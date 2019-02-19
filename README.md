@@ -8,7 +8,7 @@ TODO
 
 ## Contributing
 
-Install (pnpm)[https://pnpm.js.org/]
+Install [pnpm](https://pnpm.js.org/)
 
 ```
 npm i -g pnpm
