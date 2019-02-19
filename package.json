@@ -1,0 +1,34 @@
+{
+  "name": "wirestate",
+  "version": "0.0.1",
+  "description": "Statechart wireframe generator",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "parcel src/index.html",
+    "build": "parcel build src/index.html --target browser --out-dir build",
+    "build:node": "tsc -p .",
+    "lint": "eslint --fix src",
+    "clean": "rimraf build lib"
+  },
+  "author": "Darren Schnare <dschnare@launchfort.com>",
+  "dependencies": {
+    "prop-types": "15.7.2",
+    "react": "16.8.2",
+    "react-dom": "16.8.2",
+    "xstate": "^4.3.1"
+  },
+  "devDependencies": {
+    "eslint": "5.13.0",
+    "eslint-config-standard": "12.0.0",
+    "eslint-import-resolver-node": "0.3.2",
+    "eslint-plugin-import": "2.16.0",
+    "eslint-plugin-node": "8.0.1",
+    "eslint-plugin-promise": "4.0.1",
+    "eslint-plugin-react": "7.12.4",
+    "eslint-plugin-standard": "4.0.0",
+    "parcel-bundler": "1.11.0",
+    "rimraf": "2.6.3",
+    "scheduler": "0.13.2",
+    "typescript": "3.3.3"
+  }
+}
