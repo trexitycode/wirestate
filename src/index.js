@@ -9,7 +9,7 @@ const stateComponentMap = {
   //     height: '100%',
   //     background: 'red'
   //   }
-  //   return <div style={style}>{wirestate()}</div>
+  //   return (<div style={style}>{wirestate()}</div>)
   // }
 }
 
@@ -45,8 +45,8 @@ const machine = Machine({
         },
         'Does token exist?': {
           on: {
-            'yes?': 'No Errors',
-            'no?': 'No Errors'
+            'token exists?': 'No Errors',
+            'token does not exist?': 'No Errors'
           }
         }
       }
