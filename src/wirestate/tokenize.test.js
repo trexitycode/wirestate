@@ -1,4 +1,4 @@
-import { tokenize } from './tokenize'
+import { tokenize, makeTokenizer } from './tokenize'
 import { parse } from './parse'
 
 /*
@@ -19,8 +19,7 @@ Additions to Sketch.systems syntax:
   Example:
 
   My State
-    @include "./somefile.states"
-    @include "./modal.states" prefix My State
+    @include "./modal.states" (automatically prefixes all child and grandchild state IDs with "My State.")
 */
 
 const state = `
@@ -39,13 +38,15 @@ Six
     done.state.Four -> Seven
 
     Four
-      @include "./file.states" prefix Four:
+      @include "./file.states"
 
 Seven
 
 `
 
-const tokens = tokenize(state)
+
+const tokenizer = makeTokenizer(state)
+const tokens = tokenizer.tokenize(state)
 console.log({ tokens })
 
 const ast = parse(tokens)

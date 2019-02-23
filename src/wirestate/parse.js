@@ -1,3 +1,273 @@
+const makeScanner = (tokens) => {
+  // Remove the comments
+  tokens = tokens.filter(t => t.type !== 'comment')
+
+  let i = 0
+  let token = tokens[i]
+
+  const reset = () => {
+    i = 0
+    token = tokens[i]
+  }
+
+  const advance = (step = 1) => {
+    i += step
+    return token = tokens[i]
+  }
+
+  const look = (pattern) => {
+    pattern = Array.isArray(pattern) ? pattern : [ pattern ]
+    const patternCount = patterns.length
+    let patternDoesMatch = true
+    let t = 0
+
+    for (let p = 0; p < patternCount && patternDoesMatch; p += 1) {
+      const pattern = patterns[p]
+      const token = tokens[i + t]
+
+      if (typeof t === 'string') {
+        // Wildcard token type (0 or more)
+        if (pattern.endsWith('*')) {
+          if (token.type === pattern.substr(0, pattern.length - 1)) {
+            p -= 1
+            t += 1
+          }
+          patternDoesMatch = true
+        // Zero or one token type (0 or 1)
+        } else if (pattern.endsWith('?')) {
+          if (token.type === pattern.substr(0, pattern.length - 1)) {
+            t += 1
+          }
+          patternDoesMatch = true
+        } else {
+          t += 1
+          patternDoesMatch = token.type === pattern
+        }
+      } else if (Object(pattern) === pattern) {
+        t += 1
+        patternDoesMatch = Object
+          .keys(pattern)
+          .every(key => token[key] === pattern[key])
+      } else {
+        throw new Error('Expected a string or token mask as a pattern')
+      }
+    }
+
+    return patternDoesMatch
+  }
+
+  const consume = (pattern) => {
+    if (look(pattern)) {
+      const t = token
+      advance()
+      return t
+    } else {
+      throw syntaxError()
+    }
+  }
+
+  return {
+    get token () { return token },
+    get index () { return i },
+    advance,
+    look,
+    reset,
+    consume
+  }
+}
+
+export const makeParser = (tokens) => {
+  const scanner = makeScanner(tokens)
+
+  const syntaxError = (message = null, { token = scanner.token } = {}) => {
+    if (token) {
+      message = message || `Unexpected token ${token.value}`
+      return Object.assign(
+        new Error(`SyntaxError${message ? ': ' + message : ''} near [L:${token.line} C:${token.column}]`)
+      )
+    } else {
+      return new Error(`SyntaxError: Unexpected end of input`)
+    }
+  }
+
+  const parse = () => {
+    scanner.reset()
+    return stateChartNode()
+  }
+
+  const stateChartNode = () => {
+    let node = {
+      type: 'statechart',
+      states: []
+    }
+    let indent = 0
+
+    while (scanner.token) {
+      if (scanner.look('identifier')) {
+        if (indent === 0) {
+          node.states.push(stateNode())
+        } else {
+          throw syntaxError('Unexpected indent')
+        }
+      } else if (scanner.type === 'newline') {
+        indent = 0
+        scanner.advance()
+      } else if (scanner.type === 'whitespace') {
+        indent += 1
+        scanner.advance()
+      } else {
+        throw syntaxError()
+      }
+    }
+    return node
+  }
+
+  const stateNode = (indentLevel = 0) => {
+    const idToken = scanner.consume('identifier')
+    let node = {
+      type: 'state',
+      id: idToken.value,
+      indent: 0,
+      stateType: 'atomic',
+      initial: false,
+      final: false,
+      transitions: [],
+      states: [],
+      line: idToken.line,
+      column: idToken.column
+    }
+    let indent = indentLevel
+
+    scanner.advance()
+
+    let symbols = []
+    while (scanner.look('symbol')) {
+      symbols.push(scanner.consume('symbol'))
+    }
+
+    // (all) *?&!
+    // (valid co-symbols) &!*
+    // (valid co-symbols) ?*
+
+    if (symbols.find(s => s.value === '?')) {
+      if (symbols.find(s => ['!', '&'].indexOf(s.value) >= 0)) {
+        throw syntaxError('Unsupported state symbol')
+      }
+    }
+
+    symbols.forEach(s => {
+      if (s.value === '*') node.initial = true
+      if (s.value === '!') {
+        node.final = true
+        node.id += '!'
+      }
+      if (s.value === '&') node.stateType = 'parallel'
+      if (s.value === '?') {
+        node.stateType = 'transient'
+        node.id += '?'
+      }
+    })
+
+    while (scanner.token) {
+      if (scanner.token.type === 'identifier') {
+        // Is indentation too much?
+        if (indent > indentLevel + 1) {
+          throw syntaxError(`Expected indentation ${indentLevel + 1} but got ${indent}`)
+        }
+
+        // Is the next token directive, transition or child state?
+        if (scanner.look('directive')) { // a directive
+          if (indent < indentLevel) {
+            throw syntaxError('Unexpected dedentation')
+          }
+          indent = indentLevel
+          node.states.push(directiveNode())
+        } else if (scanner.look([ 'identifier', 'operator?', 'whitespace*', { value: '->' } ])) { // a transition
+          if (indent < indentLevel) {
+            throw syntaxError('Unexpected dedentation')
+          }
+          indent = indentLevel
+          node.transitions.push(transitionNode())
+        } else if (scanner.look('identifier')) { // another state
+          if (indent < indentLevel) { // ancestor state
+            break
+          } else { // child state
+            indent = indentLevel
+            node.states.push(stateNode(indent))
+          }
+        } else {
+          throw syntaxError()
+        }
+      } else if (scanner.type === 'newline') {
+        indent = indentLevel
+        scanner.advance()
+      } else if (scanner.type === 'whitespace') {
+        indent += 1
+        scanner.advance()
+      } else {
+        throw syntaxError()
+      }
+    }
+
+    return node
+  }
+
+  const transitionNode = () => {
+    const eventToken = scanner.consume('identifier')
+    let event = eventToken.value
+
+    if (scanner.look('symbol')) {
+      const symbolToken = scanner.consume('symbol')
+      if (symbolToken.value === '?' || symbolToken.value === '!') {
+        event += symbolToken.value
+      } else {
+        throw syntaxError()
+      }
+    }
+
+    scanner.consume({ value: '->' })
+    let stateId = scanner.consume('identifier').value
+
+    if (scanner.look('symbol')) {
+      const symbolToken = scanner.consume('symbol')
+      if (symbolToken.value === '?' || symbolToken.value === '!') {
+        stateId += symbolToken.value
+      } else {
+        throw syntaxError()
+      }
+    }
+
+    let node = {
+      type: 'transition',
+      event,
+      stateId,
+      line: eventToken.line,
+      column: eventToken.column
+    }
+
+    return node
+  }
+
+  const directiveNode = () => {
+    const typeToken = scanner.consume('directive')
+    let node = {
+      type: 'directive',
+      directiveType: typeToken.value,
+      fileName: scanner.consume('string').value,
+      line: typeToken.line,
+      column: typeToken.column
+    }
+
+    return node
+  }
+
+  return { parse }
+}
+
+
+
+
+
 export function parse (tokens) {
   let i = 0
   let t = tokens[i]
@@ -5,7 +275,7 @@ export function parse (tokens) {
   // Remove comments
   tokens = tokens.filter(t => t.type !== 'comment')
 
-  const syntaxError = ({ message = '', token = t }) => {
+  const syntaxError = ({ message = '', token = t } = {}) => {
     if (t) {
       message = message || `Unexpected token ${token.type}:${token.value}`
       return Object.assign(

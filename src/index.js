@@ -4,13 +4,24 @@ import * as ReactDom from 'react-dom'
 import { WireStateContext, WireStateView } from './wirestate'
 
 const stateComponentMap = {
-  // 'App': ({ currState, send, wirestate }) => {
-  //   const style = {
-  //     height: '100%',
-  //     background: 'red'
-  //   }
-  //   return (<div style={style}>{wirestate()}</div>)
-  // }
+  'App': ({ currState, send, wirestate }) => {
+    const style = {
+      height: '100%',
+      background: 'red'
+    }
+
+    return (<div style={style}>{wirestate()}</div>)
+  }
+}
+
+const stateServiceMap = {
+  'App.Loading Screen.Loading App State': (send) => {
+    // load app state
+    // set mobx
+    // send('loaded')
+    // set mobx error message
+    // send('fail)
+  }
 }
 
 const machine = Machine({
@@ -59,10 +70,12 @@ const Root = () => {
   const [currState, setCurrState] = React.useState(service.state)
   const [prevState, setPrevState] = React.useState(null)
 
-  service.onTransition(() => {
-    setPrevState(currState)
-    setCurrState(service.state)
-  })
+  React.useMemo(() => {
+    service.onTransition(() => {
+      setPrevState(currState)
+      setCurrState(service.state)
+    })
+  }, [])
 
   return (
     <WireStateContext.Provider value={{ service, currState, prevState, stateComponentMap }}>
