@@ -36,6 +36,11 @@ const makeScanner = (tokens) => {
       const pattern = patterns[p]
       const token = tokens[i + t]
 
+      if (!token) {
+        patternDoesMatch = false
+        break
+      }
+
       if (typeof pattern === 'string') {
         // Wildcard token type (0 or more)
         if (pattern.endsWith('*')) {

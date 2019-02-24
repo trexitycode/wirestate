@@ -40,9 +40,7 @@ Six
     Four
       @include "./file.states"
 
-Seven
-
-`
+Seven`
 
 
 const tokenizer = makeTokenizer()
