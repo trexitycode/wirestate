@@ -1,3 +1,4 @@
-export * from './tokenize'
-export * from './parse'
+export * from './tokenizer'
+export * from './parser'
+export * from './analyzer'
 export * from './bindings'

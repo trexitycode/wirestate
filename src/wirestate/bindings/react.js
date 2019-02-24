@@ -79,7 +79,7 @@ const EventsView = ({ events, send, layout = 'auto' }) => {
 }
 
 
-const AtomicStateView = ({ title, events = [], send, children = null }) => {
+const AtomicStateView = ({ title, send, events = [], children = null }) => {
   const style = {
     state: {
       position: 'relative',
@@ -182,7 +182,7 @@ const renderStateView = ({ service, currState, prevState, stateComponentMap, par
   const hierarchyToSearch = paths.slice(k + 1)
   const match = hierarchyToSearch.filter(path => (path in stateComponentMap)).shift()
 
-  if (match) {
+  if (parentStatePath && match) {
     const ViewOverride = stateComponentMap[match]
     return (
       <ViewOverride
@@ -237,7 +237,7 @@ const renderStateView = ({ service, currState, prevState, stateComponentMap, par
               const e = service.machine.getStateNodeByPath(path).events
               return (
                 <div key={path} style={style.row}>
-                  <AtomicStateView title={path.split('.').slice(0, -1)}>
+                  <AtomicStateView title={path.split('.').slice(0, -1)} send={send}>
                     <TransientStateView title={path} events={e} send={send} />
                   </AtomicStateView>
                 </div>
@@ -261,7 +261,7 @@ const renderStateView = ({ service, currState, prevState, stateComponentMap, par
     if (process.env.NODE_ENV === 'development') {
       if (parentStateNode) {
         return (
-          <AtomicStateView title={parentStateNode.id}>
+          <AtomicStateView title={parentStateNode.id} send={send}>
             <TransientStateView title={title} events={events} send={send} />
           </AtomicStateView>
         )
@@ -271,7 +271,7 @@ const renderStateView = ({ service, currState, prevState, stateComponentMap, par
     } else {
       if (parentStateNode) {
         return (
-          <AtomicStateView title={parentStateNode.id} />
+          <AtomicStateView title={parentStateNode.id} send={send} />
         )
       } else {
         return null
@@ -285,7 +285,7 @@ const renderStateView = ({ service, currState, prevState, stateComponentMap, par
   }
 }
 
-export const WireStateView = ({ parentStatePath }) => {
+export const WireStateView = ({ parentStatePath = '' }) => {
   return (
     <WireStateContext.Consumer>{
       value => renderStateView(Object.assign({}, value, { parentStatePath }))

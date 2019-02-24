@@ -1,11 +1,14 @@
 {
   "compilerOptions": {
     "allowJs": true,
+    "checkJs": true,
     "target": "es5",
     "moduleResolution": "node",
     "module": "commonjs",
     "outDir": "lib",
     "newLine": "LF",
+    "jsx": "react",
+    "reactNamespace": "React",
     "lib": [
       "dom",
       "es2015"

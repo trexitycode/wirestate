@@ -1,5 +1,5 @@
-import { tokenize, makeTokenizer } from './tokenize'
-import { parse } from './parse'
+import { makeTokenizer } from './tokenizer'
+import { makeParser } from './parser'
 
 /*
 * = initial
@@ -45,9 +45,10 @@ Seven
 `
 
 
-const tokenizer = makeTokenizer(state)
+const tokenizer = makeTokenizer()
 const tokens = tokenizer.tokenize(state)
-console.log({ tokens })
+console.log(JSON.stringify({ tokens }, null, 2))
 
-const ast = parse(tokens)
+const parser = makeParser()
+const ast = parser.parse(tokens)
 console.log(JSON.stringify({ ast }, null, 2))
