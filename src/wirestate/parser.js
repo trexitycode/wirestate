@@ -93,6 +93,80 @@ const makeScanner = (tokens) => {
   }
 }
 
+const implicitStateNode = (scanner, id) => {
+  let node = {
+    type: 'state',
+    id,
+    initial: true,
+    final: true,
+    stateType: 'atomic',
+    indent: 0,
+    states: [],
+    transitions: [],
+    line: 1,
+    column: 0
+  }
+  let indent = 0
+
+  while (scanner.token) {
+    if (scanner.look('identifier')) {
+      // Is indentation too much?
+      if (indent > 0) {
+        throw scanner.syntaxError(`Expected indentation 0 but got ${indent}`)
+      }
+
+      // event? ->
+      // event! ->
+      if (scanner.look([ 'identifier', 'symbol?', 'whitespace*', { value: '->' } ])) { // a transition
+        indent = 0
+        node.transitions.push(transitionNode(scanner))
+      } else if (scanner.look('identifier')) { // another state
+        // child state
+        node.states.push(stateNode(scanner, { indentLevel: 0 }))
+        indent = 0
+      } else {
+        throw scanner.syntaxError()
+      }
+    // Is the next token directive, transition or child state?
+    } else if (scanner.look('directive')) { // a directive
+      // Is indentation too much?
+      if (indent > 0) {
+        throw scanner.syntaxError(`Expected indentation 0 but got ${indent}`)
+      }
+
+      indent = 0
+      node.states.push(directiveNode(scanner))
+    } else if (scanner.look('newline')) {
+      indent = 0
+      scanner.advance()
+    } else if (scanner.look('whitespace')) {
+      indent += 1
+      scanner.advance()
+    } else {
+      throw scanner.syntaxError()
+    }
+  }
+
+  while (scanner.token) {
+    if (scanner.look('identifier')) {
+      if (indent === 0) {
+        node.states.push(stateNode(scanner, { indentLevel: 0 }))
+      } else {
+        throw scanner.syntaxError('Unexpected indent')
+      }
+    } else if (scanner.look('newline')) {
+      indent = 0
+      scanner.advance()
+    } else if (scanner.look('whitespace')) {
+      indent += 1
+      scanner.advance()
+    } else {
+      throw scanner.syntaxError()
+    }
+  }
+  return node
+}
+
 const stateChartNode = (scanner) => {
   let node = {
     type: 'statechart',
@@ -283,9 +357,9 @@ const directiveNode = (scanner) => {
 }
 
 export const makeParser = () => {
-  const parse = (tokens) => {
+  const parse = (tokens, { stateChartId = 'statechart' } = {}) => {
     const scanner = makeScanner(tokens)
-    return stateChartNode(scanner)
+    return implicitStateNode(scanner, stateChartId)
   }
 
   return { parse }

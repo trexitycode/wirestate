@@ -23,6 +23,10 @@ Additions to Sketch.systems syntax:
 */
 
 const state = `
+back -> Exit!
+
+Exit!
+
 Home*
   one -> One?
 
