@@ -6,26 +6,26 @@ import { makeParser } from './parser'
 
 const readFile = promisify(FS.readFile)
 
-export const makeAnalyzer = () => {
-  // Breadth-first walk of an AST graph. Calls visit for each AST node.
-  const walk = (node, visit) => {
-    let stack = [ node ]
-    while (stack.length) {
-      const n = stack.shift()
-      switch (n.type) {
-        case 'state':
-          visit(n)
-          n.transitions(t => visit(t))
-          stack.push(...n.states)
-          break
-        case 'transition':
-        case 'directive':
-          visit(n)
-          break
-      }
+// Breadth-first walk of an AST graph. Calls visit for each AST node.
+const walk = (node, visit) => {
+  let stack = [ node ]
+  while (stack.length) {
+    const n = stack.shift()
+    switch (n.type) {
+      case 'state':
+        visit(n)
+        n.transitions.forEach(t => visit(t))
+        stack.push(...n.states)
+        break
+      case 'transition':
+      case 'directive':
+        visit(n)
+        break
     }
   }
+}
 
+export const makeAnalyzer = () => {
   const analyze = async (ast, fileName = '') => {
     // Make deep copy
     ast = JSON.parse(JSON.stringify(ast))
@@ -44,15 +44,15 @@ export const makeAnalyzer = () => {
     // Verify no duplicate state IDs
     let allStateNodesMap = allStateNodes.reduce((map, node) => {
       if (node.id in map) {
-        // Semantic Error
+        throw new Error(`SemanticError: Duplicate state ID "${node.id}"`)
       } else {
         map[node.id] = node
       }
       return map
     }, {})
 
+    // Get all state nodes with an @include directive in their states array
     const deferredStates = allStateNodes
-      // Get all state nodes with an @include directive in their states array
       .filter(node => node.states.some(n => n.directiveType === '@include'))
 
     // Verify transtion targets refer to existing state IDs
@@ -68,37 +68,29 @@ export const makeAnalyzer = () => {
       })
       .forEach(node => {
         if (!(node.target in allStateNodesMap)) {
-          // Semantic Error
+          throw new Error(`SemanticError: Transition target not found "${node.target}"`)
         }
       })
 
-    // For atomic states that have child states set stateType to "compound"
+    // NOTE: Can a 'transient' state have child states?
+
+    // For atomic states that have child states, set their stateType to "compound"
     allStateNodes.filter(node => node.stateType === 'atomic').forEach(node => {
       if (node.states.length) {
         node.stateType = 'compound'
       }
     })
 
-    // Verify there is only one top-level initial state
-    if (ast.states.filter(n => n.initial).length > 1) {
-      // Semantic Error
-    }
-
-    // If no initial top-level state then set first state to be initial
-    if (ast.states.length && ast.states.filter(n => n.initial).length === 0) {
-      ast.states[0].initial = true
-    }
-
-    // Verify compound states do not have duplicate initial states
-    allStateNodes.filter(node => node.stateType === 'compound').forEach(node => {
-      if (node.states.filter(n => n.initial).length > 1) {
-        // Semantic Error
+    // Verify there is only one initial child state for all compound states
+    walk(ast, node => {
+      if (node.stateType === 'compound' && node.states.filter(n => n.initial).length > 1) {
+        throw new Error(`SemanticError: Only one child state can be marked as initial: "${node.id}"`)
       }
     })
 
-    // For compound states that have no initial state, set first state to be initial
-    allStateNodes.filter(node => node.stateType === 'compound').forEach(node => {
-      if (node.states.length && node.states.filter(n => n.initial).length === 0) {
+    // If no child state is set to be initial then, set first child state to be initial
+    walk(ast, node => {
+      if (node.stateType === 'compound' && node.states.filter(n => n.initial).length === 0) {
         node.states[0].initial = true
       }
     })
@@ -107,48 +99,53 @@ export const makeAnalyzer = () => {
     // (prefix ALL states with `${parent.id}.${state.id}`)
     const tokenizer = makeTokenizer()
     const parser = makeParser()
-    await allStateNodes
+    await deferredStates
       // Get all state nodes with an @include directive in their states array
       .filter(node => node.states.some(n => n.directiveType === '@include'))
       // For each node that has an @include directive we create a task that
       // will asynchronously load the the file referenced by the directive
       // then tokenize, parse and prefix all state node IDs.
-      .map(() => async (node) => {
-        const directiveNodes = node.states.filter(n => n.type === 'directive')
-        await directiveNodes.map(() => async (d) => {
-          const fileNameToInclude = Path.resolve(fileName, d.fileName)
-          const text = await readFile(fileName, 'utf8')
-          let tokens = []
-          let includedAst = null
+      .map(parentNode => async () => {
+        const includeNodes = parentNode.states.filter(n => n.directiveType === '@include')
+        await includeNodes.map(includeNode => async () => {
+          const fileNameToInclude = Path.resolve(
+            Path.dirname(fileName),
+            includeNode.fileName
+          )
+          const text = await readFile(fileNameToInclude, 'utf8')
+          let includedRootNode = null
 
           try {
-            tokens = tokenizer.tokenize(text)
-            includedAst = parser.parse(tokens)
-            includedAst = await analyze(includedAst)
+            const tokens = tokenizer.tokenize(text)
+            const rootId = Path.basename(fileNameToInclude, Path.extname(fileNameToInclude))
+            includedRootNode = parser.parse(tokens, rootId)
+            includedRootNode = await analyze(includedRootNode, fileNameToInclude)
           } catch (error) {
-            throw Object.assign(new Error(`(FILE:${fileNameToInclude})::${error.message}`), error)
+            throw Object.assign(new Error(`(FILE:${includeNode.fileName})::${error.message}`), error)
           }
 
-          // If the directive node was not marked as being initial then set all
-          // top-level state nodes in the included AST to initial = flase since
-          // there will be some other state under the parent that is already
-          // initial.
-          includedAst.initial = !d.initial
+          // If there is already an initial child state immediately under the
+          // parent node then we ensure the included state is not marked as initial.
+          if (parentNode.states.some(node => node.initial)) {
+            includedRootNode.initial = false
+          }
 
           // Prefix all state IDs with the parent node's ID
-          walk(includedAst, n => {
+          walk(includedRootNode, n => {
             if (n.type === 'state') {
-              n.id = `${node.id}.${n.id}`
+              n.externalId = n.id
+              n.id = `${parentNode.id}.${n.id}`
             } else if (n.type === 'transition') {
-              n.target = `${node.id}.${n.target}`
+              n.target = `${parentNode.id}.${n.target}`
             }
           })
-          // Inline the AST states into the parent state
-          node.states.splice(node.states.indexOf(d), 1, ...includedAst)
+
+          // Replace the directive node in the parent node
+          parentNode.states.splice(parentNode.states.indexOf(includeNode), 1, includedRootNode)
 
         // Run each directive parsing task sequentially
         }).reduce((p, task) => p.then(task), Promise.resolve())
-      // Run each task sequentially
+      // Run each task that handles directives sequentially
       }).reduce((p, task) => p.then(task), Promise.resolve())
 
     // Re-scan all sate nodes after directives have been processed
@@ -179,7 +176,7 @@ export const makeAnalyzer = () => {
       })
       .forEach(node => {
         if (!(node.target in allStateNodesMap)) {
-          // Semantic Error
+          throw new Error(`SemanticError: Transition target not found "${node.target}"`)
         }
       })
 

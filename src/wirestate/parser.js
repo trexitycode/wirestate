@@ -99,6 +99,7 @@ const implicitStateNode = (scanner, id) => {
     id,
     initial: true,
     final: true,
+    parallel: false,
     stateType: 'atomic',
     indent: 0,
     states: [],
@@ -231,7 +232,7 @@ const stateNode = (scanner, { indentLevel }) => {
       node.final = true
       node.id += '!'
     }
-    if (s.value === '&') node.stateType = 'parallel'
+    if (s.value === '&') node.parallel = true
     if (s.value === '?') {
       node.stateType = 'transient'
       node.id += '?'
@@ -345,22 +346,32 @@ const directiveNode = (scanner) => {
     scanner.consume('whitespace')
   }
 
-  let node = {
-    type: 'directive',
-    directiveType: typeToken.value,
-    fileName: scanner.consume('string').value,
-    line: typeToken.line,
-    column: typeToken.column
+  let node = null
+
+  if (typeToken.value === '@include') {
+    node = {
+      type: 'directive',
+      directiveType: typeToken.value,
+      fileName: scanner.consume('string').value,
+      line: typeToken.line,
+      column: typeToken.column
+    }
+  } else {
+    node = {
+      type: 'directive',
+      directiveType: typeToken.value,
+      line: typeToken.line,
+      column: typeToken.column
+    }
   }
 
   return node
 }
 
 export const makeParser = () => {
-  const parse = (tokens, { stateChartId = 'statechart' } = {}) => {
+  const parse = (tokens, id = 'statechart') => {
     const scanner = makeScanner(tokens)
-    return implicitStateNode(scanner, stateChartId)
+    return implicitStateNode(scanner, id)
   }
-
   return { parse }
 }
