@@ -1,7 +1,7 @@
 import { interpret, Machine } from 'xstate'
 import * as React from 'react'
 import * as ReactDom from 'react-dom'
-import { WireStateContext, WireStateView } from './wirestate'
+import { WireStateContext, WireStateView } from './wirestate/bindings'
 
 const stateComponentMap = {
   'App': ({ currState, send, wirestate }) => {
@@ -29,18 +29,23 @@ const machine = Machine({
   initial: 'Go',
   states: {
     Go: {
+      id: 'Go',
       initial: 'Does token exist?',
       states: {
         'No Errors': {
+          id: 'No Errors',
           type: 'parallel',
           states: {
             One: {
+              id: 'One',
               on: { 'go': '#App.Go' }
             },
             Two: {
+              id: 'Two',
               initial: 'What time is it?',
               states: {
                 'What time is it?': {
+                  id: 'What time is it?',
                   on: {
                     'Is it noon?': '#App.Go'
                   }
@@ -48,6 +53,7 @@ const machine = Machine({
               }
             },
             Three: {
+              id: 'Three',
               on: { 'go': '#App.Go' }
             }
           }
@@ -55,6 +61,7 @@ const machine = Machine({
         'No Token Error': {
         },
         'Does token exist?': {
+          id: 'Does token exist?',
           on: {
             'token exists?': 'No Errors',
             'token does not exist?': 'No Errors'

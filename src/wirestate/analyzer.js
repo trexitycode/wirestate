@@ -7,19 +7,18 @@ import { makeParser } from './parser'
 const readFile = promisify(FS.readFile)
 
 // Breadth-first walk of an AST graph. Calls visit for each AST node.
-const walk = (node, visit) => {
-  let stack = [ node ]
+export const walk = (node, visit) => {
+  let stack = [ { node, parent: null } ]
   while (stack.length) {
-    const n = stack.shift()
-    switch (n.type) {
+    const { node, parent } = stack.shift()
+    switch (node.type) {
       case 'state':
-        visit(n)
-        n.transitions.forEach(t => visit(t))
-        stack.push(...n.states)
+        visit(node, parent)
+        node.transitions.forEach(t => visit(t, node))
+        stack.push(...node.states.map(n => ({ node: n, parent: node })))
         break
-      case 'transition':
       case 'directive':
-        visit(n)
+        visit(node, parent)
         break
     }
   }
@@ -159,7 +158,7 @@ export const makeAnalyzer = () => {
     // Verify no duplicate state IDs after processing directives
     allStateNodesMap = allStateNodes.reduce((map, node) => {
       if (node.id in map) {
-        // Semantic Error
+        throw new Error(`SemanticError: Duplicate state ID "${node.id}"`)
       } else {
         map[node.id] = node
       }

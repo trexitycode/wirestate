@@ -1,6 +1,7 @@
 import { makeTokenizer } from './tokenizer'
 import { makeParser } from './parser'
 import { makeAnalyzer } from './analyzer'
+import { makeGenerator } from './generator'
 
 const state = `
 back -> Exit!
@@ -9,7 +10,7 @@ Exit!
 
 Home*
   one -> One?
-  get name -> Home.Modal
+  get name -> Home.modal
 
   @include "./modal.state"
 
@@ -21,14 +22,13 @@ Seven`
 
 const tokenizer = makeTokenizer()
 const tokens = tokenizer.tokenize(state)
-// console.log(JSON.stringify({ tokens }, null, 2))
 
 const parser = makeParser()
 const ast = parser.parse(tokens)
-// console.log(JSON.stringify(ast, null, 2))
 
 const analyzer = makeAnalyzer()
 analyzer.analyze(ast, 'file.state').then(newAst => {
-  console.log(JSON.stringify(newAst, null, 2))
+  const generator = makeGenerator()
+  console.log(generator.generate(newAst, 'xstate-machine-esm'))
 })
 

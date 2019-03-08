@@ -175,9 +175,41 @@ const renderStateView = ({ service, currState, prevState, stateComponentMap, par
   // by the developer furhter in the state hierarchy (i.e. we don't go up the
   // hierarchy past parentStatePath).
 
+  /*
+  const send = service.send.bind(service)
+  const stateHierarchy = service.machine.getStateNodes(currState)
+  const Tree = stateHierarchy.reduce((Parent, state) => {
+    if (state.config.externalId in stateComponentMap) {
+      const View = stateComponentMap[state.config.externalId]
+      return (children) => {
+        return (<Parent><View>{children}</View></Parent>)
+      }
+    } else if (state.id in stateComponentMap) {
+      const View = stateComponentMap[state.id]
+      return (children) => {
+        return (<Parent><View>{children}</View></Parent>)
+      }
+    } else if (state.id.endsWith('?')) {
+      return () => {
+        return (<Parent><TransientStateView title={state.id} events={state.nextEvents} send={send} /></Parent>)
+      }
+    } else if (state.type === 'parallel') {
+      // TODO
+    } else {
+      return (children) => {
+        return (<Parent><AtomicStateView title={state.id} events={state.nextEvents} send={send}>{children}</AtomicStateView></Parent>)
+      }
+    }
+  }, (children) => (<div>{children}</div>))
+
+  return (<Tree />)
+  */
+
   const send = service.send.bind(service)
   const machine = service.machine
-  const paths = [ machine.id ].concat(currState.toStrings().map(path => `${machine.id}.${path}`))
+  const paths = [ machine.id ].concat(
+    currState.toStrings().map(path => `${machine.id}.${path}`)
+  )
   const k = paths.indexOf(parentStatePath)
   const hierarchyToSearch = paths.slice(k + 1)
   const match = hierarchyToSearch.filter(path => (path in stateComponentMap)).shift()
@@ -197,6 +229,7 @@ const renderStateView = ({ service, currState, prevState, stateComponentMap, par
   }
 
   const stateNodes = service.machine.getStateNodes(currState)
+  console.log(stateNodes.map(s => s.stateIds))
   const currStateNode = stateNodes.slice(-1).pop()
   const parentStateNode = currStateNode.parent
   const events = currState.nextEvents

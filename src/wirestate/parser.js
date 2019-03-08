@@ -98,7 +98,7 @@ const implicitStateNode = (scanner, id) => {
     type: 'state',
     id,
     initial: true,
-    final: true,
+    final: false,
     parallel: false,
     stateType: 'atomic',
     indent: 0,
