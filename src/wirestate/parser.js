@@ -1,3 +1,53 @@
+export class Node {
+  constructor () {
+    this.type = ''
+    this.line = 1
+    this.column = 0
+  }
+}
+
+export class StateNode extends Node {
+  constructor () {
+    super()
+    this.type = 'state'
+    this.id = ''
+    this.initial = false
+    this.final = false
+    this.parallel = false
+    this.stateType = ''
+    this.indent = 0
+    /** @type {Array<StateNode|DirectiveNode>} */
+    this.states = []
+    /** @type {TransitionNode[]} */
+    this.transitions = []
+  }
+}
+
+export class TransitionNode extends Node {
+  constructor () {
+    super()
+    this.type = 'transition'
+    this.event = ''
+    this.target = ''
+  }
+}
+
+export class DirectiveNode extends Node {
+  constructor () {
+    super()
+    this.type = 'directive'
+    this.directiveType = ''
+  }
+}
+
+export class IncludeDirectiveNode extends DirectiveNode {
+  constructor () {
+    super()
+    this.directiveType = '@include'
+    this.fileName = ''
+  }
+}
+
 const makeScanner = (tokens) => {
   // Remove the comments
   tokens = tokens.filter(t => t.type !== 'comment')
@@ -23,7 +73,7 @@ const makeScanner = (tokens) => {
 
   const advance = (step = 1) => {
     i += step
-    return token = tokens[i]
+    return (token = tokens[i])
   }
 
   const look = (patterns) => {
@@ -93,20 +143,15 @@ const makeScanner = (tokens) => {
   }
 }
 
-const implicitStateNode = (scanner, id) => {
-  let node = {
-    type: 'state',
+const parseImplicitStateNode = (scanner, id) => {
+  let node = new StateNode()
+  Object.assign(node, {
     id,
-    initial: true,
-    final: false,
-    parallel: false,
     stateType: 'atomic',
     indent: 0,
-    states: [],
-    transitions: [],
     line: 1,
     column: 0
-  }
+  })
   let indent = 0
 
   while (scanner.token) {
@@ -120,10 +165,10 @@ const implicitStateNode = (scanner, id) => {
       // event! ->
       if (scanner.look([ 'identifier', 'symbol?', 'whitespace*', { value: '->' } ])) { // a transition
         indent = 0
-        node.transitions.push(transitionNode(scanner))
+        node.transitions.push(parseTransitionNode(scanner))
       } else if (scanner.look('identifier')) { // another state
         // child state
-        node.states.push(stateNode(scanner, { indentLevel: 0 }))
+        node.states.push(parseStateNode(scanner, { indentLevel: 0 }))
         indent = 0
       } else {
         throw scanner.syntaxError()
@@ -136,7 +181,7 @@ const implicitStateNode = (scanner, id) => {
       }
 
       indent = 0
-      node.states.push(directiveNode(scanner))
+      node.states.push(parseDirectiveNode(scanner))
     } else if (scanner.look('newline')) {
       indent = 0
       scanner.advance()
@@ -151,7 +196,7 @@ const implicitStateNode = (scanner, id) => {
   while (scanner.token) {
     if (scanner.look('identifier')) {
       if (indent === 0) {
-        node.states.push(stateNode(scanner, { indentLevel: 0 }))
+        node.states.push(parseStateNode(scanner, { indentLevel: 0 }))
       } else {
         throw scanner.syntaxError('Unexpected indent')
       }
@@ -168,47 +213,16 @@ const implicitStateNode = (scanner, id) => {
   return node
 }
 
-const stateChartNode = (scanner) => {
-  let node = {
-    type: 'statechart',
-    states: []
-  }
-  let indent = 0
-
-  while (scanner.token) {
-    if (scanner.look('identifier')) {
-      if (indent === 0) {
-        node.states.push(stateNode(scanner, { indentLevel: 0 }))
-      } else {
-        throw scanner.syntaxError('Unexpected indent')
-      }
-    } else if (scanner.look('newline')) {
-      indent = 0
-      scanner.advance()
-    } else if (scanner.look('whitespace')) {
-      indent += 1
-      scanner.advance()
-    } else {
-      throw scanner.syntaxError()
-    }
-  }
-  return node
-}
-
-const stateNode = (scanner, { indentLevel }) => {
+const parseStateNode = (scanner, { indentLevel }) => {
   const idToken = scanner.consume('identifier')
-  let node = {
-    type: 'state',
+  let node = new StateNode()
+  Object.assign(node, {
     id: idToken.value,
     stateType: 'atomic',
-    initial: false,
-    final: false,
     indent: indentLevel,
-    transitions: [],
-    states: [],
     line: idToken.line,
     column: idToken.column
-  }
+  })
   let indent = 0
 
   let symbols = []
@@ -253,7 +267,7 @@ const stateNode = (scanner, { indentLevel }) => {
           throw scanner.syntaxError('Unexpected dedentation')
         }
         indent = 0
-        node.transitions.push(transitionNode(scanner))
+        node.transitions.push(parseTransitionNode(scanner))
       } else if (scanner.look('identifier')) { // another state
         if (indent <= indentLevel) { // ancestor state
           // Backtrack so the ancestor parent will re-read the indentation
@@ -261,7 +275,7 @@ const stateNode = (scanner, { indentLevel }) => {
           indent = 0
           break
         } else { // child state
-          node.states.push(stateNode(scanner, { indentLevel: indent }))
+          node.states.push(parseStateNode(scanner, { indentLevel: indent }))
           indent = 0
         }
       } else {
@@ -279,7 +293,7 @@ const stateNode = (scanner, { indentLevel }) => {
       }
 
       indent = 0
-      node.states.push(directiveNode(scanner))
+      node.states.push(parseDirectiveNode(scanner))
     } else if (scanner.look('newline')) {
       indent = 0
       scanner.advance()
@@ -294,7 +308,7 @@ const stateNode = (scanner, { indentLevel }) => {
   return node
 }
 
-const transitionNode = (scanner) => {
+const parseTransitionNode = (scanner) => {
   const eventToken = scanner.consume('identifier')
   let event = eventToken.value
 
@@ -328,18 +342,18 @@ const transitionNode = (scanner) => {
     }
   }
 
-  let node = {
-    type: 'transition',
+  let node = new TransitionNode()
+  Object.assign(node, {
     event,
     target,
     line: eventToken.line,
     column: eventToken.column
-  }
+  })
 
   return node
 }
 
-const directiveNode = (scanner) => {
+const parseDirectiveNode = (scanner) => {
   const typeToken = scanner.consume('directive')
 
   while (scanner.look('whitespace')) {
@@ -349,20 +363,19 @@ const directiveNode = (scanner) => {
   let node = null
 
   if (typeToken.value === '@include') {
-    node = {
-      type: 'directive',
-      directiveType: typeToken.value,
+    node = new IncludeDirectiveNode()
+    Object.assign(node, {
       fileName: scanner.consume('string').value,
       line: typeToken.line,
       column: typeToken.column
-    }
+    })
   } else {
-    node = {
-      type: 'directive',
+    node = new DirectiveNode()
+    Object.assign({
       directiveType: typeToken.value,
       line: typeToken.line,
       column: typeToken.column
-    }
+    })
   }
 
   return node
@@ -371,7 +384,7 @@ const directiveNode = (scanner) => {
 export const makeParser = () => {
   const parse = (tokens, id = 'statechart') => {
     const scanner = makeScanner(tokens)
-    return implicitStateNode(scanner, id)
+    return parseImplicitStateNode(scanner, id)
   }
   return { parse }
 }

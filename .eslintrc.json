@@ -1,6 +1,5 @@
 {
   "extends": [
-    "standard",
-    "react"
+    "standard"
   ]
 }

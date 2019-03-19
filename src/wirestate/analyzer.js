@@ -6,20 +6,23 @@ import { makeParser } from './parser'
 
 const readFile = promisify(FS.readFile)
 
-// Breadth-first walk of an AST graph. Calls visit for each AST node.
+/**
+ * Breadth-first walk of an AST graph. Calls visit for each AST node.
+ * @param {Object} node
+ * @param {Function} visit
+ */
 export const walk = (node, visit) => {
   let stack = [ { node, parent: null } ]
+
   while (stack.length) {
     const { node, parent } = stack.shift()
-    switch (node.type) {
-      case 'state':
-        visit(node, parent)
-        node.transitions.forEach(t => visit(t, node))
-        stack.push(...node.states.map(n => ({ node: n, parent: node })))
-        break
-      case 'directive':
-        visit(node, parent)
-        break
+
+    if (node.type === 'state') {
+      visit(node, parent)
+      node.transitions.forEach(t => visit(t, node))
+      stack.push(...node.states.map(n => ({ node: n, parent: node })))
+    } else if (node.type === 'directive') {
+      visit(node, parent)
     }
   }
 }
@@ -119,14 +122,9 @@ export const makeAnalyzer = () => {
             const rootId = Path.basename(fileNameToInclude, Path.extname(fileNameToInclude))
             includedRootNode = parser.parse(tokens, rootId)
             includedRootNode = await analyze(includedRootNode, fileNameToInclude)
+            includedRootNode.initial = includeNode.initial
           } catch (error) {
             throw Object.assign(new Error(`(FILE:${includeNode.fileName})::${error.message}`), error)
-          }
-
-          // If there is already an initial child state immediately under the
-          // parent node then we ensure the included state is not marked as initial.
-          if (parentNode.states.some(node => node.initial)) {
-            includedRootNode.initial = false
           }
 
           // Prefix all state IDs with the parent node's ID

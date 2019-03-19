@@ -12,13 +12,12 @@ Home*
   one -> One?
   get name -> Home.modal
 
-  @include "./modal.state"
+  @include "./modal.states"
 
 One?
   is user logged in? -> Seven
 
 Seven`
-
 
 const tokenizer = makeTokenizer()
 const tokens = tokenizer.tokenize(state)
@@ -27,8 +26,7 @@ const parser = makeParser()
 const ast = parser.parse(tokens)
 
 const analyzer = makeAnalyzer()
-analyzer.analyze(ast, 'file.state').then(newAst => {
+analyzer.analyze(ast, 'file.states').then(newAst => {
   const generator = makeGenerator()
   console.log(generator.generate(newAst, 'xstate-machine-esm'))
 })
-

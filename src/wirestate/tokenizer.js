@@ -33,7 +33,7 @@ const makeScanner = (str) => {
   }
 
   return {
-    get line ()  { return line },
+    get line () { return line },
     get column () { return column },
     get index () { return i },
     get c () { return c },
@@ -230,8 +230,8 @@ export const makeTokenizer = () => {
       const text = scanner.text
       const c = scanner.c
       return c === '@' &&
-        (text[i + 1] >= 'a' && text[i + 1] <= 'z') ||
-        (text[i + 1] >= 'A' && text[i + 1] <= 'Z')
+        ((text[i + 1] >= 'a' && text[i + 1] <= 'z') ||
+        (text[i + 1] >= 'A' && text[i + 1] <= 'Z'))
     },
     read (scanner) {
       let buffer = '@'

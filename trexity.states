@@ -1,0 +1,444 @@
+App*
+  back -> Exit?
+
+  Exit?
+  Go To Previous State?
+  Go To Next State?
+
+  Loading Screen*
+    Loading App State*
+      app state loaded -> Okay To Authenticate?
+      app state failure -> App Error
+
+    Okay To Authenticate?
+      session token available? -> Validating Session Token
+      no session token available? -> Hold Loading Screen
+
+    Hold Loading Screen
+      next -> Landing Screen
+
+    Validating Session Token
+      token valid -> App Inside
+      token invalid -> Hold Loading Screen
+
+  Landing Screen
+    sign up -> Intro Screen
+    sign in -> Sign In
+
+  Intro Screen
+    Page 1*
+      back -> Landing Screen
+      next -> Page 2
+
+    Page 2
+      back -> Page 1
+      next -> Page 3
+
+    Page 3
+      back -> Page 3
+      next -> Page 4
+
+    Page 4
+      back -> Page 3
+      next -> Sign In
+
+  Sign In
+    Enter Phone Number Screen*
+      No Phone Number Error*
+        try sending -> Okay To Send Phone Number?
+        recover account -> Recover Account
+
+      Bad Phone Number Error
+        dismiss -> No Code Error
+
+      Phone Number Server Error
+        dismiss -> No Code Error
+
+      Okay To Send Phone Number?
+        blank? -> No Phone Number Error
+        not blank? -> Sending Phone Number
+
+      Sending Phone Number
+        server accepted -> Enter Code Screen
+        server rejected -> Bad Phone Number Error
+        server failure -> Phone Number Server Error
+
+    Enter Code Screen
+      back -> Enter Phone Number Screen
+
+      No Code Error*
+        try sending -> Okay To Send Code?
+        resend code -> Resending Code
+
+      Bad Code Error
+        dismiss -> No Code Error
+
+      Code Server Error
+        dismiss -> No Code Error
+
+      Resending Code
+        server success -> Code Resent
+        server failure -> Code Server Error
+
+      Code Resent
+        try sending -> Okay To Send Code?
+        resend code -> Resending Code
+
+      Okay To Send Code?
+        blank? -> No Code Error
+        not blank? -> Sending Code
+
+      Sending Code
+        server accepted with new account -> Sign Up
+        server accepted with existing account -> App Inside
+        server rejected -> Bad Code Error
+        server failure -> Code Server Error
+
+  Sign Up
+    Enter User Details Screen*
+      No User Details Error*
+        try sending -> Okay To Send User Details?
+
+      Bad User Details Error
+        dismiss -> No User Details Error
+
+      User Details Server Error
+        dismiss -> No User Details Error
+
+      Okay To Send User Details?
+        any fields blank? -> No User Details Error
+        fields not blank? -> Sending User Details
+
+      Sending User Details
+        server accepted -> Driver Application
+          Driver Application Intro Screen
+          server rejected -> Bad User Details ErrorDriver Requirements
+        server failed -> User Details Server Error
+
+    Agreement Screen
+      agree -> Driver Application
+      view terms -> Terms Of Agreement Screen
+      view privacy policy -> Privacy Policy Screen
+
+    Terms Of Agreement Screen
+      back -> Agreement Screen
+
+    Privacy Policy Screen
+      back -> Agreement Screen
+
+  Recover Account
+    Enter Email Screen
+      No Email Error*
+        try sending -> Okay To Send Email?
+
+      Bad Email Error
+        dismiss -> No Email Error
+
+      Email Server Error
+        dismiss -> No Email Error
+
+      Okay To Send Email?
+        blank? -> No Email Error
+        not blank? -> Sending Email
+
+      Sending Email
+        server accepted -> Email Sent Screen
+        server rejected -> Bad Email Error
+        server failed -> Email Server Error
+
+      Email Sent Screen
+        No Email Server Error*
+          email confirmed -> Enter New Phone Number Screen
+          resend email -> Resending Email
+
+        Resend Email Server Error
+          dismiss -> No Email Server Error
+
+        Resending Email
+          server accepted -> Email Sent Screen
+          server failed -> Resend Email Server Error
+
+      Enter New Phone Number Screen
+        No New Phone Number Error*
+          try sending -> Okay To Send New Phone Number?
+
+        Bad New Phone Number Error
+          dismiss -> No New Phone Number Error
+
+        New Phone Number Server Error
+          dismiss -> No New Phone Number Error
+
+        Okay To Send New Phone Number?
+          blank? -> No New Phone Number Error
+          not blank? -> Sending New Phone Number
+
+        Sending New Phone Number
+          server failure -> New Phone Number Server Error
+          server accepted -> Enter New Code Screen
+          server rejected -> Bad New Phone Number Error
+
+      Enter New Code Screen
+        No New Code Error*
+          try sending -> Okay To Send New Code?
+          resend code -> Resending New Code
+
+        Bad New Code Error
+          dismiss -> No New Code Error
+
+        New Code Server Error
+          dismiss -> No New Code Error
+
+        Resending New Code
+          server failure -> New Code Server Error
+          server success -> New Code Resent
+
+        New Code Resent
+          try sending -> Okay To Send New Code?
+          resend code -> Resending New Code
+
+        Okay To Send New Code?
+          blank? -> No New Code Error
+          not blank? -> Sending New Code
+
+        Sending New Code
+          server accepted -> App Inside
+          server rejected -> Bad New Code Error
+          server failure -> New Code Server Error
+
+  Driver Application
+    skip -> App Inside
+
+    Driver Application Intro Screen*
+      start -> Driver Application Todo List
+
+    Driver Application Todo List
+      Driver Requirements Screen*
+        back -> Driver Application Intro Screen
+        next -> Vehicle Make And Model Screen
+
+      Vehicle Make And Model Screen
+        back -> Driver Requirements Screen
+        next -> Okay To Save Vehicle Make And Model?
+
+        No Vehicle Make And Model Error*
+        Bad Vehicle Make And Model Error
+        Vehicle Make And Model Server Error
+
+        Okay To Save Vehicle Make And Model?
+          any fields blank? -> No Vehicle Make And Model Error
+          fields not blank? -> Saving Vehicle Make And Model
+
+        Saving Vehicle Make And Model
+          server accepted -> License Plate Screen
+          server rejected -> Bad Vehicle Make And Model Error
+          server failure -> Vehicle Make And Model Server Error
+
+      License Plate Screen
+        back -> Vehicle Make And Model Screen
+        try saving license plate -> Okay To Save License Plate?
+
+        No License Plate Error*
+        Bad License Plate Error
+        Bad License Plate Server Error
+
+        Okay To Save License Plate?
+          blank? -> No License Plate Error
+          not blank? -> Saving License Plate
+
+        Saving License Plate
+          server accepted -> Driver Photo
+          server rejected -> Bad License Plate Error
+          server failure -> License Plate Server Error
+
+      Driver Photo
+        back -> License Plate Screen
+
+        Driver Photo Intro Screen
+          add photo -> Driver Photo Capture Screen
+          next -> Safety Standards Certificate
+
+        Driver Photo Capture Screen
+          back -> Driver Photo Intro Screen
+          choose photo -> Driver Photo Chosen
+
+          No Driver Photo Chosen*
+
+          Driver Photo Chosen
+            next -> Driver Photo Verify Screen
+
+        Driver Photo Verify Screen
+          back -> Driver Photo Capture Screen
+          save -> Driver Photo Submitted
+
+          Driver Photo Submitted
+            next -> Safety Standards Certificate
+
+      Safety Standards Certificate
+        back -> Driver Photo
+
+        Safety Standards Certificate Intro Screen*
+          add photo -> Safety Standards Certificate Capture Screen
+          next -> Proof Of Insurance
+
+        Safety Standards Certificate Capture Screen
+          back -> Safety Standards Certificate Intro Screen
+          choose photo -> Safety Standards Certificate Photo Chosen
+
+          No Safety Standards Certificate Photo Chosen*
+
+          Safety Standards Certificate Photo Chosen
+            next -> Safety Standards Certificate Verify Screen
+
+        Safety Standards Certificate Verify Screen
+          back -> Safety Standards Certificate Capture Screen
+          save -> Safety Standards Certificate Submitted
+
+          Safety Standards Certificate Submitted
+            next -> Proof Of Insurance
+
+      Proof Of Insurance
+        back -> Safety Standards Certificate
+
+        Proof Of Insurance Intro Screen*
+          add photo -> Proof Of Insurance Capture Screen
+          next -> Work Eligibility
+
+        Proof Of Insurance Capture Screen
+          back -> Proof Of Insurance Intro Screen
+          choose photo -> Proof Of Insurance Photo Chosen
+
+          No Proof Of Insurance Photo Chosen*
+
+          Proof Of Insurance Photo Chosen
+            next -> Proof Of Insurance Verify Screen
+
+        Proof Of Insurance Verify Screen
+          back -> Proof Of Insurance Capture Screen
+          save -> Proof Of Insurance Submitted
+
+          Proof Of Insurance Submitted
+            next -> Work Eligibility
+
+      Work Eligibility
+        back -> Proof Of Insurance
+
+        Work Eligibility Intro Screen*
+          add photo -> Work Eligibility Capture Screen
+          next -> Social Insurance Number Screen
+
+        Work Eligibility Capture Screen
+          back -> Work Eligibility Intro Screen
+          choose photo -> Work Eligibility Photo Chosen
+
+          No Work Eligibility Photo Chosen*
+
+          Work Eligibility Photo Chosen
+            next -> Work Eligibility Verify Screen
+
+        Work Eligibility Verify Screen
+          back -> Work Eligibility Capture Screen
+          save -> Work Eligibility Submitted
+
+          Work Eligibility Submitted
+            next -> Social Insurance Number Screen
+
+      Social Insurance Number Screen
+        back -> Work Eligibility
+        try saving social insurance number -> Okay To Save Social Insurance Number?
+
+        No Social Insurance Number Error*
+        Bad Social Insurance Number Error
+        Bad Social Insurance Number Server Error
+
+        Okay To Save Social Insurance Number?
+          blank? -> No Social Insurance Number Error
+          not blank? -> Saving Social Insurance Number
+
+        Saving Social Insurance Number
+          server accepted -> Driver's License
+          server rejected -> Bad Social Insurance Number Error
+          server failure -> Social Insurance Number Server Error
+
+      Driver's License
+        back -> Social Insurance Number Screen
+
+        Driver's License Intro Screen*
+          add photo -> Driver's License Capture Screen
+          next -> Social Insurance Number Screen
+
+        Driver's License Capture Screen
+          back -> Driver's License Intro Screen
+          choose photo -> Driver's License Photo Chosen
+
+          No Driver's License Photo Chosen*
+
+          Driver's License Photo Chosen
+            next -> Driver's License Verify Screen
+
+        Driver's License Verify Screen
+          back -> Driver's License Capture Screen
+          save -> Driver's License Submitted
+
+          Driver's License Submitted
+            next -> Driver Application Complete Screen
+
+      Driver Application Complete Screen
+        next -> Payment Method Details
+
+    Payment Method Details
+      skip -> App Inside
+
+      Payment Method Screen*
+        direct deposit -> Banking Info Screen
+
+      Banking Info Screen
+        back -> Payment Method Screen
+        try sending banking info -> Okay To Send Banking Info?
+
+        No Banking Info Error*
+
+        Bad Banking Info Error
+          back -> No Banking Info Error
+          dismiss -> No Banking Info Error
+
+        Banking Info Server Error
+
+        Okay To Send Banking Info?
+          any blank fields? -> No Banking Info Error
+          no blank fields? -> Sending Banking Info
+
+        Sending Banking Info
+          server accepted -> Banking Info Submitted
+          server rejected -> Bad Banking Info Error
+          server failed -> Banking Info Server Error
+
+        Banking Info Submitted
+          next -> App Inside
+
+  App Inside&
+    Modals
+      No Modal*
+
+      Is Driver Application Completed?
+        yes? -> Go To Next State?
+        no? -> Driver Application Incomplete Modal
+
+      Driver Application Incomplete Modal
+        complete form -> Driver Application
+        dismiss -> Go To Previous State?
+
+    Menu
+      Menu Hidden*
+        show -> Is Driver Application Completed? # Next State=Menu Showing, Previous State=Menu Hidden
+
+      Menu Showing
+        hide -> Menu Hidden
+
+    App Screens
+      Home Screen*
+        my trips -> My Trips
+        shipping marketplace -> Shipping Marketplace
+
+      My Trips
+
+      Shipping Marketplace
