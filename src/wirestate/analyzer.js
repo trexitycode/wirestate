@@ -53,6 +53,13 @@ export const makeAnalyzer = () => {
       return map
     }, {})
 
+    // Transient states cannot have child states
+    allStateNodes.filter(node => node.stateType === 'transient').forEach(node => {
+      if (node.states.length !== 0) {
+        throw new Error(`SemanticError: Transient states cannot have child states: "${node.id}"`)
+      }
+    })
+
     // Get all state nodes with an @include directive in their states array
     const deferredStates = allStateNodes
       .filter(node => node.states.some(n => n.directiveType === '@include'))
@@ -73,8 +80,6 @@ export const makeAnalyzer = () => {
           throw new Error(`SemanticError: Transition target not found "${node.target}"`)
         }
       })
-
-    // NOTE: Can a 'transient' state have child states?
 
     // For atomic states that have child states, set their stateType to "compound"
     allStateNodes.filter(node => node.stateType === 'atomic').forEach(node => {
@@ -137,8 +142,18 @@ export const makeAnalyzer = () => {
             }
           })
 
+          // If there is only a single child state then we insert
+          // this first child node, otherwise we insert the root node.
+          const nodeToInsert = (
+            includedRootNode.transitions.length === 0 &&
+            includedRootNode.states.length === 1
+          ) ? includedRootNode.states[0]
+            : includedRootNode
+
+          nodeToInsert.initial = includedRootNode.initial
+
           // Replace the directive node in the parent node
-          parentNode.states.splice(parentNode.states.indexOf(includeNode), 1, includedRootNode)
+          parentNode.states.splice(parentNode.states.indexOf(includeNode), 1, nodeToInsert)
 
         // Run each directive parsing task sequentially
         }).reduce((p, task) => p.then(task), Promise.resolve())
