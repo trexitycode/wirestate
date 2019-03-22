@@ -87,7 +87,13 @@ function xstateConfigGenerator (stateNode) {
         if (s === stateNode || (stateNode.parent || { states: [] }).states.find(ss => ss === s)) {
           o[transition.event] = s.name
         } else {
-          o[transition.event] = `#${s.id.split('.').slice(1).join('.')}`
+          if (s.parent) {
+            o[transition.event] = `#${s.id.split('.').slice(1).join('.')}`
+          } else {
+            // If we're targeting the root state node then the target of the
+            // transition is just the root state ID.
+            o[transition.event] = `#${s.id}`
+          }
         }
         return o
       }, {})
