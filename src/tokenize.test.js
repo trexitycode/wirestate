@@ -26,7 +26,7 @@ const parser = makeParser()
 const ast = parser.parse(tokens)
 
 const analyzer = makeAnalyzer()
-analyzer.analyze(ast, 'file.states').then(newAst => {
+analyzer.analyze(ast, { fileName: 'file.states' }).then(newAst => {
   const generator = makeGenerator()
   console.log(generator.generate(newAst, 'xstate-machine-esm'))
 })

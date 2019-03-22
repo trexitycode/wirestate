@@ -1,52 +1,4 @@
-export class Node {
-  constructor () {
-    this.type = ''
-    this.line = 1
-    this.column = 0
-  }
-}
-
-export class StateNode extends Node {
-  constructor () {
-    super()
-    this.type = 'state'
-    this.id = ''
-    this.initial = false
-    this.final = false
-    this.parallel = false
-    this.stateType = ''
-    this.indent = 0
-    /** @type {Array<StateNode|DirectiveNode>} */
-    this.states = []
-    /** @type {TransitionNode[]} */
-    this.transitions = []
-  }
-}
-
-export class TransitionNode extends Node {
-  constructor () {
-    super()
-    this.type = 'transition'
-    this.event = ''
-    this.target = ''
-  }
-}
-
-export class DirectiveNode extends Node {
-  constructor () {
-    super()
-    this.type = 'directive'
-    this.directiveType = ''
-  }
-}
-
-export class IncludeDirectiveNode extends DirectiveNode {
-  constructor () {
-    super()
-    this.directiveType = '@include'
-    this.fileName = ''
-  }
-}
+import { StateNode, TransitionNode, DirectiveNode, IncludeDirectiveNode } from './ast-nodes'
 
 const makeScanner = (tokens) => {
   // Remove the comments
@@ -143,10 +95,10 @@ const makeScanner = (tokens) => {
   }
 }
 
-const parseImplicitStateNode = (scanner, id) => {
+const parseImplicitStateNode = (scanner, name) => {
   let node = new StateNode()
   Object.assign(node, {
-    id,
+    name,
     stateType: 'atomic',
     indent: 0,
     line: 1,
@@ -165,10 +117,14 @@ const parseImplicitStateNode = (scanner, id) => {
       // event! ->
       if (scanner.look([ 'identifier', 'symbol?', 'whitespace*', { value: '->' } ])) { // a transition
         indent = 0
-        node.transitions.push(parseTransitionNode(scanner))
+        node.transitions.push(Object.assign(
+          parseTransitionNode(scanner), { parent: node }
+        ))
       } else if (scanner.look('identifier')) { // another state
         // child state
-        node.states.push(parseStateNode(scanner, { indentLevel: 0 }))
+        node.states.push(Object.assign(
+          parseStateNode(scanner, { indentLevel: 0 }), { parent: node }
+        ))
         indent = 0
       } else {
         throw scanner.syntaxError()
@@ -181,7 +137,10 @@ const parseImplicitStateNode = (scanner, id) => {
       }
 
       indent = 0
-      node.states.push(parseDirectiveNode(scanner))
+      // @ts-ignore
+      node.states.push(Object.assign(
+        parseDirectiveNode(scanner), { parent: node }
+      ))
     } else if (scanner.look('newline')) {
       indent = 0
       scanner.advance()
@@ -196,7 +155,9 @@ const parseImplicitStateNode = (scanner, id) => {
   while (scanner.token) {
     if (scanner.look('identifier')) {
       if (indent === 0) {
-        node.states.push(parseStateNode(scanner, { indentLevel: 0 }))
+        node.states.push(Object.assign(
+          parseStateNode(scanner, { indentLevel: 0 }), { parent: node }
+        ))
       } else {
         throw scanner.syntaxError('Unexpected indent')
       }
@@ -214,14 +175,14 @@ const parseImplicitStateNode = (scanner, id) => {
 }
 
 const parseStateNode = (scanner, { indentLevel }) => {
-  const idToken = scanner.consume('identifier')
+  const nameToken = scanner.consume('identifier')
   let node = new StateNode()
   Object.assign(node, {
-    id: idToken.value,
+    name: nameToken.value,
     stateType: 'atomic',
     indent: indentLevel,
-    line: idToken.line,
-    column: idToken.column
+    line: nameToken.line,
+    column: nameToken.column
   })
   let indent = 0
 
@@ -244,12 +205,12 @@ const parseStateNode = (scanner, { indentLevel }) => {
     if (s.value === '*') node.initial = true
     if (s.value === '!') {
       node.final = true
-      node.id += '!'
+      node.name += '!'
     }
     if (s.value === '&') node.parallel = true
     if (s.value === '?') {
       node.stateType = 'transient'
-      node.id += '?'
+      node.name += '?'
     }
   })
 
@@ -267,7 +228,9 @@ const parseStateNode = (scanner, { indentLevel }) => {
           throw scanner.syntaxError('Unexpected dedentation')
         }
         indent = 0
-        node.transitions.push(parseTransitionNode(scanner))
+        node.transitions.push(Object.assign(
+          parseTransitionNode(scanner), { parent: node }
+        ))
       } else if (scanner.look('identifier')) { // another state
         if (indent <= indentLevel) { // ancestor state
           // Backtrack so the ancestor parent will re-read the indentation
@@ -275,7 +238,9 @@ const parseStateNode = (scanner, { indentLevel }) => {
           indent = 0
           break
         } else { // child state
-          node.states.push(parseStateNode(scanner, { indentLevel: indent }))
+          node.states.push(Object.assign(
+            parseStateNode(scanner, { indentLevel: indent }), { parent: node }
+          ))
           indent = 0
         }
       } else {
@@ -293,7 +258,10 @@ const parseStateNode = (scanner, { indentLevel }) => {
       }
 
       indent = 0
-      node.states.push(parseDirectiveNode(scanner))
+      // @ts-ignore
+      node.states.push(Object.assign(
+        parseDirectiveNode(scanner), { parent: node }
+      ))
     } else if (scanner.look('newline')) {
       indent = 0
       scanner.advance()
@@ -381,10 +349,13 @@ const parseDirectiveNode = (scanner) => {
   return node
 }
 
+const capitalize = str => str[0].toUpperCase() + str.substr(1)
+
 export const makeParser = () => {
-  const parse = (tokens, id = 'statechart') => {
+  const parse = (tokens, name = 'statechart') => {
+    name = capitalize(name)
     const scanner = makeScanner(tokens)
-    return parseImplicitStateNode(scanner, id)
+    return parseImplicitStateNode(scanner, name)
   }
   return { parse }
 }

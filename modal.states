@@ -2,5 +2,10 @@ Open*
   accept -> Accept!
   dismiss -> Dismissed!
 
+  @include "./inside.states"
+  One
+  Four
+
+
 Accept!
 Dismissed!
