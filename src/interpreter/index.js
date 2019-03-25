@@ -353,16 +353,6 @@ export class Interpreter {
         reg.listener(...args)
       })
     }
-
-    // Only used in the 'entry' and 'exit' events.
-    this._matches = function (configuration, stateDescriptor) {
-      const regexp = buildRegExp(stateDescriptor)
-      const atomic = configuration.filter(isAtomicState)
-      return atomic.some(state => {
-        const id = state.id
-        return regexp.test(id)
-      })
-    }
   }
 
   onEntry (listener) {
@@ -400,6 +390,16 @@ export class Interpreter {
   send (event) {
     if (!this.running) return
     this.externalQueue.enqueue(event)
+  }
+
+  // Only used in events
+  matches (configuration, stateDescriptor) {
+    const regexp = buildRegExp(stateDescriptor)
+    const atomic = configuration.filter(isAtomicState)
+    return atomic.some(state => {
+      const id = state.id
+      return regexp.test(id)
+    })
   }
 
   /// //////////////////
@@ -481,7 +481,7 @@ export class Interpreter {
     computeEntrySet(enabledTransitions, statesToEnter, statesForDefaultEntry)
     for (let s of statesToEnter.toArray().sort(entryOrder)) {
       this.configuration.add(s)
-      this._emit('entry', s, this._matches.bind(undefined, [ s ]))
+      this._emit('entry', s, this.matches.bind(undefined, [ s ]))
       if (isFinalState(s)) {
         if (isSCXMLElement(s.parent)) {
           this.running = false
@@ -497,7 +497,7 @@ export class Interpreter {
         }
       }
     }
-    this._emit('transition', this._matches.bind(undefined, this.configuration.toArray()))
+    this._emit('transition', this.matches.bind(undefined, this.configuration.toArray()))
   }
 
   /**
@@ -528,7 +528,7 @@ export class Interpreter {
     let statesToExit = this.computeExitSet(enabledTransitions)
     for (let s of statesToExit.toArray().sort(exitOrder)) {
       this.configuration.delete(s)
-      this._emit('exit', s, this._matches.bind(undefined, [ s ]))
+      this._emit('exit', s, this.matches.bind(undefined, [ s ]))
     }
   }
 

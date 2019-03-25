@@ -16,9 +16,5 @@
   },
   "include": [
     "src/**/*.js"
-  ],
-  "exclude": [
-    "src/testing.js",
-    "src/bindings"
   ]
 }
