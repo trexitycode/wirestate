@@ -49,3 +49,17 @@ s.onEvent(event => {
 const state = State.create(config)
 s.start(state)
 s.send('about')
+
+/*
+// APPLICATION CODE:
+// my-app.js
+const MyApp = () => {
+  return (
+    <WireStateApp onDone={exitApp}>
+      <WireStateView state='About' component={Home} />
+      <WireStateView state='*.Modal.About' component={About} />
+      <WireStateView state='*.Contact' component={Contact} />
+    </WireStateApp>
+  )
+}
+*/

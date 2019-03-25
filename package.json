@@ -12,10 +12,13 @@
     "clean": "rimraf build lib"
   },
   "author": "Darren Schnare <dschnare@launchfort.com>",
-  "dependencies": {},
+  "dependencies": {
+    "prop-types": "15.7.2",
+    "react": "16.8.5"
+  },
   "devDependencies": {
     "@types/node": "11.10.5",
-    "eslint": "5.15.1",
+    "eslint": "5.15.3",
     "eslint-config-standard": "12.0.0",
     "eslint-import-resolver-node": "0.3.2",
     "eslint-plugin-import": "2.16.0",
