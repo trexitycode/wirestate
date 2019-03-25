@@ -1,15 +1,6 @@
 #! /usr/bin/env node
 
-const FS = require('fs')
-const Path = require('path')
-const { promisify } = require('util')
 const WireState = require('../lib/index')
-
-const readFile = promisify(FS.readFile)
-const tokenizer = WireState.makeTokenizer()
-const parser = WireState.makeParser()
-const analyzer = WireState.makeAnalyzer()
-const generator = WireState.makeGenerator()
 
 const readOption = (names, args, { defaultValue = null }) => {
   let argValue = defaultValue
@@ -35,15 +26,7 @@ const readOption = (names, args, { defaultValue = null }) => {
 }
 
 async function generate (inputFileName, outputType) {
-  const id = Path.basename(inputFileName, '.states')
-  const stateText = await readFile(inputFileName, 'utf8')
-  const tokens = tokenizer.tokenize(stateText)
-  const stateNode = parser.parse(tokens, id)
-
-  const newStateNode = await analyzer.analyze(stateNode, 'file.states')
-  const output = generator.generate(newStateNode, outputType)
-
-  return output
+  return WireState.compile(inputFileName, outputType)
 }
 
 function main () {
