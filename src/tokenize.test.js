@@ -10,7 +10,7 @@ Exit!
 
 Home*
   one -> One?
-  get name -> Home.modal
+  get name -> modal
 
   @include "./modal.states"
 

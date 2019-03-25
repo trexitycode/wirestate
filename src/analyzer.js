@@ -22,6 +22,13 @@ const analyze = async (stateNode, { fileName = '' } = {}) => {
     }
   })
 
+  let statesMap = Object.create(null)
+  allStateNodes.forEach(stateNode => {
+    if (stateNode.id in statesMap) {
+      throw new Error(`SemanticError: State already exists: "${stateNode.name}" with ID: ${stateNode.id}`)
+    }
+  })
+
   // Transient states cannot have child states
   allStateNodes.filter(node => node.stateType === 'transient').forEach(node => {
     if (node.states.length !== 0) {

@@ -74,6 +74,46 @@ const makeScanner = (tokens) => {
     return patternDoesMatch
   }
 
+  const canConsumeTo = (typeOrObj) => {
+    let canConsumeTo = false
+
+    for (let t = 0; t + i < tokens.length && !canConsumeTo; t += 1) {
+      const token = tokens[i + t]
+      if (token.type === 'newline') break
+      if (typeof typeOrObj === 'string') {
+        canConsumeTo = token.type === typeOrObj
+      } else {
+        canConsumeTo = Object
+          .keys(typeOrObj)
+          .every(key => token[key] === typeOrObj[key])
+      }
+    }
+
+    return canConsumeTo
+  }
+
+  const consumeTo = (typeOrObj) => {
+    let toks = []
+    let done = false
+
+    for (; i < tokens.length && !done; i += 1) {
+      const token = tokens[i]
+      if (typeof typeOrObj === 'string') {
+        done = token.type === typeOrObj
+        if (!done) toks.push(token)
+        if (done) i -= 1
+      } else {
+        done = Object
+          .keys(typeOrObj)
+          .every(key => token[key] === typeOrObj[key])
+        if (!done) toks.push(token)
+        if (done) i -= 1
+      }
+    }
+
+    return toks
+  }
+
   const consume = (pattern) => {
     if (look(pattern)) {
       const t = token
@@ -91,6 +131,8 @@ const makeScanner = (tokens) => {
     look,
     reset,
     consume,
+    canConsumeTo,
+    consumeTo,
     syntaxError
   }
 }
@@ -107,15 +149,19 @@ const parseImplicitStateNode = (scanner, name) => {
   let indent = 0
 
   while (scanner.token) {
-    if (scanner.look('identifier')) {
+    if (scanner.look('identifier') || scanner.look([ { value: '*' } ])) {
       // Is indentation too much?
       if (indent > 0) {
         throw scanner.syntaxError(`Expected indentation 0 but got ${indent}`)
       }
 
-      // event? ->
-      // event! ->
-      if (scanner.look([ 'identifier', 'symbol?', 'whitespace*', { value: '->' } ])) { // a transition
+      // event ->
+      // event. ->
+      // event.* ->
+      // * ->
+      // *. ->
+      // *.event ->
+      if (scanner.canConsumeTo({ value: '->' })) {
         indent = 0
         node.transitions.push(Object.assign(
           parseTransitionNode(scanner), { parent: node }
@@ -152,25 +198,6 @@ const parseImplicitStateNode = (scanner, name) => {
     }
   }
 
-  while (scanner.token) {
-    if (scanner.look('identifier')) {
-      if (indent === 0) {
-        node.states.push(Object.assign(
-          parseStateNode(scanner, { indentLevel: 0 }), { parent: node }
-        ))
-      } else {
-        throw scanner.syntaxError('Unexpected indent')
-      }
-    } else if (scanner.look('newline')) {
-      indent = 0
-      scanner.advance()
-    } else if (scanner.look('whitespace')) {
-      indent += 1
-      scanner.advance()
-    } else {
-      throw scanner.syntaxError()
-    }
-  }
   return node
 }
 
@@ -215,15 +242,19 @@ const parseStateNode = (scanner, { indentLevel }) => {
   })
 
   while (scanner.token) {
-    if (scanner.look('identifier')) {
+    if (scanner.look('identifier') || scanner.look([ { value: '*' } ])) {
       // Is indentation too much?
       if (indent > indentLevel + 2) {
         throw scanner.syntaxError(`Expected indentation ${indentLevel + 2} but got ${indent}`)
       }
 
-      // event? ->
-      // event! ->
-      if (scanner.look([ 'identifier', 'symbol?', 'whitespace*', { value: '->' } ])) { // a transition
+      // event ->
+      // event. ->
+      // event.* ->
+      // * ->
+      // *. ->
+      // *.event ->
+      if (scanner.canConsumeTo({ value: '->' })) {
         if (indent < indentLevel) {
           throw scanner.syntaxError('Unexpected dedentation')
         }
@@ -277,20 +308,11 @@ const parseStateNode = (scanner, { indentLevel }) => {
 }
 
 const parseTransitionNode = (scanner) => {
-  const eventToken = scanner.consume('identifier')
-  let event = eventToken.value
+  const eventDescriptorTokens = scanner.consumeTo({ value: '->' })
+  let eventDescriptor = eventDescriptorTokens.map(t => t.value).join('').trim()
 
-  if (scanner.look('symbol')) {
-    const symbolToken = scanner.consume('symbol')
-    if (symbolToken.value === '?' || symbolToken.value === '!') {
-      event += symbolToken.value
-    } else {
-      throw scanner.syntaxError()
-    }
-  }
-
-  while (scanner.look('whitespace')) {
-    scanner.consume('whitespace')
+  if (/^(\*|([a-zA-Z0-9_-][a-zA-Z0-9_\- ?]*))(\.(\*|([a-zA-Z0-9_-][a-zA-Z0-9_\- ?]*)*))*$/.test(eventDescriptor) === false) {
+    throw scanner.syntaxError(`Invalid event descriptor: ${eventDescriptor}`)
   }
 
   scanner.consume({ value: '->' })
@@ -312,10 +334,10 @@ const parseTransitionNode = (scanner) => {
 
   let node = new TransitionNode()
   Object.assign(node, {
-    event,
+    event: eventDescriptor,
     target,
-    line: eventToken.line,
-    column: eventToken.column
+    line: eventDescriptorTokens[0].line,
+    column: eventDescriptorTokens[0].column
   })
 
   return node
@@ -349,11 +371,8 @@ const parseDirectiveNode = (scanner) => {
   return node
 }
 
-const capitalize = str => str[0].toUpperCase() + str.substr(1)
-
 export const makeParser = () => {
-  const parse = (tokens, name = 'statechart') => {
-    name = capitalize(name)
+  const parse = (tokens, name = 'StateChart') => {
     const scanner = makeScanner(tokens)
     return parseImplicitStateNode(scanner, name)
   }

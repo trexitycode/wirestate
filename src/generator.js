@@ -71,11 +71,9 @@ function xstateConfigGenerator (stateNode) {
   /** @param {StateNode} stateNode */
   const toXstateNode = stateNode => {
     let xstateNode = {
-      // Don't include the root state node's name in the ID path if the state
-      // node is not the root node.
       id: stateNode.parent
-        ? stateNode.id.split('.').slice(1).join('.')
-        : stateNode.id.split('.')[0],
+        ? stateNode.id
+        : stateNode.name,
       initial: (stateNode.states.find(state => !!state.initial) || { name: undefined }).name,
       final: stateNode.final ? true : undefined,
       type: stateNode.parallel ? 'parallel' : undefined
@@ -87,13 +85,7 @@ function xstateConfigGenerator (stateNode) {
         if (s === stateNode || (stateNode.parent || { states: [] }).states.find(ss => ss === s)) {
           o[transition.event] = s.name
         } else {
-          if (s.parent) {
-            o[transition.event] = `#${s.id.split('.').slice(1).join('.')}`
-          } else {
-            // If we're targeting the root state node then the target of the
-            // transition is just the root state ID.
-            o[transition.event] = `#${s.id}`
-          }
+          o[transition.event] = `#${s.id}`
         }
         return o
       }, {})

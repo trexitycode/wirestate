@@ -1,0 +1,21 @@
+{
+  name: 'state',
+  match: '([a-zA-Z0-9\-_]([a-zA-Z0-9\-_.] ?)+)([*!&?]*)(?=$|\s+(?!-))',
+  captures: {
+    1: 'identifier.state',
+    3: 'modifier.state'
+  }
+}
+
+{
+  name: 'event',
+  match: '([a-zA-Z0-9]([a-zA-Z0-9.] ?)+)\s+(?=->)',
+  captures: {
+    1: 'identifier.event'
+  }
+}
+
+{
+  name: 'keyword.operator',
+  match: '->'
+}

@@ -176,7 +176,7 @@ export const makeTokenizer = () => {
   }
 
   const symbolToken = {
-    symbols: '?&*!',
+    symbols: '?&*!.',
     canRead (scanner) { return this.symbols.indexOf(scanner.c) >= 0 },
     read (scanner) {
       const c = scanner.c
@@ -201,14 +201,16 @@ export const makeTokenizer = () => {
     read (scanner) {
       let id = ''
       let c = scanner.c
-      while ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c === ' ' || c === '.' || c === '_' || c === '-') {
+      while ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c === ' ' || c === '_' || c === '-') {
         if (c === ' ') {
-          const k = scanner.text[scanner.index + 1]
-          if ((k >= 'a' && k <= 'z') || (k >= 'A' && k <= 'Z') || (k >= '0' && k <= '9')) {
-            id += c + k
-            c = scanner.advance(2)
-          } else {
+          const t = scanner.text.substr(scanner.index + 1, 2)
+          // Don't cosume the space if it is immediately followed by:
+          // '->' (the transition operator)
+          if (t === '->') {
             break
+          } else {
+            id += c
+            c = scanner.advance()
           }
         } else {
           id += c
