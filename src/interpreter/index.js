@@ -353,6 +353,22 @@ export class Interpreter {
         reg.listener(...args)
       })
     }
+    this._matches = (stateDescriptor) => {
+      const regexp = buildRegExp(stateDescriptor)
+      const atomic = this.configuration.toArray().filter(isAtomicState)
+      return atomic.some(state => {
+        const id = state.id
+        return regexp.test(id)
+      })
+    }
+  }
+
+  onEntry (listener) {
+    this._listeners.push({ type: 'entry', listener })
+  }
+
+  onExit (listener) {
+    this._listeners.push({ type: 'exit', listener })
   }
 
   onTransition (listener) {
@@ -463,6 +479,10 @@ export class Interpreter {
     computeEntrySet(enabledTransitions, statesToEnter, statesForDefaultEntry)
     for (let s of statesToEnter.toArray().sort(entryOrder)) {
       this.configuration.add(s)
+      this._emit('entry', {
+        configuration: [ s ],
+        matches: this._matches
+      })
       if (isFinalState(s)) {
         if (isSCXMLElement(s.parent)) {
           this.running = false
@@ -478,7 +498,10 @@ export class Interpreter {
         }
       }
     }
-    this._emit('transition', this.configuration.toArray().map(s => s.id), this.configuration.toArray().filter(isAtomicState))
+    this._emit('transition', {
+      configuration: this.configuration,
+      matches: this._matches
+    })
   }
 
   /**
@@ -509,6 +532,10 @@ export class Interpreter {
     let statesToExit = this.computeExitSet(enabledTransitions)
     for (let s of statesToExit.toArray().sort(exitOrder)) {
       this.configuration.delete(s)
+      this._emit('exit', {
+        configuration: [ s ],
+        matches: this._matches
+      })
     }
   }
 

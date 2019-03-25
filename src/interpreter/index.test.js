@@ -29,8 +29,10 @@ const config = {
 }
 
 const s = new Interpreter()
-s.onTransition((configuration) => {
-  console.log('configuration:', configuration)
+s.onTransition(({ matches }) => {
+  console.log('Home:', matches('*.Home'))
+  console.log('Contact:', matches('*.Contact'))
+  console.log('About:', matches('*.About'))
 })
 s.onEvent(event => {
   console.log('event sent:', event)
