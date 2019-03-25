@@ -233,6 +233,7 @@ export class State {
     this._transitions = []
   }
 
+  get isAtomic () { return isAtomicState(this) }
   get name () { return this._name }
   get id () {
     let path = []
@@ -393,9 +394,9 @@ export class Interpreter {
   }
 
   // Only used in events
-  matches (configuration, stateDescriptor) {
+  matches (enabledStates, stateDescriptor) {
     const regexp = buildRegExp(stateDescriptor)
-    const atomic = configuration.filter(isAtomicState)
+    const atomic = enabledStates.filter(isAtomicState)
     return atomic.some(state => {
       const id = state.id
       return regexp.test(id)

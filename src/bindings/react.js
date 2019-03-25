@@ -6,6 +6,7 @@ const service = new Interpreter()
 
 export const WireStateContext = React.createContext({
   configuration: [],
+  atomicStates: [],
   service,
   send: service.send.bind(service),
   matches: service.matches.bind(service)
@@ -28,8 +29,9 @@ export const WireStateApp = ({ children, onDone = () => {} }) => {
     }
   })
 
+  const atomicStates = configuration.filter(s => s.isAtomic)
   return (
-    <WireStateContext.Provider value={{ service, configuration }}>
+    <WireStateContext.Provider value={{ service, configuration, atomicStates }}>
       {children}
     </WireStateContext.Provider>
   )
@@ -40,8 +42,8 @@ WireStateApp.propTypes = {
 }
 
 export const WireStateView = ({ state, component, children }) => {
-  const { matches } = React.useContext(WireStateContext)
-  return matches(state)
+  const { matches, atomicStates } = React.useContext(WireStateContext)
+  return matches(atomicStates, state)
     ? (
       component ? <component /> : <>{children}</>
     )
