@@ -22,7 +22,7 @@ export const compileFromSource = async (src, generatorName = 'json') => {
 }
 
 export const compile = async (fileName, generatorName = 'json') => {
-  const src = await readFile(fileName)
+  const src = await readFile(fileName, 'utf8')
   const tokenizer = makeTokenizer()
   const tokens = tokenizer.tokenize(src)
 
