@@ -353,9 +353,14 @@ export class Interpreter {
         reg.listener(...args)
       })
     }
-    this._matches = (stateDescriptor) => {
+
+    // Only used in the 'entry' and 'exit' events.
+    // Late-binds to 'this' so that we can re-use the
+    // same function for all events.
+    this._matches = function (stateDescriptor) {
       const regexp = buildRegExp(stateDescriptor)
-      const atomic = this.configuration.toArray().filter(isAtomicState)
+      // @ts-ignore
+      const atomic = this.configuration.filter(isAtomicState)
       return atomic.some(state => {
         const id = state.id
         return regexp.test(id)
@@ -499,7 +504,7 @@ export class Interpreter {
       }
     }
     this._emit('transition', {
-      configuration: this.configuration,
+      configuration: this.configuration.toArray(),
       matches: this._matches
     })
   }
