@@ -336,6 +336,8 @@ const exitOrder = (a, b) => b.documentOrder - a.documentOrder
 const nextTick = (fn) => {
   if (typeof process === 'object') {
     process.nextTick(fn)
+  } else if (typeof requestAnimationFrame === 'function') {
+    requestAnimationFrame(fn)
   } else {
     setTimeout(fn, 0)
   }
@@ -345,6 +347,7 @@ export class Interpreter {
   constructor () {
     /** @type {{ type: string, listener: Function }[]} */
     this._listeners = []
+    this._running = false
 
     // Emit an event that invokes registered listeners
     this._emit = (eventType, ...args) => {
@@ -356,36 +359,73 @@ export class Interpreter {
     }
   }
 
+  get running () { return this._running }
+
   onEntry (listener) {
     this._listeners.push({ type: 'entry', listener })
+    return () => {
+      if (listener) {
+        this._listeners.splice(this._listeners.indexOf(listener), 1)
+        listener = null
+      }
+    }
   }
 
   onExit (listener) {
     this._listeners.push({ type: 'exit', listener })
+    return () => {
+      if (listener) {
+        this._listeners.splice(this._listeners.indexOf(listener), 1)
+        listener = null
+      }
+    }
   }
 
   onTransition (listener) {
     this._listeners.push({ type: 'transition', listener })
+    return () => {
+      if (listener) {
+        this._listeners.splice(this._listeners.indexOf(listener), 1)
+        listener = null
+      }
+    }
   }
 
   onEvent (listener) {
     this._listeners.push({ type: 'event', listener })
+    return () => {
+      if (listener) {
+        this._listeners.splice(this._listeners.indexOf(listener), 1)
+        listener = null
+      }
+    }
   }
 
   onDone (listener) {
     this._listeners.push({ type: 'done', listener })
+    return () => {
+      if (listener) {
+        this._listeners.splice(this._listeners.indexOf(listener), 1)
+        listener = null
+      }
+    }
   }
 
   /** @param {State} state */
   start (state) {
+    if (this.running) return
     this.configuration = new OrderedSet()
     this.internalQueue = new Queue()
     this.externalQueue = new Queue()
-    this.running = true
+    this._running = true
     const t = new Transition('', state.initial)
     t._source = state
     this.enterStates([ t ])
     this.mainEventLoop()
+  }
+
+  stop () {
+    this.send('machine.cancel')
   }
 
   send (event) {
@@ -448,7 +488,7 @@ export class Interpreter {
     let externalEvent = this.externalQueue.dequeue()
     this._emit('event', externalEvent)
     if (isCancelEvent(externalEvent)) {
-      this.running = false
+      this._running = false
       return
     }
     let enabledTransitions = this.selectTransitions(externalEvent)
@@ -485,7 +525,7 @@ export class Interpreter {
       this._emit('entry', s, this.matches.bind(undefined, [ s ]))
       if (isFinalState(s)) {
         if (isSCXMLElement(s.parent)) {
-          this.running = false
+          this._running = false
         } else {
           let parent = s.parent
           let grandparent = parent.parent

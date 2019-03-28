@@ -23,6 +23,11 @@ export const WireStateApp = ({ children, onDone = () => {} }) => {
     const unlistenDone = service.onDone(() => {
       if (typeof onDone === 'function') onDone()
     })
+
+    // Calling start multiple times has no effect. Just the first
+    // call to start will start the interpreter.
+    service.start()
+
     return () => {
       unlistenTransition()
       unlistenDone()
