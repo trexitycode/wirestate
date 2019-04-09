@@ -308,7 +308,7 @@ function buildRegExp (string) {
  *
  * PATTERN            MATCHES EVENTS LIKE
  * '*'                anything, foo.event, something
- * *.foo              foo, something.foo, something.foo.anything
+ * *.foo              foo, something.foo
  * foo                foo
  * foo.               foo, foo.something, foo.something.two
  * foo.*              foo, foo.something, foo.something.two

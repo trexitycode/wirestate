@@ -1,21 +1,20 @@
 # WireState
 
-The statechart wireframe generator
+Statecharts for wireframe and application development
 
 *Why?*
 
 TODO
 
+## Documentation
+
+- [Guide](./docs/GUIDE.md)
+- [API](./docs/API.md)
+
 ## Contributing
-
-Install [pnpm](https://pnpm.js.org/)
-
-```
-npm i -g pnpm
-```
 
 Install the project dependencies
 
 ```
-pnpm install
+npm install
 ```
