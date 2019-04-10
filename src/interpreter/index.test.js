@@ -28,7 +28,8 @@ const config = {
   ]
 }
 
-const s = new Interpreter()
+const state = State.create(config)
+const s = new Interpreter(state)
 s.onTransition(matches => {
   console.log('TRANSITION')
   console.log('Home:', matches('*.Home'))
@@ -46,8 +47,7 @@ s.onExit(state => {
 s.onEvent(event => {
   console.log('event sent:', event)
 })
-const state = State.create(config)
-s.start(state)
+s.start()
 s.send('about')
 
 /*

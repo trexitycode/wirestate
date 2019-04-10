@@ -1,4 +1,4 @@
-class Queue {
+export class Queue {
   constructor () {
     this._list = []
   }
@@ -20,7 +20,7 @@ class Queue {
   }
 }
 
-class OrderedSet {
+export class OrderedSet {
   constructor () {
     this._items = []
   }
@@ -76,7 +76,7 @@ class OrderedSet {
   }
 }
 
-class Transition {
+export class Transition {
   /**
    * @param {string} event
    * @param {State[]} targets
@@ -161,7 +161,7 @@ export class State {
         throw new Error(`State config object missing 'name' property`)
       }
 
-      configs.push(...config.states)
+      configs.push(...(config.states || []))
       k += 1
     }
 
@@ -192,7 +192,7 @@ export class State {
     configs.forEach(config => {
       const s = states[states.indexOf(config) + 1]
       ;(config.transitions || []).forEach(transitionConfig => {
-        const targetNames = transitionConfig.target.split(' ')
+        const targetNames = transitionConfig.target.split(',').map(x => x.trim())
         const targets = targetNames.map(targetName => {
           const target = resolveState(s, targetName)
 
@@ -294,10 +294,15 @@ const isCancelEvent = (event) => event === 'cancel.machine'
 const getChildStates = (state) => state.states
 
 function buildRegExp (string) {
-  if (string === '*') return new RegExp('\\w+(\\.\\w+)*')
+  if (string === '*') return new RegExp(`[^.]+(\\.[^.]+)*`)
+  // Replace any regex special character
   string = string.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&')
-    .replace(/\\.\\\*|\\\.$/g, '(\\.\\w+)*?')
-    .replace(/^\\\*/, '(\\w+(\\.\\w+)*?)?')
+    // Replace ^*. and ^.
+    .replace(/^\\\*\\\.|^\\\./, `([^.]+\\.)*`)
+    // Replace .*$ and .$
+    .replace(/\\\.\\\*$|\\\.$/, '(\\.[^.]+)*')
+    // Replace .*.
+    .replace(/\\\.\\\*\\\./g, '\\.([^.]+\\.)*')
   return new RegExp('^' + string)
 }
 
@@ -308,12 +313,14 @@ function buildRegExp (string) {
  *
  * PATTERN            MATCHES EVENTS LIKE
  * '*'                anything, foo.event, something
+ * .foo               foo, something.foo
  * *.foo              foo, something.foo
  * foo                foo
  * foo.               foo, foo.something, foo.something.two
  * foo.*              foo, foo.something, foo.something.two
  * foo.*.Modal        foo.anything.Modal
  * foo.*.Modal.       foo.anything.Modal, foo.anything.something.Modal.Another
+ * foo.*.Modal.*      foo.anything.Modal, foo.anything.something.Modal.Another
  * foo.*.One.*.Two    foo.One.Two, foo.anything.One.something.Two
  *
  * @param {string} transitionEvent
@@ -334,19 +341,27 @@ const entryOrder = (a, b) => a.documentOrder - b.documentOrder
 const exitOrder = (a, b) => b.documentOrder - a.documentOrder
 
 const nextTick = (fn) => {
-  if (typeof process === 'object') {
-    process.nextTick(fn)
-  } else if (typeof requestAnimationFrame === 'function') {
+  if (typeof requestAnimationFrame === 'function') {
     requestAnimationFrame(fn)
+  } else if (typeof process === 'object') {
+    process.nextTick(fn)
   } else {
-    setTimeout(fn, 0)
+    setTimeout(fn, 16.333)
   }
 }
 
 export class Interpreter {
-  constructor () {
+  /**
+   * @param {State} rootState
+   */
+  constructor (rootState) {
+    this.rootState = rootState
     /** @type {{ type: string, listener: Function }[]} */
     this._listeners = []
+    this._running = false
+    this.configuration = new OrderedSet()
+    this.internalQueue = new Queue()
+    this.externalQueue = new Queue()
     this._running = false
 
     // Emit an event that invokes registered listeners
@@ -357,6 +372,9 @@ export class Interpreter {
         reg.listener(...args)
       })
     }
+
+    this.send = this.send.bind(this)
+    this.matches = this.matches.bind(this)
   }
 
   get running () { return this._running }
@@ -411,15 +429,11 @@ export class Interpreter {
     }
   }
 
-  /** @param {State} state */
-  start (state) {
+  start () {
     if (this.running) return
-    this.configuration = new OrderedSet()
-    this.internalQueue = new Queue()
-    this.externalQueue = new Queue()
     this._running = true
-    const t = new Transition('', state.initial)
-    t._source = state
+    const t = new Transition('', this.rootState.initial)
+    t._source = this.rootState
     this.enterStates([ t ])
     this.mainEventLoop()
   }
@@ -433,14 +447,18 @@ export class Interpreter {
     this.externalQueue.enqueue(event)
   }
 
-  // Only used in events
-  matches (enabledStates, stateDescriptor) {
+  matches (stateDescriptor) {
     const regexp = buildRegExp(stateDescriptor)
-    const atomic = enabledStates.filter(isAtomicState)
+    const atomic = this.configuration.toArray().filter(isAtomicState)
     return atomic.some(state => {
       const id = state.id
       return regexp.test(id)
     })
+  }
+
+  /** @param {State[]} states */
+  setConfiguration (states) {
+    this.internalQueue.enqueue({ type: 'machine.configure', states })
   }
 
   /// //////////////////
@@ -470,8 +488,8 @@ export class Interpreter {
       if (this.internalQueue.isEmpty) {
         macrostepDone = true
       } else {
-        /** @type {string} */
-        let internalEvent = this.internalQueue.dequeue()
+        /** @type {{ type: string, [key:string]: any }} */
+        const internalEvent = this.internalQueue.dequeue()
         enabledTransitions = this.selectTransitions(internalEvent)
       }
 
@@ -486,12 +504,12 @@ export class Interpreter {
     if (this.externalQueue.isEmpty || !this.running) return
 
     let externalEvent = this.externalQueue.dequeue()
-    this._emit('event', externalEvent)
+    this._emit('event', { event: externalEvent, service: this })
     if (isCancelEvent(externalEvent)) {
       this._running = false
       return
     }
-    let enabledTransitions = this.selectTransitions(externalEvent)
+    let enabledTransitions = this.selectTransitions({ type: externalEvent })
     if (!enabledTransitions.isEmpty) {
       this.microstep(enabledTransitions.toArray())
     }
@@ -517,28 +535,28 @@ export class Interpreter {
    * @param {Transition[]} enabledTransitions
    */
   enterStates (enabledTransitions) {
+    const service = this
     let statesToEnter = new OrderedSet()
-    let statesForDefaultEntry = new OrderedSet()
-    computeEntrySet(enabledTransitions, statesToEnter, statesForDefaultEntry)
+    computeEntrySet(enabledTransitions, statesToEnter)
     for (let s of statesToEnter.toArray().sort(entryOrder)) {
       this.configuration.add(s)
-      this._emit('entry', s, this.matches.bind(undefined, [ s ]))
+      this._emit('entry', { state: s, service })
       if (isFinalState(s)) {
         if (isSCXMLElement(s.parent)) {
           this._running = false
         } else {
           let parent = s.parent
           let grandparent = parent.parent
-          this.internalQueue.enqueue('done.state.' + parent.id)
+          this.internalQueue.enqueue({ type: 'done.state.' + parent.id })
           if (isParallelState(grandparent)) {
             if (getChildStates(grandparent).every(s => this.isInFinalState(s))) {
-              this.internalQueue.enqueue('done.state.' + grandparent.id)
+              this.internalQueue.enqueue({ type: 'done.state.' + grandparent.id })
             }
           }
         }
       }
     }
-    this._emit('transition', this.matches.bind(undefined, this.configuration.toArray()))
+    this._emit('transition', { service: this })
   }
 
   /**
@@ -567,9 +585,10 @@ export class Interpreter {
    */
   exitStates (enabledTransitions) {
     let statesToExit = this.computeExitSet(enabledTransitions)
+    const service = this
     for (let s of statesToExit.toArray().sort(exitOrder)) {
       this.configuration.delete(s)
-      this._emit('exit', s, this.matches.bind(undefined, [ s ]))
+      this._emit('exit', { state: s, service })
     }
   }
 
@@ -614,35 +633,44 @@ export class Interpreter {
 
   /**
    *
-   * @param {string} event
+   * @param {{ type: string, [key: string]: any }} event
    * @return {OrderedSet}
    */
   selectTransitions (event) {
     let enabledTransitions = new OrderedSet()
-    let atomicStates = this.configuration.toArray().filter(isAtomicState).sort(documentOrder)
-    for (let state of atomicStates) {
-      let loop = true
-      for (let s of [ state ].concat(getProperAncestors(state, null))) {
-        if (!loop) break
-        for (let t of s.transitions.sort(documentOrder)) {
-          if (t.event && nameMatch(t.event, event)) {
-            enabledTransitions.add(t)
-            loop = false
-            break
+
+    if (event.type === 'machine.configure') {
+      const t = new Transition('', event.states)
+      t._source = this.rootState
+      enabledTransitions.add(t)
+    } else {
+      let atomicStates = this.configuration.toArray().filter(isAtomicState).sort(documentOrder)
+      for (let state of atomicStates) {
+        let loop = true
+        for (let s of [ state ].concat(getProperAncestors(state, null))) {
+          if (!loop) break
+          for (let t of s.transitions.sort(documentOrder)) {
+            if (t.event && nameMatch(t.event, event.type)) {
+              enabledTransitions.add(t)
+              loop = false
+              break
+            }
           }
         }
       }
     }
+
     enabledTransitions = this.removeConflictingTransitions(enabledTransitions)
     return enabledTransitions
   }
 
   exitInterpreter () {
     let statesToExit = this.configuration.toArray().sort(exitOrder)
+    const service = this
     for (let s of statesToExit) {
       this.configuration.delete(s)
       if (isFinalState(s) && isSCXMLElement(s.parent)) {
-        this._emit('done')
+        this._emit('done', { service })
       }
     }
   }
@@ -737,15 +765,14 @@ function getTransitionDomain (transition) {
  * @param {State} state
  * @param {State} ancestor
  * @param {OrderedSet} statesToEnter
- * @param {OrderedSet} statesForDefaultEntry
  */
-function addAncestorStatesToEnter (state, ancestor, statesToEnter, statesForDefaultEntry) {
+function addAncestorStatesToEnter (state, ancestor, statesToEnter) {
   for (let anc of getProperAncestors(state, ancestor)) {
     statesToEnter.add(anc)
     if (isParallelState(anc)) {
       for (let child of getChildStates(anc)) {
         if (!statesToEnter.some(s => isDescendant(s, child))) {
-          addDescendantStatesToEnter(child, statesToEnter, statesForDefaultEntry)
+          addDescendantStatesToEnter(child, statesToEnter)
         }
       }
     }
@@ -756,23 +783,21 @@ function addAncestorStatesToEnter (state, ancestor, statesToEnter, statesForDefa
  *
  * @param {State} state
  * @param {OrderedSet} statesToEnter
- * @param {OrderedSet} statesForDefaultEntry Not used
  */
-function addDescendantStatesToEnter (state, statesToEnter, statesForDefaultEntry) {
+function addDescendantStatesToEnter (state, statesToEnter) {
   statesToEnter.add(state)
   if (isCompoundState(state)) {
-    statesForDefaultEntry.add(state)
     for (let s of state.initial) {
-      addDescendantStatesToEnter(s, statesToEnter, statesForDefaultEntry)
+      addDescendantStatesToEnter(s, statesToEnter)
     }
     for (let s of state.initial) {
-      addAncestorStatesToEnter(s, state, statesToEnter, statesForDefaultEntry)
+      addAncestorStatesToEnter(s, state, statesToEnter)
     }
   } else {
     if (isParallelState(state)) {
       for (let child of getChildStates(state)) {
         if (!statesToEnter.some(s => isDescendant(s, child))) {
-          addDescendantStatesToEnter(child, statesToEnter, statesForDefaultEntry)
+          addDescendantStatesToEnter(child, statesToEnter)
         }
       }
     }
@@ -783,16 +808,15 @@ function addDescendantStatesToEnter (state, statesToEnter, statesForDefaultEntry
  *
  * @param {Transition[]} transitions
  * @param {OrderedSet} statesToEnter
- * @param {OrderedSet} statesForDefaultEntry
  */
-function computeEntrySet (transitions, statesToEnter, statesForDefaultEntry) {
+function computeEntrySet (transitions, statesToEnter) {
   for (let t of transitions) {
     for (let s of t.target) {
-      addDescendantStatesToEnter(s, statesToEnter, statesForDefaultEntry)
+      addDescendantStatesToEnter(s, statesToEnter)
     }
     let ancestor = getTransitionDomain(t)
     for (let s of getEffectiveTargetStates(t).toArray()) {
-      addAncestorStatesToEnter(s, ancestor, statesToEnter, statesForDefaultEntry)
+      addAncestorStatesToEnter(s, ancestor, statesToEnter)
     }
   }
 }

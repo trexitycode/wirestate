@@ -1,56 +1,62 @@
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
-import { Interpreter } from '../interpreter'
-
-const service = new Interpreter()
 
 export const WireStateContext = React.createContext({
   configuration: [],
-  atomicStates: [],
-  service,
-  send: service.send.bind(service),
-  matches: service.matches.bind(service)
+  send: null,
+  matches: null,
+  service: null
 })
 
-export const WireStateApp = ({ children, onDone = () => {} }) => {
-  const { service } = React.useContext(WireStateContext)
-  const { configuration, setConfiguration } = React.useState([])
+export const WireStateApp = ({ children, service, onStart }) => {
+  const [ state, setState ] = React.useState(() => {
+    return {
+      configuration: [],
+      service,
+      send: service.send,
+      matches: service.matches
+    }
+  })
 
   React.useEffect(() => {
-    const unlistenTransition = service.onTransition(() => {
-      setConfiguration(service.configuration.toArray())
-    })
-    const unlistenDone = service.onDone(() => {
-      if (typeof onDone === 'function') onDone()
-    })
+    const subscriptions = [
+      service.onTransition(() => {
+        setState({ ...state, configuration: service.configuration.toArray() })
+      })
+    ].filter(Boolean)
 
     // Calling start multiple times has no effect. Just the first
     // call to start will start the interpreter.
     service.start()
 
+    if (onStart) onStart()
+
     return () => {
-      unlistenTransition()
-      unlistenDone()
+      while (subscriptions.length) {
+        subscriptions.pop()()
+      }
     }
   })
 
-  const atomicStates = configuration.filter(s => s.isAtomic)
   return (
-    <WireStateContext.Provider value={{ service, configuration, atomicStates }}>
+    <WireStateContext.Provider value={state}>
       {children}
     </WireStateContext.Provider>
   )
 }
 WireStateApp.propTypes = {
+  service: PropTypes.object.isRequired,
   children: PropTypes.node.isRequired,
-  onDone: PropTypes.func
+  onStart: PropTypes.func
 }
 
 export const WireStateView = ({ state, component, children }) => {
-  const { matches, atomicStates } = React.useContext(WireStateContext)
-  return matches(atomicStates, state)
+  const Component = component
+  const { service } = React.useContext(WireStateContext)
+
+  return service.matches(state)
     ? (
-      component ? <component /> : <>{children}</>
+      Component ? <Component /> : children
     )
     : null
 }
