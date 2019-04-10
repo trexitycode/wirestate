@@ -14,20 +14,54 @@ Given a statechart like:
 
 ```
 # App.state
-App
-  home -> Home
-  about -> About
-  contact -> Contact
+home -> Home
+about -> About
+contact -> Contact
 
-  Home*
-  About
-  Contact
+Home*
+About
+Contact
 ```
 
 We can compile it to a `json` format for interpreting using the following CLI:
 
 ```
 wirestate App.state --output json-esm > App.state.js
+```
+
+Inspecting the JSON output, notice that the root state takes the name of the
+file:
+
+```
+export const config = {
+  'name': 'App',
+  'transitions': [
+    {
+      'event': 'home',
+      'target': 'Home'
+    },
+    {
+      'event': 'about',
+      'target': 'About'
+    },
+    {
+      'event': 'contact',
+      'target': 'Contact'
+    }
+  ],
+  'states': [
+    {
+      'name': 'Home',
+      'initial': true
+    },
+    {
+      'name': 'About'
+    },
+    {
+      'name': 'Contact'
+    }
+  ]
+}
 ```
 
 ### Choose A Binding
@@ -142,13 +176,28 @@ Transitions:
 
 ```
 # Transitions are typically all lowercased, indented 2 spaces and are of the
-# form `name -> State`
+# form `name -> State` or `name.name.name -> State` (events can be arbitrarily
+# namespaced by using '.')
 About
   home -> Home
   about -> About
 
   Home
   About
+```
+
+Also, transitions can target multiple states or a single state:
+
+```
+About
+  home -> Home
+  # When this transition is enabled, the About and Modal states will
+  # be activated at the same time (i.e. in parallel)
+  about -> About, About
+
+  Home
+  About
+  Modal
 ```
 
 By default the first nested/child state is a parent state's initial state:
