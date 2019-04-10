@@ -294,6 +294,8 @@ TODO
 TODO
 
 - single and multiple transition targets
+- state name resolution; the first sibling or ancestor state that matches the
+  target state name will be selected
 
 **State ID And Event Matching**
 
@@ -312,3 +314,15 @@ foo.*.Modal.       foo.Modal, foo.anything.Modal, foo.anything.something.Modal.A
 foo.*.Modal.*      foo.Modal, foo.anything.Modal, foo.anything.something.Modal.Another
 foo.*.One.*.Two    foo.One.Two, foo.anything.One.something.somethingelse.Two
 ```
+
+**Application State**
+
+TODO
+
+- don't need to listen to application state updates
+- modifying application state then sending an event to the interpreter
+  will cause a rerender of your application
+- the state transition will naturally cause your application to rerender, and
+  when it does the new application state values will be used
+- you can use things like redux or veux, etc. but know that this will lead to
+  extra redraws
