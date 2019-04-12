@@ -72,7 +72,7 @@ export const config = {
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { Interpreter, State } from 'wirestate/interpreter'
-import { WireStateApp, WireStateView } from 'wirestate/bindings/react'
+import { WireStateApp, WireStateContext, WireStateView } from 'wirestate/bindings/react'
 import { config as AppStateConfig } from './App.state.js'
 
 // Parse the app state from JSON
@@ -103,7 +103,8 @@ const App = () => {
     <>
       <WireStateView component={Home} state='*.Home' />
       <WireStateView component={About} state='*.About' />
-      <WireStateView component={Contact} state='*.Contact' />
+      {/* Same as using WireStateView */}
+      { matches('*.Contact') ? <Contact /> : null }
     </>
   )
 }

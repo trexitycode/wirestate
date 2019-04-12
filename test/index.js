@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { Interpreter, State } from '../src/interpreter'
-import { WireStateApp, WireStateView } from '../src/bindings/react'
+import { WireStateApp, WireStateView, WireStateContext } from '../src/bindings/react'
 import { config as AppStateConfig } from './App.state.js'
 
 // Parse the app state from JSON
@@ -27,12 +27,14 @@ export const Root = () => {
 }
 
 const App = () => {
+  const { matches } = React.useContext(WireStateContext)
   // Render components whenever a state ID matches a state descriptor pattern
   return (
     <>
       <WireStateView component={Home} state='*.Home' />
       <WireStateView component={About} state='*.About' />
-      <WireStateView component={Contact} state='*.Contact' />
+      {/* Same as using WireStateView */}
+      { matches('*.Contact') ? <Contact /> : null }
     </>
   )
 }

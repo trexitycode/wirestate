@@ -61,6 +61,11 @@ const Root = () => {
 }
 ```
 
+Props:
+
+- `service` The `Interpreter` instance
+- `onStart` Function called when the interpreter starts (called each render)
+
 > WireStateContext
 Convenience context that provides the following properties:
 
@@ -99,6 +104,11 @@ const App = () => {
   </>
 }
 ```
+
+Props:
+
+- `component` The component to render when the state descriptor matches
+- `state` The state descriptor that must match the state configuration of the `Interpreter`
 
 ## Vue Binding
 
