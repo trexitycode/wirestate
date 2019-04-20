@@ -1,6 +1,8 @@
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
 
+const noop = () => {}
+
 export const WireStateContext = React.createContext({
   configuration: [],
   send: null,
@@ -8,7 +10,7 @@ export const WireStateContext = React.createContext({
   service: null
 })
 
-export const WireStateApp = ({ children, service, onStart }) => {
+export const WireStateApp = ({ children, service, onStart, context = {} }) => {
   const [ state, setState ] = React.useState(() => {
     return {
       configuration: [],
@@ -21,7 +23,7 @@ export const WireStateApp = ({ children, service, onStart }) => {
   React.useEffect(() => {
     const subscriptions = [
       service.onTransition(() => {
-        setState({ ...state, configuration: service.configuration.toArray() })
+        setState({ ...context, ...state, configuration: service.configuration.toArray() })
       })
     ].filter(Boolean)
 
@@ -29,7 +31,9 @@ export const WireStateApp = ({ children, service, onStart }) => {
     // call to start will start the interpreter.
     service.start()
 
-    if (onStart) onStart()
+    if (typeof onStart === 'function') {
+      onStart()
+    }
 
     return () => {
       while (subscriptions.length) {
@@ -47,14 +51,15 @@ export const WireStateApp = ({ children, service, onStart }) => {
 WireStateApp.propTypes = {
   service: PropTypes.object.isRequired,
   children: PropTypes.node.isRequired,
-  onStart: PropTypes.func
+  onStart: PropTypes.func,
+  context: PropTypes.object
 }
 
 export const WireStateView = ({ state, component, children }) => {
   const Component = component
-  const { service } = React.useContext(WireStateContext)
+  const { matches } = React.useContext(WireStateContext)
 
-  return service.matches(state)
+  return matches(state)
     ? (
       Component ? <Component /> : children
     )
@@ -62,6 +67,22 @@ export const WireStateView = ({ state, component, children }) => {
 }
 WireStateView.propTypes = {
   state: PropTypes.string.isRequired,
-  component: PropTypes.func,
+  component: PropTypes.elementType,
   children: PropTypes.node
+}
+
+export const WireStateAction = ({ state, action }) => {
+  const ctx = React.useContext(WireStateContext)
+
+  React.useEffect(() => {
+    if (ctx.matches(state)) {
+      return action(ctx)
+    }
+  })
+
+  return null
+}
+WireStateAction.propTypes = {
+  state: PropTypes.string.isRequired,
+  action: PropTypes.func.isRequired
 }
