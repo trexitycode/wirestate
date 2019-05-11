@@ -5,6 +5,8 @@
     "target": "es5",
     "moduleResolution": "node",
     "module": "commonjs",
+    "sourceMap": true,
+    "incremental": true,
     "outDir": "lib",
     "newLine": "LF",
     "jsx": "react",
@@ -16,5 +18,12 @@
   },
   "include": [
     "src/**/*.js"
+  ],
+  "exclude": [
+    "src/generator.js",
+    "src/analyzer.js",
+    "src/compile.js",
+    "src/interpreter",
+    "src/bindings"
   ]
 }

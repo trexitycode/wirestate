@@ -64,32 +64,42 @@ export const makeTokenizer = () => {
     }
   }
 
-  const newlineToken = {
+  const indentToken = {
     canRead (scanner) { return scanner.c === '\n' || scanner.look('\r\n') },
     read (scanner) {
-      let nl = scanner.c
       if (scanner.look('\r\n')) {
-        nl += scanner.advance()
+        scanner.advance()
       }
 
       scanner.advance()
 
+      let value = ''
+      while (scanner.c === ' ') {
+        value += scanner.c
+        scanner.advance()
+      }
+
       return {
-        type: 'newline',
-        value: nl,
-        raw: nl
+        type: 'indent',
+        value: value,
+        raw: value
       }
     }
   }
 
   const whitespaceToken = {
-    canRead (scanner) { return scanner.c === ' ' },
+    canRead (scanner) { return scanner.c === ' ' || scanner.c === '\t' },
     read (scanner) {
-      scanner.advance()
+      let value = ''
+      while (scanner.c === ' ' || scanner.c === '\t') {
+        value += scanner.c
+        scanner.advance()
+      }
+
       return {
         type: 'whitespace',
-        value: ' ',
-        raw: ' '
+        value: value,
+        raw: value
       }
     }
   }
@@ -152,7 +162,10 @@ export const makeTokenizer = () => {
       }
 
       if (!isTerminated) {
-        throw new Error(`LexicalError: Unterminated string "${buffer}"`)
+        throw Object.assign(
+          new Error(`LexicalError: Unterminated string "${buffer}"`),
+          { line: scanner.line, column: scanner.column }
+        )
       }
 
       return {
@@ -163,26 +176,31 @@ export const makeTokenizer = () => {
     }
   }
 
-  const operatorToken = {
-    canRead (scanner) { return scanner.look('->') },
+  const symbolToken = {
+    canRead (scanner) {
+      return scanner.look('->') || scanner.look('<-')
+    },
     read (scanner) {
-      scanner.advance(2)
+      const value = scanner.c + scanner.advance()
+
+      scanner.advance()
+
       return {
-        type: 'operator',
-        value: '->',
-        raw: '->'
+        type: 'symbol',
+        value,
+        raw: value
       }
     }
   }
 
-  const symbolToken = {
-    symbols: '?&*!.',
-    canRead (scanner) { return this.symbols.indexOf(scanner.c) >= 0 },
+  const operatorToken = {
+    operators: '?&*!.{}',
+    canRead (scanner) { return this.operators.indexOf(scanner.c) >= 0 },
     read (scanner) {
       const c = scanner.c
       scanner.advance()
       return {
-        type: 'symbol',
+        type: 'operator',
         value: c,
         raw: c
       }
@@ -254,13 +272,13 @@ export const makeTokenizer = () => {
 
   const tokenReaders = [
     commentToken,
-    newlineToken,
-    whitespaceToken,
+    indentToken,
     stringToken,
     directiveToken,
-    operatorToken,
     symbolToken,
-    identifierToken
+    operatorToken,
+    identifierToken,
+    whitespaceToken
   ]
   const tokenReaderCount = tokenReaders.length
 
@@ -288,9 +306,9 @@ export const makeTokenizer = () => {
       }
 
       if (noMatch) {
-        throw new Error(
+        throw Object.assign(new Error(
           `LexicalError: Unknown charcter: ${scanner.c} [L:${line} C:${column}]`
-        )
+        ), { line, column })
       }
     }
 
