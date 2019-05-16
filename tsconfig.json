@@ -2,7 +2,7 @@
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
-    "target": "es5",
+    "target": "es2015",
     "moduleResolution": "node",
     "module": "commonjs",
     "sourceMap": true,
@@ -12,7 +12,6 @@
     "jsx": "react",
     "reactNamespace": "React",
     "lib": [
-      "dom",
       "es2015"
     ]
   },
@@ -21,7 +20,6 @@
   ],
   "exclude": [
     "src/generator.js",
-    "src/analyzer.js",
     "src/compile.js",
     "src/interpreter",
     "src/bindings"

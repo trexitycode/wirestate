@@ -21,10 +21,6 @@
         "version": "2edd3ddf436ef8e12df876dcae4ecd6a8748577944c477bf4b20d5596e0c9843",
         "signature": "2edd3ddf436ef8e12df876dcae4ecd6a8748577944c477bf4b20d5596e0c9843"
       },
-      "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/typescript/lib/lib.dom.d.ts": {
-        "version": "6994c583b66862deca24d7bbf77297d95b9d3da8160dbd9beef6b847cf7c1376",
-        "signature": "6994c583b66862deca24d7bbf77297d95b9d3da8160dbd9beef6b847cf7c1376"
-      },
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/typescript/lib/lib.es2015.core.d.ts": {
         "version": "384f66a3422d80014c51de2682159bb26f1e35854029880ccd5f6d1f00e6a36d",
         "signature": "384f66a3422d80014c51de2682159bb26f1e35854029880ccd5f6d1f00e6a36d"
@@ -109,20 +105,23 @@
         "version": "63b66918290d794f73832a6d0325be5026236674fe8c0cb0b68d162000d7bbe8",
         "signature": "63b66918290d794f73832a6d0325be5026236674fe8c0cb0b68d162000d7bbe8"
       },
-      "/users/darren/workspace/launchfort/sandbox/wirestate/src/ast-nodes.js": {
-        "version": "38816ec0cd432176952eabdf2061e35c5349910fd4980f141d62de1119b17be1"
-      },
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/tokenizer.js": {
-        "version": "6a37858fae5b48879cd14d4174c982a66d43e841fc6163c24658ea1b903b3181"
+        "version": "fb3a560f63ffcafa2171651a47c27b69fe57020f9b76b0b2688d31934721f255"
+      },
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/ast-nodes.js": {
+        "version": "7f13bb2d6ea038bb6a900314c41fe3042ce589b999d53bfe1c4f0be45292f1be"
       },
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/parser.js": {
-        "version": "aab8ff9ef33176439b65bf968ca9b5b10dff45ca368aab23b59cef5c0a3e3524"
+        "version": "af66de9721a056ce4748273d137e46d2424ed1f45bed8b3797f5ea13c1c81a00"
+      },
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/analyzer.js": {
+        "version": "4727bbad9b6ba95689d57795d5fa3ae24999b8dadd6bb15252bfdb70a9852e0b"
       },
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/index.js": {
         "version": "f0ea64c6e9561dd7c1449c9456e54c7cc5b73c9efe4aa4ee33665fa76a6e74f0"
       },
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/tokenize.test.js": {
-        "version": "ebaaa9256d0b1981a1ccb242d39ee8dc3a7740ef1f2bf0598e6b156ea8aa6391"
+        "version": "8187d186e15ed685a413eb03605e56dbe8e4a4f8c391c5a92c98b9c05eb1a2bc"
       },
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/globals.d.ts": {
         "version": "9ae4bfd042044be3249b63bbb453a392283dc690d65842194d80bbff90ae0c81",
@@ -308,7 +307,7 @@
     "options": {
       "allowJs": true,
       "checkJs": true,
-      "target": 1,
+      "target": 2,
       "moduleResolution": 2,
       "module": 1,
       "sourceMap": true,
@@ -318,7 +317,6 @@
       "jsx": 2,
       "reactNamespace": "React",
       "lib": [
-        "lib.dom.d.ts",
         "lib.es2015.d.ts"
       ],
       "project": ".",
@@ -342,10 +340,6 @@
         "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
       ],
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/typescript/lib/lib.es2018.d.ts": [
-        "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/typescript/lib/lib.dom.d.ts": [
         "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/util.d.ts",
         "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -433,17 +427,26 @@
         "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/util.d.ts",
         "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "/users/darren/workspace/launchfort/sandbox/wirestate/src/ast-nodes.js": [
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/tokenizer.js": [
         "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/util.d.ts",
         "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "/users/darren/workspace/launchfort/sandbox/wirestate/src/tokenizer.js": [
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/ast-nodes.js": [
         "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/util.d.ts",
         "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
       ],
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/parser.js": [
         "/users/darren/workspace/launchfort/sandbox/wirestate/src/ast-nodes.js",
         "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/analyzer.js": [
+        "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/fs.d.ts",
+        "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/path.d.ts",
+        "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/sandbox/wirestate/src/tokenizer.js",
+        "/users/darren/workspace/launchfort/sandbox/wirestate/src/parser.js",
+        "/users/darren/workspace/launchfort/sandbox/wirestate/src/ast-nodes.js",
         "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
       ],
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/index.js": [
@@ -455,6 +458,7 @@
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/tokenize.test.js": [
         "/users/darren/workspace/launchfort/sandbox/wirestate/src/tokenizer.js",
         "/users/darren/workspace/launchfort/sandbox/wirestate/src/parser.js",
+        "/users/darren/workspace/launchfort/sandbox/wirestate/src/analyzer.js",
         "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/util.d.ts",
         "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -745,10 +749,6 @@
         "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
       ],
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/typescript/lib/lib.es2018.d.ts": [
-        "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/typescript/lib/lib.dom.d.ts": [
         "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/util.d.ts",
         "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -1111,7 +1111,6 @@
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/typescript/lib/lib.es2016.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/typescript/lib/lib.es2017.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/typescript/lib/lib.es2018.d.ts",
-      "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/typescript/lib/lib.dom.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/typescript/lib/lib.es2015.core.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/typescript/lib/lib.es2015.collection.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/typescript/lib/lib.es2015.generator.d.ts",
@@ -1133,6 +1132,11 @@
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/typescript/lib/lib.es2018.regexp.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/typescript/lib/lib.esnext.intl.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/typescript/lib/lib.esnext.bigint.d.ts",
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/tokenizer.js",
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/ast-nodes.js",
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/parser.js",
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/analyzer.js",
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/index.js",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/globals.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/assert.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/async_hooks.d.ts",
@@ -1178,10 +1182,6 @@
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/globals.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/index.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/q/index.d.ts",
-      "/users/darren/workspace/launchfort/sandbox/wirestate/src/ast-nodes.js",
-      "/users/darren/workspace/launchfort/sandbox/wirestate/src/tokenizer.js",
-      "/users/darren/workspace/launchfort/sandbox/wirestate/src/parser.js",
-      "/users/darren/workspace/launchfort/sandbox/wirestate/src/index.js",
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/tokenize.test.js"
     ]
   },

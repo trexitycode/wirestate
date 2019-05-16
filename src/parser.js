@@ -1,6 +1,6 @@
 import { StateNode, TransitionNode, ImportNode, ScopeNode, MachineNode, UseDirectiveNode, EventProtocolNode } from './ast-nodes'
 
-const makeScanner = (tokens) => {
+const makeScanner = (tokens, { fileName = '' } = {}) => {
   // Remove the comments and whitespace
   tokens = tokens.filter(t => t.type !== 'comment' && t.type !== 'whitespace')
 
@@ -16,8 +16,8 @@ const makeScanner = (tokens) => {
     if (token) {
       message = message || `Unexpected token ${token.type}:"${token.value}"`
       return Object.assign(
-        new Error(`SyntaxError${message ? ': ' + message : ''} near [L:${token.line} C:${token.column}]`),
-        { line: token.line, column: token.column }
+        new Error(`SyntaxError${message ? ': ' + message : ''} near [L:${token.line} C:${token.column} File:${fileName}]`),
+        { line: token.line, column: token.column, fileName }
       )
     } else {
       return new Error(`SyntaxError: Unexpected end of input`)
@@ -142,8 +142,8 @@ const makeScanner = (tokens) => {
   }
 }
 
-const parseScopeNode = (scanner) => {
-  const scopeNode = new ScopeNode()
+const parseScopeNode = (scanner, { fileName = '' } = {}) => {
+  const scopeNode = new ScopeNode(fileName)
   let importNodesValid = true
   let indent = 0
 
@@ -246,20 +246,6 @@ const parseMarchineNode = (scanner) => {
       } else {
         throw scanner.syntaxError()
       }
-    } else if (scanner.look({ value: '@use' })) {
-      // Is indentation too much?
-      if (indent > 2) {
-        throw scanner.syntaxError(`Expected indentation 2 but got ${indent}`)
-      }
-
-      if (indent < 2) {
-        throw scanner.syntaxError('Unexpected dedentation')
-      }
-
-      // @ts-ignore
-      machineNode.states.push(Object.assign(
-        parseUseDirectiveNode(scanner), { parent: machineNode }
-      ))
     } else if (scanner.look({ value: '<-' })) {
       // Is indentation too much?
       if (indent > 2) {
@@ -287,6 +273,8 @@ const parseMarchineNode = (scanner) => {
       ep.column = firstToken.column
       ep.parent = machineNode
       machineNode.eventProtocols.push(ep)
+    } else {
+      throw scanner.syntaxError()
     }
   }
 
@@ -401,6 +389,10 @@ const parseStateNode = (scanner, { indentLevel }) => {
           scanner.advance(-1)
           break
         } else { // child state
+          if (node.stateType === 'transient') {
+            throw scanner.syntaxError('Transient states cannot have child states')
+          }
+
           node.states.push(Object.assign(
             parseStateNode(scanner, { indentLevel: indent }),
             { parent: node }
@@ -419,10 +411,13 @@ const parseStateNode = (scanner, { indentLevel }) => {
         throw scanner.syntaxError('Unexpected dedentation')
       }
 
-      // @ts-ignore
-      node.states.push(Object.assign(
-        parseUseDirectiveNode(scanner), { parent: node }
-      ))
+      if (node.useDirective) {
+        // Advance so that when we throw the proper column is reported
+        scanner.consume({ value: '@use' })
+        throw scanner.syntaxError('Multiple @use encountered')
+      }
+
+      node.useDirective = Object.assign(parseUseDirectiveNode(scanner), { parent: node })
     } else if (scanner.look({ value: '<-' })) {
       // Is indentation too much?
       if (indent > indentLevel + 2) {
@@ -468,10 +463,10 @@ const parseUseDirectiveNode = (scanner) => {
   return node
 }
 
-export const makeParser = () => {
+export const makeParser = ({ fileName = '' } = {}) => {
   const parse = (tokens) => {
-    const scanner = makeScanner(tokens)
-    return parseScopeNode(scanner)
+    const scanner = makeScanner(tokens, { fileName })
+    return parseScopeNode(scanner, { fileName })
   }
   return { parse }
 }

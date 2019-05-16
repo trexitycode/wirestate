@@ -44,7 +44,7 @@ const makeScanner = (str) => {
   }
 }
 
-export const makeTokenizer = () => {
+export const makeTokenizer = ({ fileName = '' } = {}) => {
   const commentToken = {
     canRead (scanner) { return scanner.c === '#' },
     read (scanner) {
@@ -163,8 +163,8 @@ export const makeTokenizer = () => {
 
       if (!isTerminated) {
         throw Object.assign(
-          new Error(`LexicalError: Unterminated string "${buffer}"`),
-          { line: scanner.line, column: scanner.column }
+          new Error(`LexicalError: Unterminated string "${buffer}" [L:${scanner.line} C:${scanner.column} File:${fileName}]`),
+          { line: scanner.line, column: scanner.column, fileName }
         )
       }
 
@@ -307,8 +307,8 @@ export const makeTokenizer = () => {
 
       if (noMatch) {
         throw Object.assign(new Error(
-          `LexicalError: Unknown charcter: ${scanner.c} [L:${line} C:${column}]`
-        ), { line, column })
+          `LexicalError: Unknown charcter: ${scanner.c} [L:${line} C:${column} File:${fileName}]`
+        ), { line, column, fileName })
       }
     }
 

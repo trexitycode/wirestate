@@ -1,34 +1,35 @@
 import { makeTokenizer } from './tokenizer'
 import { makeParser } from './parser'
-// import { makeAnalyzer } from './analyzer'
+import { makeAnalyzer } from './analyzer'
 // import { makeGenerator } from './generator'
 
 const state = `
-@import { Modal } from 'some-file'
-
 @machine App
   dismiss -> Done!
 
   Yellow
-    hi -> Blue
+    hi -> Green
     <- go
   Green
-    @use Modal
   Done!
 `
 
-const tokenizer = makeTokenizer()
+const fileName = '/App.wirestate'
+const tokenizer = makeTokenizer({ fileName })
 const tokens = tokenizer.tokenize(state)
 
-console.dir({ tokens }, { depth: 30 })
+// console.dir({ tokens }, { depth: 30 })
 
-const parser = makeParser()
-const ast = parser.parse(tokens)
+const parser = makeParser({ fileName })
+const scopeNode = parser.parse(tokens)
 
-console.dir({ ast }, { depth: 30 })
+// console.dir({ scopeNode }, { depth: 30 })
 
-// const analyzer = makeAnalyzer()
-// analyzer.analyze(ast, { fileName: 'file.states' }).then(newAst => {
-//   const generator = makeGenerator()
-//   console.log(generator.generate(newAst, 'xstate-machine-esm'))
-// })
+const analyzer = makeAnalyzer()
+analyzer.analyze(scopeNode).then(scopeNode => {
+  console.dir({ scopeNode }, { depth: 30 })
+  // const generator = makeGenerator()
+  // console.log(generator.generate(newAst, 'xstate-machine-esm'))
+}, error => {
+  console.error(error)
+})
