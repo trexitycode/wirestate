@@ -15,7 +15,8 @@ import {
   // eslint-disable-next-line no-unused-vars
   UseDirectiveNode
 } from './ast-nodes'
-import { Cache } from './internal'
+// eslint-disable-next-line no-unused-vars
+import { Cache } from './cache'
 
 const stat = promisify(FS.stat)
 const readFile = promisify(FS.readFile)
@@ -423,12 +424,10 @@ async function analyzeUseDirectiveNode (useDirectiveNode, { cache }) {
 
 /**
  * @param {Object} [options]
+ * @param {Cache} options.cache
  * @param {string[]} [options.dirs]
- * @param {string} [options.cacheDir]
  */
-export const makeAnalyzer = ({ dirs = [], cacheDir = '.wirestate' } = {}) => {
-  const cache = new Cache({ cacheDir })
-
+export const makeAnalyzer = ({ dirs = [], cache }) => {
   return {
     /** @param {ScopeNode} scopeNode */
     analyze (scopeNode) {

@@ -1,6 +1,7 @@
 import { makeTokenizer } from './tokenizer'
 import { makeParser } from './parser'
 import { makeAnalyzer } from './analyzer'
+import { Cache } from './cache'
 // import { makeGenerator } from './generator'
 
 const state = `
@@ -30,7 +31,8 @@ const scopeNode = parser.parse(tokens)
 
 // console.dir({ scopeNode }, { depth: 30 })
 
-const analyzer = makeAnalyzer()
+const cache = new Cache()
+const analyzer = makeAnalyzer({ cache })
 analyzer.analyze(scopeNode).then(scopeNode => {
   console.dir({ scopeNode }, { depth: 30 })
   // const generator = makeGenerator()
