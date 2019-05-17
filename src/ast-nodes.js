@@ -34,6 +34,7 @@ export class Node {
     throw new Error('Unimplemented')
   }
 }
+
 export class ScopeNode extends Node {
   constructor (fileName = '') {
     super('scope')
@@ -168,6 +169,7 @@ export class MachineNode extends CompoundNode {
     return inst
   }
 }
+
 export class EventProtocolNode extends Node {
   /** @param {string} eventName */
   constructor (eventName) {
@@ -193,6 +195,7 @@ export class EventProtocolNode extends Node {
     return inst
   }
 }
+
 export class StateNode extends CompoundNode {
   /**
    * @param {string} id
@@ -271,6 +274,7 @@ export class StateNode extends CompoundNode {
     return inst
   }
 }
+
 export class TransitionNode extends Node {
   /**
    * @param {string} event
@@ -306,6 +310,7 @@ export class TransitionNode extends Node {
     return inst
   }
 }
+
 class DirectiveNode extends Node {
   /**
    * @param {string} directiveType
@@ -318,6 +323,7 @@ class DirectiveNode extends Node {
 
   get directiveType () { return this._directiveType }
 }
+
 export class UseDirectiveNode extends DirectiveNode {
   /**
    * @param {string} machineId

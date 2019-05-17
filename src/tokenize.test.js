@@ -8,10 +8,15 @@ const state = `
   dismiss -> Done!
 
   Yellow
-    hi -> Green
-    <- go
+    go -> Green
+    @use Modal
+
   Green
   Done!
+
+@machine Modal
+  <- go
+  Start
 `
 
 const fileName = '/App.wirestate'

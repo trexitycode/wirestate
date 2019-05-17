@@ -1,6 +1,6 @@
 export * from './tokenizer'
 export * from './parser'
-// export * from './analyzer'
+export * from './analyzer'
 // export * from './generator'
 // export * from './compile'
 // export * from './interpreter'

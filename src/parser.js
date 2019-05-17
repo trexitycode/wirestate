@@ -363,7 +363,7 @@ const parseStateNode = (scanner, { indentLevel }) => {
   while (scanner.token) {
     const indent = scanner.consume({ type: 'indent' }).value.length
 
-    if (scanner.look({ type: '@machine' })) {
+    if (scanner.look({ value: '@machine' })) {
       scanner.advance(-1)
       break
     } else if (scanner.look('identifier') || scanner.look({ value: '*' })) {
