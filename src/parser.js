@@ -164,7 +164,7 @@ const parseScopeNode = (scanner, { fileName = '' } = {}) => {
       }
 
       importNodesValid = false
-      const machineNode = parseMarchineNode(scanner)
+      const machineNode = parseMachineNode(scanner)
       machineNode.parent = scopeNode
       scopeNode.machines.push(machineNode)
     } else {
@@ -203,7 +203,7 @@ const parseImportNode = (scanner) => {
   return importNode
 }
 
-const parseMarchineNode = (scanner) => {
+const parseMachineNode = (scanner) => {
   const firstToken = scanner.consume({ value: '@machine' })
   const machineId = scanner.consume({ type: 'identifier' }).value
   const machineNode = new MachineNode(machineId)
