@@ -1,4 +1,4 @@
-export class Node {
+class Node {
   /**
    * @param {string} type
    */
@@ -29,13 +29,33 @@ export class Node {
     }
   }
 
-  /** @return {Node} */
+  /** @return {this} */
   clone () {
-    throw new Error('Unimplemented')
+    // @ts-ignore
+    return this.constructor.fromJSON(this.toJSON())
+  }
+
+  toJSON () {
+    return {
+      type: this.type,
+      line: this.line,
+      column: this.column
+    }
   }
 }
 
 export class ScopeNode extends Node {
+  static fromJSON (json) {
+    let inst = new ScopeNode(json.fileName)
+    inst.line = json.line
+    inst.column = json.column
+    inst._machines = json.machines.map(MachineNode.fromJSON)
+    inst._machines.forEach(n => (n.parent = inst))
+    inst._imports = json.imports.map(ImportNode.fromJSON)
+    inst._imports.forEach(n => (n.parent = inst))
+    return inst
+  }
+
   constructor (fileName = '') {
     super('scope')
     this._fileName = fileName
@@ -58,18 +78,23 @@ export class ScopeNode extends Node {
     throw new Error('ScopeNode cannot have a parent')
   }
 
-  clone () {
-    let inst = new ScopeNode(this.fileName)
-    Object.assign(inst, this)
-    inst._imports = this._imports.map(n => n.clone())
-    inst._imports.forEach(n => (n.parent = inst))
-    inst._machines = this._machines.map(n => n.clone())
-    inst._machines.forEach(n => (n.parent = inst))
-    return inst
+  toJSON () {
+    let json = super.toJSON()
+    json.imports = this._imports.map(n => n.toJSON())
+    json.machines = this._machines.map(n => n.toJSON())
+    return json
   }
 }
 
 export class ImportNode extends Node {
+  static fromJSON (json) {
+    let inst = new ImportNode(json.machineIds, json.file)
+    inst.line = json.line
+    inst.column = json.column
+    // TOOD: Set inst.scopeNode
+    return inst
+  }
+
   /**
    * @param {string[]} machineIds
    * @param {string} file
@@ -99,10 +124,11 @@ export class ImportNode extends Node {
     }
   }
 
-  clone () {
-    let inst = new ImportNode(this.machineIds, this.file)
-    Object.assign(inst, this)
-    return inst
+  toJSON () {
+    let json = super.toJSON()
+    json.file = this.file
+    json.machineIds = this.machineIds.slice()
+    return json
   }
 }
 
@@ -134,9 +160,31 @@ class CompoundNode extends Node {
   get states () { return this._states }
   get transitions () { return this._transitions }
   get eventProtocols () { return this._eventProtocols }
+
+  toJSON () {
+    let json = super.toJSON()
+    json.id = this.id
+    json.states = this._states.map(n => n.toJSON())
+    json.transitions = this._transitions.map(n => n.toJSON())
+    json.eventProtocols = this._eventProtocols.map(n => n.toJSON())
+    return json
+  }
 }
 
 export class MachineNode extends CompoundNode {
+  static fromJSON (json) {
+    let inst = new MachineNode(json.id)
+    inst.line = json.line
+    inst.column = json.column
+    inst._states = json.states.map(StateNode.fromJSON)
+    inst._states.forEach(n => (n.parent = inst))
+    inst._transitions = json.transitions.map(TransitionNode.fromJSON)
+    inst._transitions.forEach(n => (n.parent = inst))
+    inst._eventProtocols = json.eventProtocols.map(EventProtocolNode.fromJSON)
+    inst._eventProtocols.forEach(n => (n.parent = inst))
+    return inst
+  }
+
   /** @param {string} id */
   constructor (id) {
     super('machine', id)
@@ -153,24 +201,16 @@ export class MachineNode extends CompoundNode {
       throw new Error('MachineNode parent must be an instance of ScopeNode')
     }
   }
-
-  clone () {
-    let inst = new MachineNode(this.id)
-
-    Object.assign(inst, this)
-
-    inst._states = this._states.map(n => n.clone())
-    inst._states.forEach(n => (n.parent = inst))
-    inst._transitions = this._transitions.map(n => n.clone())
-    inst._transitions.forEach(n => (n.parent = inst))
-    inst._eventProtocols = this._eventProtocols.map(n => n.clone())
-    inst._eventProtocols.forEach(n => (n.parent = inst))
-
-    return inst
-  }
 }
 
 export class EventProtocolNode extends Node {
+  static fromJSON (json) {
+    let inst = new EventProtocolNode(json.eventName)
+    inst.line = json.line
+    inst.column = json.column
+    return inst
+  }
+
   /** @param {string} eventName */
   constructor (eventName) {
     super('eventProtocol')
@@ -189,14 +229,34 @@ export class EventProtocolNode extends Node {
     }
   }
 
-  clone () {
-    let inst = new EventProtocolNode(this.eventName)
-    Object.assign(inst, this)
-    return inst
+  toJSON () {
+    let json = super.toJSON()
+    json.eventName = this.eventName
+    return json
   }
 }
 
 export class StateNode extends CompoundNode {
+  static fromJSON (json) {
+    let inst = new StateNode(json.id, json.indent)
+    inst.line = json.line
+    inst.column = json.column
+    inst.initial = json.initial
+    inst.stateType = json.stateType
+    inst.parallel = json.parallel
+    inst.final = json.final
+    inst.useDirective = json.useDirective
+      ? Object.assign(UseDirectiveNode.fromJSON(json.useDirective), { parent: inst })
+      : null
+    inst._states = json.states.map(StateNode.fromJSON)
+    inst._states.forEach(n => (n.parent = inst))
+    inst._transitions = json.transitions.map(TransitionNode.fromJSON)
+    inst._transitions.forEach(n => (n.parent = inst))
+    inst._eventProtocols = json.eventProtocols.map(EventProtocolNode.fromJSON)
+    inst._eventProtocols.forEach(n => (n.parent = inst))
+    return inst
+  }
+
   /**
    * @param {string} id
    * @param {number} indent
@@ -254,28 +314,25 @@ export class StateNode extends CompoundNode {
     return null
   }
 
-  clone () {
-    let inst = new StateNode(this.id, this.indent)
-
-    Object.assign(inst, this)
-
-    inst._states = this._states.map(n => n.clone())
-    inst._states.forEach(n => (n.parent = inst))
-    inst._transitions = this._transitions.map(n => n.clone())
-    inst._transitions.forEach(n => (n.parent = inst))
-    inst._eventProtocols = this._eventProtocols.map(n => n.clone())
-    inst._eventProtocols.forEach(n => (n.parent = inst))
-
-    if (this.useDirective) {
-      inst.useDirective = this.useDirective.clone()
-      inst.useDirective.parent = inst
-    }
-
-    return inst
+  toJSON () {
+    let json = super.toJSON()
+    json.stateType = this.stateType
+    json.initial = this.initial
+    json.parallel = this.parallel
+    json.final = this.final
+    json.indent = this.indent
+    return json
   }
 }
 
 export class TransitionNode extends Node {
+  static fromJSON (json) {
+    let inst = new TransitionNode(json.event, json.target)
+    inst.line = json.line
+    inst.column = json.column
+    return inst
+  }
+
   /**
    * @param {string} event
    * @param {string} target
@@ -304,10 +361,11 @@ export class TransitionNode extends Node {
     }
   }
 
-  clone () {
-    let inst = new TransitionNode(this.event, this.target)
-    Object.assign(inst, this)
-    return inst
+  toJSON () {
+    let json = super.toJSON()
+    json.event = this.event
+    json.target = this.target
+    return json
   }
 }
 
@@ -322,9 +380,22 @@ class DirectiveNode extends Node {
   }
 
   get directiveType () { return this._directiveType }
+
+  toJSON () {
+    let json = super.toJSON()
+    json.directiveType = this.directiveType
+    return json
+  }
 }
 
 export class UseDirectiveNode extends DirectiveNode {
+  static fromJSON (json) {
+    let inst = new UseDirectiveNode(json.machineId)
+    inst.line = json.line
+    inst.column = json.column
+    return inst
+  }
+
   /**
    * @param {string} machineId
    */
@@ -372,10 +443,10 @@ export class UseDirectiveNode extends DirectiveNode {
     }
   }
 
-  clone () {
-    let inst = new UseDirectiveNode(this.machineId)
-    Object.assign(inst, this)
-    return inst
+  toJSON () {
+    let json = super.toJSON()
+    json.machineId = this.machineId
+    return json
   }
 }
 

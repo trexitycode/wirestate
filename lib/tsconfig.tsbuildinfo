@@ -109,10 +109,10 @@
         "version": "fb3a560f63ffcafa2171651a47c27b69fe57020f9b76b0b2688d31934721f255"
       },
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/ast-nodes.js": {
-        "version": "7f13bb2d6ea038bb6a900314c41fe3042ce589b999d53bfe1c4f0be45292f1be"
+        "version": "5d8b7ef949ae1e8f6039608d22c8262369929eb08bb835fee7b9c1fb02331274"
       },
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/parser.js": {
-        "version": "04322103a917c1bfc3cd0bf0910269ad38d17e2c4f7fb920369090bc55a671a4"
+        "version": "7988e8fc2378a55eb40a5c3a10cf26d4b0c07c1c7be65c97f90acb6bf79e7ae4"
       },
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/analyzer.js": {
         "version": "4727bbad9b6ba95689d57795d5fa3ae24999b8dadd6bb15252bfdb70a9852e0b"
@@ -1134,11 +1134,6 @@
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/typescript/lib/lib.esnext.intl.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/typescript/lib/lib.esnext.bigint.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/tokenizer.js",
-      "/users/darren/workspace/launchfort/sandbox/wirestate/src/ast-nodes.js",
-      "/users/darren/workspace/launchfort/sandbox/wirestate/src/parser.js",
-      "/users/darren/workspace/launchfort/sandbox/wirestate/src/analyzer.js",
-      "/users/darren/workspace/launchfort/sandbox/wirestate/src/index.js",
-      "/users/darren/workspace/launchfort/sandbox/wirestate/src/tokenize.test.js",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/globals.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/assert.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/async_hooks.d.ts",
@@ -1183,7 +1178,12 @@
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/util.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/globals.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/index.d.ts",
-      "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/q/index.d.ts"
+      "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/q/index.d.ts",
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/ast-nodes.js",
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/parser.js",
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/analyzer.js",
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/index.js",
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/tokenize.test.js"
     ]
   },
   "version": "3.4.5"
