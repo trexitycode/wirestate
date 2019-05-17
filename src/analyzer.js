@@ -3,8 +3,19 @@ import * as Path from 'path'
 import { promisify } from 'util'
 import { makeTokenizer } from './tokenizer'
 import { makeParser } from './parser'
-// eslint-disable-next-line no-unused-vars
-import { walk, resolveState, ScopeNode, ImportNode, MachineNode, StateNode, UseDirectiveNode } from './ast-nodes'
+import {
+  resolveState,
+  ScopeNode,
+  // eslint-disable-next-line no-unused-vars
+  ImportNode,
+  // eslint-disable-next-line no-unused-vars
+  MachineNode,
+  // eslint-disable-next-line no-unused-vars
+  StateNode,
+  // eslint-disable-next-line no-unused-vars
+  UseDirectiveNode
+} from './ast-nodes'
+import { Cache } from './internal'
 
 const stat = promisify(FS.stat)
 const readFile = promisify(FS.readFile)
@@ -26,26 +37,26 @@ const normalizeEventName = eventName => {
 /**
  * @param {ScopeNode} scopeNode
  * @param {Object} [options]
+ * @param {Cache} [options.cache]
  * @param {string[]} [options.dirs] The directories to search for wirestate files
  * @return {Promise<ScopeNode>}
  */
-function analyze (scopeNode, { dirs = [] } = {}) {
+function analyze (scopeNode, { cache, dirs = [] }) {
   if (scopeNode instanceof ScopeNode) {
-    return analyzeScopeNode(scopeNode.clone(), { dirs })
+    return analyzeScopeNode(scopeNode.clone(), { cache, dirs })
   } else {
     throw new Error('Can only analyzie ScopeNode instances')
   }
 }
 
-/** @type {Map<string, Promise<ScopeNode>>} */
-const cache = new Map()
 /**
  * @param {string} wireStateFile
  * @param {Object} [options]
+ * @param {Cache} [options.cache]
  * @param {string[]} [options.dirs]
  * @return {Promise<ScopeNode>}
  */
-async function requireWireStateFile (wireStateFile, { dirs = [] }) {
+async function requireWireStateFile (wireStateFile, { cache, dirs = [] }) {
   dirs = dirs.length === 0 ? [ '.' ] : dirs
 
   const fileNames = dirs.map(dir => Path.join(dir, wireStateFile))
@@ -69,11 +80,12 @@ async function requireWireStateFile (wireStateFile, { dirs = [] }) {
     )
   }
 
-  if (cache.has(firstMatchedFileName)) {
+  const cacheHit = await cache.has(wireStateFile)
+  if (cacheHit) {
     return cache.get(firstMatchedFileName)
   }
 
-  cache.set(firstMatchedFileName, new Promise((resolve, reject) => {
+  cache.set(wireStateFile, new Promise((resolve, reject) => {
     readFile(firstMatchedFileName, 'utf8').then(text => {
       const tokenizer = makeTokenizer({ fileName: firstMatchedFileName })
       const parser = makeParser({ fileName: firstMatchedFileName })
@@ -90,9 +102,10 @@ async function requireWireStateFile (wireStateFile, { dirs = [] }) {
 /**
  * @param {ScopeNode} scopeNode
  * @param {Object} [options]
+ * @param {Cache} [options.cache]
  * @param {string[]} [options.dirs]
  */
-async function analyzeScopeNode (scopeNode, { dirs = [] } = {}) {
+async function analyzeScopeNode (scopeNode, { cache, dirs = [] }) {
   // Ensure that we have unique machine IDs
   const machineIds = scopeNode.machines.map(machineNode => machineNode.id)
   const uniqueMachineIds = new Set(machineIds)
@@ -113,12 +126,16 @@ async function analyzeScopeNode (scopeNode, { dirs = [] } = {}) {
   // Analyze the import nodes
   await Promise.all(
     scopeNode.imports.map(async (node) => {
-      return analyzeImportNode(node, { dirs })
+      return analyzeImportNode(node, { cache, dirs })
     })
   )
 
   // Analyze the machine nodes
-  scopeNode._machines = scopeNode.machines.map(machineNode => analyzeMachineNode(machineNode))
+  scopeNode._machines = await Promise.all(
+    scopeNode.machines.map(machineNode => {
+      return analyzeMachineNode(machineNode, { cache })
+    })
+  )
 
   return scopeNode
 }
@@ -126,23 +143,28 @@ async function analyzeScopeNode (scopeNode, { dirs = [] } = {}) {
 /**
  * @param {ImportNode} importNode
  * @param {Object} [options]
+ * @param {Cache} [options.cache]
  * @param {string[]} [options.dirs]
  */
-async function analyzeImportNode (importNode, { dirs = [] } = {}) {
-  const fileToImport = importNode.file.startsWith('.')
+async function analyzeImportNode (importNode, { cache, dirs = [] }) {
+  const file = importNode.file.startsWith('./') || importNode.file.startsWith('.\\')
     ? Path.join(importNode.parent.fileName, importNode.file)
     : importNode.file
 
-  importNode.scopeNode = await requireWireStateFile(fileToImport, { dirs })
+  importNode._file = file
+
+  requireWireStateFile(file, { cache, dirs })
 
   return importNode
 }
 
 /**
  * @param {MachineNode} machineNode
- * @return {MachineNode}
+ * @param {Object} options
+ * @param {Cache} options.cache
+ * @return {Promise<MachineNode>}
  */
-function analyzeMachineNode (machineNode) {
+async function analyzeMachineNode (machineNode, { cache }) {
   // Ensure that we have unique state IDs
   const stateIds = machineNode.states.map(stateNode => stateNode.id)
   const uniqueStateIds = new Set(stateIds)
@@ -230,18 +252,22 @@ function analyzeMachineNode (machineNode) {
   }
 
   // Analyze state nodes
-  machineNode._states = machineNode.states.map(stateNode => {
-    return analyzeStateNode(stateNode)
-  })
+  machineNode._states = await Promise.all(
+    machineNode.states.map(stateNode => {
+      return analyzeStateNode(stateNode, { cache })
+    })
+  )
 
   return machineNode
 }
 
 /**
  * @param {StateNode} stateNode
- * @return {StateNode}
+ * @param {Object} options
+ * @param {Cache} options.cache
+ * @return {Promise<StateNode>}
  */
-function analyzeStateNode (stateNode) {
+async function analyzeStateNode (stateNode, { cache }) {
   // Transient states cannot have child states
   if (stateNode.stateType === 'transient' && stateNode.states.length > 0) {
     throw new SemanticError(`Transient states cannot have child states\n  State ID: ${stateNode.id}"`, {
@@ -343,23 +369,43 @@ function analyzeStateNode (stateNode) {
   }
 
   // Analyze state nodes
-  stateNode._states = stateNode.states.map(stateNode => {
-    return analyzeStateNode(stateNode)
-  })
+  stateNode._states = await Promise.all(
+    stateNode.states.map(stateNode => {
+      return analyzeStateNode(stateNode, { cache })
+    })
+  )
 
   // Analyze @use directive
-  stateNode.useDirective = analyzeUseDirectiveNode(stateNode.useDirective)
+  stateNode.useDirective = await analyzeUseDirectiveNode(stateNode.useDirective, { cache })
 
   return stateNode
 }
 
 /**
  * @param {UseDirectiveNode} useDirectiveNode
- * @return {UseDirectiveNode}
+ * @param {Object} options
+ * @param {Cache} options.cache
+ * @return {Promise<UseDirectiveNode>}
  */
-function analyzeUseDirectiveNode (useDirectiveNode) {
+async function analyzeUseDirectiveNode (useDirectiveNode, { cache }) {
   if (useDirectiveNode) {
-    const machineNode = useDirectiveNode.machineNode
+    const machineId = useDirectiveNode.machineId
+    const scopeNode = useDirectiveNode.parent.scopeNode
+    let machineNode = scopeNode.machines.find(machineNode => {
+      return machineNode.id === machineId
+    })
+
+    if (!machineNode) {
+      const importedScopeNodes = await Promise.all(
+        scopeNode.imports.map(importNode => cache.get(importNode.file))
+      )
+      importedScopeNodes.some(scopeNode => {
+        machineNode = scopeNode.machines.find(machineNode => {
+          return machineNode.id === machineId
+        })
+        return !!machineNode
+      })
+    }
 
     if (!machineNode) {
       throw new SemanticError(`Machine not found\n  Machine ID: ${useDirectiveNode.machineId}`, {
@@ -375,6 +421,18 @@ function analyzeUseDirectiveNode (useDirectiveNode) {
   }
 }
 
-export const makeAnalyzer = () => {
-  return { analyze }
+/**
+ * @param {Object} [options]
+ * @param {string[]} [options.dirs]
+ * @param {string} [options.cacheDir]
+ */
+export const makeAnalyzer = ({ dirs = [], cacheDir = '.wirestate' } = {}) => {
+  const cache = new Cache({ cacheDir })
+
+  return {
+    /** @param {ScopeNode} scopeNode */
+    analyze (scopeNode) {
+      return analyze(scopeNode, { cache, dirs })
+    }
+  }
 }

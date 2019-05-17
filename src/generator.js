@@ -22,29 +22,7 @@ export function makeGenerator () {
 
 /** @param {ScopeNode} scopeNode */
 function jsonGenerator (scopeNode) {
-  /** @param {ScopeNode} scopeNode */
-  const toJsonNode = scopeNode => {
-    const jsonNode = {
-      name: scopeNode.name,
-      initial: scopeNode.initial ? true : undefined,
-      final: scopeNode.final ? true : undefined,
-      parallel: scopeNode.parallel ? true : undefined
-    }
-
-    if (scopeNode.transitions.length) {
-      jsonNode.transitions = scopeNode.transitions.map(transition => {
-        return { event: transition.event, target: transition.target }
-      })
-    }
-
-    if (scopeNode.states.length) {
-      jsonNode.states = scopeNode.states.map(toJsonNode)
-    }
-
-    return jsonNode
-  }
-
-  return JSON.stringify(toJsonNode(scopeNode), null, 2)
+  return JSON.stringify(scopeNode, null, 2)
 }
 
 /** @param {ScopeNode} scopeNode */

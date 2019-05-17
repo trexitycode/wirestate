@@ -1,3 +1,4 @@
+import * as Path from 'path'
 import { StateNode, TransitionNode, ImportNode, ScopeNode, MachineNode, UseDirectiveNode, EventProtocolNode } from './ast-nodes'
 
 const makeScanner = (tokens, { fileName = '' } = {}) => {
@@ -51,13 +52,11 @@ const makeScanner = (tokens, { fileName = '' } = {}) => {
             p -= 1
             t += 1
           }
-          patternDoesMatch = true
         // Zero or one token type (0 or 1)
         } else if (pattern.endsWith('?')) {
           if (token.type === pattern.substr(0, pattern.length - 1)) {
             t += 1
           }
-          patternDoesMatch = true
         } else {
           t += 1
           patternDoesMatch = token.type === pattern
@@ -464,9 +463,14 @@ const parseUseDirectiveNode = (scanner) => {
 }
 
 export const makeParser = ({ fileName = '' } = {}) => {
+  if (Path.isAbsolute(fileName)) {
+    throw new Error('Parse fileName must be relative')
+  }
+
   const parse = (tokens) => {
     const scanner = makeScanner(tokens, { fileName })
     return parseScopeNode(scanner, { fileName })
   }
+
   return { parse }
 }

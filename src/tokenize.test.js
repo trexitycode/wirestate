@@ -19,7 +19,7 @@ const state = `
   Start
 `
 
-const fileName = '/App.wirestate'
+const fileName = 'App.wirestate'
 const tokenizer = makeTokenizer({ fileName })
 const tokens = tokenizer.tokenize(state)
 

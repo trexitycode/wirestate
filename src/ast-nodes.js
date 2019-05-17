@@ -91,7 +91,6 @@ export class ImportNode extends Node {
     let inst = new ImportNode(json.machineIds, json.file)
     inst.line = json.line
     inst.column = json.column
-    // TOOD: Set inst.scopeNode
     return inst
   }
 
@@ -105,8 +104,6 @@ export class ImportNode extends Node {
     this._machineIds = machineIds.slice()
     /** @private */
     this._file = file
-    /** @type {ScopeNode} */
-    this.scopeNode = null
   }
 
   get file () { return this._file }
@@ -407,29 +404,6 @@ export class UseDirectiveNode extends DirectiveNode {
 
   get machineId () { return this._machineId }
 
-  get machineNode () {
-    const scopeNode = this.parent.scopeNode
-    // Attempt to locate the machine from within our immediate scope
-    let machineNode = scopeNode.machines.find(machineNode => {
-      return machineNode.id === this.machineId
-    })
-
-    // If no machine is found in our immediate scope then we look in our imported scopes
-    if (!machineNode) {
-      const importNode = scopeNode.imports.find(importNode => {
-        return importNode.machineIds.includes(this.machineId)
-      })
-
-      if (importNode) {
-        machineNode = importNode.scopeNode.machines.find(machineNode => {
-          return machineNode.id === this.machineId
-        })
-      }
-    }
-
-    return machineNode || null
-  }
-
   /** @type {StateNode} */
   get parent () {
     // @ts-ignore
@@ -478,8 +452,6 @@ export const walk = (node, visit) => {
       stack.unshift(...node.transitions)
       stack.unshift(...node.eventProtocols)
       stack.unshift(...node.states)
-    } else if (node instanceof ImportNode) {
-      node.scopeNode && stack.unshift(node.scopeNode)
     }
   }
 
