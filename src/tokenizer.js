@@ -44,7 +44,7 @@ const makeScanner = (str) => {
   }
 }
 
-export const makeTokenizer = ({ fileName = '' } = {}) => {
+export const makeTokenizer = ({ wireStateFile = '' } = {}) => {
   const commentToken = {
     canRead (scanner) { return scanner.c === '#' },
     read (scanner) {
@@ -118,7 +118,7 @@ export const makeTokenizer = ({ fileName = '' } = {}) => {
         } else if (c === '\\') {
           c = scanner.advance()
           if (!c) {
-            isTerminated = false
+            // isTerminated = false
             break
           }
           switch (c) {
@@ -139,11 +139,13 @@ export const makeTokenizer = ({ fileName = '' } = {}) => {
               break
             case 'u':
               if (scanner.index >= scanner.text.len) {
-                isTerminated = false
+                // isTerminated = false
+                break
               }
               c = parseInt(scanner.text.substr(scanner.index + 1, 4), 16)
               if (!isFinite(c) || c < 0) {
-                isTerminated = false
+                // isTerminated = false
+                break
               }
               c = String.fromCharCode(c)
               scanner.advance(4)
@@ -153,7 +155,7 @@ export const makeTokenizer = ({ fileName = '' } = {}) => {
           c = scanner.advance()
         } else if (c === quote) {
           isTerminated = true
-          c = scanner.advance()
+          scanner.advance()
           break
         } else {
           buffer += c
@@ -163,8 +165,8 @@ export const makeTokenizer = ({ fileName = '' } = {}) => {
 
       if (!isTerminated) {
         throw Object.assign(
-          new Error(`LexicalError: Unterminated string "${buffer}" [L:${scanner.line} C:${scanner.column} File:${fileName}]`),
-          { line: scanner.line, column: scanner.column, fileName }
+          new Error(`LexicalError: Unterminated string "${buffer}" [L:${scanner.line} C:${scanner.column} File:${wireStateFile}]`),
+          { line: scanner.line, column: scanner.column, fileName: wireStateFile }
         )
       }
 
@@ -285,8 +287,8 @@ export const makeTokenizer = ({ fileName = '' } = {}) => {
   const tokenize = (text) => {
     const scanner = makeScanner(text)
     let tokens = []
-    let line = scanner.line
-    let column = scanner.column
+    let line = 0
+    let column = 0
     let noMatch = true
     let token = null
 
@@ -307,8 +309,8 @@ export const makeTokenizer = ({ fileName = '' } = {}) => {
 
       if (noMatch) {
         throw Object.assign(new Error(
-          `LexicalError: Unknown charcter: ${scanner.c} [L:${line} C:${column} File:${fileName}]`
-        ), { line, column, fileName })
+          `LexicalError: Unknown charcter: ${scanner.c} [L:${line} C:${column} File:${wireStateFile}]`
+        ), { line, column, fileName: wireStateFile })
       }
     }
 

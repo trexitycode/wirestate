@@ -37,14 +37,16 @@ const normalizeEventName = eventName => {
 
 /**
  * @param {ScopeNode} scopeNode
- * @param {Object} [options]
- * @param {Cache} [options.cache]
+ * @param {Object} options
+ * @param {Cache} options.cache
  * @param {string[]} [options.dirs] The directories to search for wirestate files
  * @return {Promise<ScopeNode>}
  */
 function analyze (scopeNode, { cache, dirs = [] }) {
   if (scopeNode instanceof ScopeNode) {
-    return analyzeScopeNode(scopeNode.clone(), { cache, dirs })
+    const promise = analyzeScopeNode(scopeNode.clone(), { cache, dirs })
+    cache.set(scopeNode.fileName, scopeNode)
+    return promise
   } else {
     throw new Error('Can only analyzie ScopeNode instances')
   }
@@ -52,13 +54,17 @@ function analyze (scopeNode, { cache, dirs = [] }) {
 
 /**
  * @param {string} wireStateFile
- * @param {Object} [options]
- * @param {Cache} [options.cache]
+ * @param {Object} options
+ * @param {Cache} options.cache
  * @param {string[]} [options.dirs]
  * @return {Promise<ScopeNode>}
  */
-async function requireWireStateFile (wireStateFile, { cache, dirs = [] }) {
+export async function requireWireStateFile (wireStateFile, { cache, dirs = [] }) {
   dirs = dirs.length === 0 ? [ '.' ] : dirs
+
+  if (wireStateFile.startsWith('.')) {
+    throw new Error(`WireState file cannot start with ./ or ../`)
+  }
 
   const fileNames = dirs.map(dir => Path.join(dir, wireStateFile))
   const matchResults = await Promise.all(
@@ -88,12 +94,12 @@ async function requireWireStateFile (wireStateFile, { cache, dirs = [] }) {
 
   cache.set(wireStateFile, new Promise((resolve, reject) => {
     readFile(firstMatchedFileName, 'utf8').then(text => {
-      const tokenizer = makeTokenizer({ fileName: firstMatchedFileName })
-      const parser = makeParser({ fileName: firstMatchedFileName })
+      const tokenizer = makeTokenizer({ wireStateFile })
+      const parser = makeParser({ wireStateFile })
       const tokens = tokenizer.tokenize(text)
       const scopeNode = parser.parse(tokens)
 
-      resolve(analyze(scopeNode, { dirs }))
+      resolve(analyze(scopeNode, { cache, dirs }))
     }, reject)
   }))
 
@@ -102,8 +108,8 @@ async function requireWireStateFile (wireStateFile, { cache, dirs = [] }) {
 
 /**
  * @param {ScopeNode} scopeNode
- * @param {Object} [options]
- * @param {Cache} [options.cache]
+ * @param {Object} options
+ * @param {Cache} options.cache
  * @param {string[]} [options.dirs]
  */
 async function analyzeScopeNode (scopeNode, { cache, dirs = [] }) {
@@ -143,14 +149,25 @@ async function analyzeScopeNode (scopeNode, { cache, dirs = [] }) {
 
 /**
  * @param {ImportNode} importNode
- * @param {Object} [options]
- * @param {Cache} [options.cache]
+ * @param {Object} options
+ * @param {Cache} options.cache
  * @param {string[]} [options.dirs]
  */
 async function analyzeImportNode (importNode, { cache, dirs = [] }) {
-  const file = importNode.file.startsWith('./') || importNode.file.startsWith('.\\')
-    ? Path.join(importNode.parent.fileName, importNode.file)
+  if (Path.isAbsolute(importNode.file)) {
+    throw new SemanticError(`Import file cannot be absolute`, {
+      fileName: importNode.parent.fileName,
+      line: importNode.line,
+      column: importNode.column
+    })
+  }
+
+  let file = /^\.+[/\\]/.test(importNode.file)
+    ? Path.join(Path.dirname(importNode.parent.fileName), importNode.file)
     : importNode.file
+
+  // Ensure the file we're importing has an extension, by default it's the .wirestate extension
+  file = Path.extname(file) ? file : `${file}.wirestate`
 
   importNode._file = file
 
@@ -423,11 +440,11 @@ async function analyzeUseDirectiveNode (useDirectiveNode, { cache }) {
 }
 
 /**
- * @param {Object} [options]
+ * @param {Object} options
  * @param {Cache} options.cache
  * @param {string[]} [options.dirs]
  */
-export const makeAnalyzer = ({ dirs = [], cache }) => {
+export const makeAnalyzer = ({ cache, dirs = [] }) => {
   return {
     /** @param {ScopeNode} scopeNode */
     analyze (scopeNode) {

@@ -1,37 +1,23 @@
-import * as FS from 'fs'
 import * as Path from 'path'
-import { promisify } from 'util'
-import { makeTokenizer } from './tokenizer'
-import { makeParser } from './parser'
-import { makeAnalyzer } from './analyzer'
+import { makeAnalyzer, requireWireStateFile } from './analyzer'
 import { makeGenerator } from './generator'
+import { Cache } from './cache'
 
-const readFile = promisify(FS.readFile)
+export const compile = async (fileName, { dir = '', cacheDir = '.wirestate', generatorName = 'json' } = {}) => {
+  const cache = new Cache({ cacheDir })
+  const wireStateFile = Path.relative(Path.resolve(dir), Path.resolve(fileName))
+  const cacheHit = await cache.has(wireStateFile)
+  let scopeNode = null
 
-export const compileFromSource = async (src, generatorName = 'json') => {
-  const tokenizer = makeTokenizer()
-  const tokens = tokenizer.tokenize(src)
+  if (cacheHit) {
+    scopeNode = await cache.get(wireStateFile)
+  } else {
+    scopeNode = await requireWireStateFile(wireStateFile, { cache, dirs: [ dir ] })
+  }
 
-  const parser = makeParser()
-  const ast = parser.parse(tokens)
+  const analyzer = makeAnalyzer({ cache, dirs: [ dir ] })
 
-  const analyzer = makeAnalyzer()
-  const newAst = await analyzer.analyze(ast)
+  await analyzer.analyze(scopeNode)
   const generator = makeGenerator()
-  return generator.generate(newAst, generatorName)
-}
-
-export const compile = async (fileName, generatorName = 'json') => {
-  const src = await readFile(fileName, 'utf8')
-  const tokenizer = makeTokenizer()
-  const tokens = tokenizer.tokenize(src)
-
-  const rootStateName = Path.basename(fileName, Path.extname(fileName))
-  const parser = makeParser()
-  const ast = parser.parse(tokens, rootStateName)
-
-  const analyzer = makeAnalyzer()
-  const newAst = await analyzer.analyze(ast, { fileName })
-  const generator = makeGenerator()
-  return generator.generate(newAst, generatorName)
+  return generator.generate(cache, { generatorName })
 }

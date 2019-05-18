@@ -1,7 +1,7 @@
 import * as Path from 'path'
 import { StateNode, TransitionNode, ImportNode, ScopeNode, MachineNode, UseDirectiveNode, EventProtocolNode } from './ast-nodes'
 
-const makeScanner = (tokens, { fileName = '' } = {}) => {
+const makeScanner = (tokens, { wireStateFile = '' } = {}) => {
   // Remove the comments and whitespace
   tokens = tokens.filter(t => t.type !== 'comment' && t.type !== 'whitespace')
 
@@ -17,8 +17,8 @@ const makeScanner = (tokens, { fileName = '' } = {}) => {
     if (token) {
       message = message || `Unexpected token ${token.type}:"${token.value}"`
       return Object.assign(
-        new Error(`SyntaxError${message ? ': ' + message : ''} near [L:${token.line} C:${token.column} File:${fileName}]`),
-        { line: token.line, column: token.column, fileName }
+        new Error(`SyntaxError${message ? ': ' + message : ''} near [L:${token.line} C:${token.column} WireState File:${wireStateFile}]`),
+        { line: token.line, column: token.column, wireStateFile }
       )
     } else {
       return new Error(`SyntaxError: Unexpected end of input`)
@@ -141,8 +141,8 @@ const makeScanner = (tokens, { fileName = '' } = {}) => {
   }
 }
 
-const parseScopeNode = (scanner, { fileName = '' } = {}) => {
-  const scopeNode = new ScopeNode(fileName)
+const parseScopeNode = (scanner, { wireStateFile = '' } = {}) => {
+  const scopeNode = new ScopeNode(wireStateFile)
   let importNodesValid = true
   let indent = 0
 
@@ -462,14 +462,18 @@ const parseUseDirectiveNode = (scanner) => {
   return node
 }
 
-export const makeParser = ({ fileName = '' } = {}) => {
-  if (Path.isAbsolute(fileName)) {
-    throw new Error('Parse fileName must be relative')
+export const makeParser = ({ wireStateFile = '' } = {}) => {
+  if (Path.isAbsolute(wireStateFile)) {
+    throw new Error('Parse wireStateFile must be relative')
+  }
+
+  if (wireStateFile.startsWith('.')) {
+    throw new Error('Parse wireStateFile cannot be prefixed with ./ or ../')
   }
 
   const parse = (tokens) => {
-    const scanner = makeScanner(tokens, { fileName })
-    return parseScopeNode(scanner, { fileName })
+    const scanner = makeScanner(tokens, { wireStateFile })
+    return parseScopeNode(scanner, { wireStateFile })
   }
 
   return { parse }

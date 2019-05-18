@@ -1,7 +1,7 @@
 {
   "name": "wirestate",
-  "version": "0.0.2",
-  "description": "Statechart wireframe generator",
+  "version": "0.1.0",
+  "description": "Behavioral statechart compiler",
   "bin": {
     "wirestate": "bin/wirestate.js"
   },
@@ -18,8 +18,9 @@
   },
   "author": "Darren Schnare <dschnare@launchfort.com>",
   "dependencies": {
-    "prop-types": "15.7.2",
-    "react": "16.8.5"
+    "mkdirp": "^0.5.1",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.5"
   },
   "devDependencies": {
     "@types/node": "11.10.5",

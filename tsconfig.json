@@ -19,8 +19,6 @@
     "src"
   ],
   "exclude": [
-    "src/compile.js",
-    "src/generator.js",
     "src/interpreter",
     "src/bindings"
   ]

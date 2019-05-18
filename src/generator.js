@@ -1,40 +1,41 @@
 /* eslint-disable-next-line */
-import { resolveState, ScopeNode } from './ast-nodes'
+import { Cache } from './cache'
 
 export function makeGenerator () {
   /**
-   * @param {StateNode} node
-   * @param {string} generatorName
+   * @param {Cache} cache
+   * @param {Object} [options]
+   * @param {string} [options.generatorName]
    */
-  const generate = (node, generatorName) => {
+  const generate = (cache, { generatorName = 'json' } = {}) => {
     if (!generatorName) {
       throw new Error('Generator name must be provided')
     }
 
-    if (generatorName === 'json') return jsonGenerator(node)
-    if (generatorName === 'json-commonjs') return jsonCommonJsGenerator(node)
-    if (generatorName === 'json-esm') return jsonEsmGenerator(node)
+    if (generatorName === 'json') return jsonGenerator(cache)
+    if (generatorName === 'json-commonjs') return jsonCommonJsGenerator(cache)
+    if (generatorName === 'json-esm') return jsonEsmGenerator(cache)
 
     throw new Error(`Generator "${generatorName}" not found`)
   }
   return { generate }
 }
 
-/** @param {ScopeNode} scopeNode */
-function jsonGenerator (scopeNode) {
-  return JSON.stringify(scopeNode, null, 2)
+/** @param {Cache} cache */
+function jsonGenerator (cache) {
+  return JSON.stringify(cache, null, 2)
 }
 
-/** @param {ScopeNode} scopeNode */
-function jsonCommonJsGenerator (scopeNode) {
+/** @param {Cache} cache */
+function jsonCommonJsGenerator (cache) {
   return [
-    'exports.config = ', jsonGenerator(scopeNode)
+    'exports.config = ', jsonGenerator(cache)
   ].join('')
 }
 
-/** @param {ScopeNode} scopeNode */
-function jsonEsmGenerator (scopeNode) {
+/** @param {Cache} cache */
+function jsonEsmGenerator (cache) {
   return [
-    'export const config = ', jsonGenerator(scopeNode)
+    'export const config = ', jsonGenerator(cache)
   ].join('')
 }

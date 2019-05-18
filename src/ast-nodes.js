@@ -318,6 +318,7 @@ export class StateNode extends CompoundNode {
     json.parallel = this.parallel
     json.final = this.final
     json.indent = this.indent
+    json.useDirective = this.useDirective
     return json
   }
 }
@@ -397,7 +398,7 @@ export class UseDirectiveNode extends DirectiveNode {
    * @param {string} machineId
    */
   constructor (machineId) {
-    super('@user')
+    super('@use')
     /** @private */
     this._machineId = machineId
   }
