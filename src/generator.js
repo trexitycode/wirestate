@@ -23,7 +23,11 @@ export function makeGenerator () {
 
 /** @param {Cache} cache */
 function jsonGenerator (cache) {
-  return JSON.stringify(cache, null, 2)
+  const blacklistedProps = [ 'line', 'column', 'indent' ]
+  return JSON.stringify(cache, (key, value) => {
+    if (blacklistedProps.includes(key)) return undefined
+    return value
+  }, 2)
 }
 
 /** @param {Cache} cache */
