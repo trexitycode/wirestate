@@ -60,8 +60,8 @@ function readOption (names, args, { defaultValue = null }) {
   }
 }
 
-async function generate (inputFileName, { generatorName, dir, cacheDir }) {
-  return WireState.compile(inputFileName, { generatorName, dir, cacheDir })
+async function generate (inputFileName, { generatorName, srcDir, cacheDir }) {
+  return WireState.compile(inputFileName, { generatorName, srcDir, cacheDir })
 }
 
 function main () {
@@ -78,16 +78,16 @@ wirestate {input file} [--output {output type}]`
   }
 
   const inputFileName = args.find(arg => !arg.startsWith('-'))
-  const dir = readOption([ '--dir' ], args, { defaultValue: '' })
-  const generatorName = readOption([ '--generator' ], args, { defaultValue: 'json' })
+  const srcDir = readOption([ '--srcDir' ], args, { defaultValue: '' })
   const cacheDir = readOption([ '--cacheDir' ], args, { defaultValue: '.wirestate' })
+  const generatorName = readOption([ '--generator' ], args, { defaultValue: 'json' })
 
   if (!inputFileName) {
     help()
     process.exit(20)
   }
 
-  return generate(inputFileName, { dir, generatorName, cacheDir })
+  return generate(inputFileName, { srcDir, generatorName, cacheDir })
 }
 
 // Entry ---------

@@ -33,8 +33,10 @@ const scopeNode = parser.parse(tokens)
 
 const cache = new Cache()
 const analyzer = makeAnalyzer({ cache })
-analyzer.analyze(scopeNode).then(() => {
+analyzer.analyze(scopeNode).then(async scopeNode => {
   // console.dir({ scopeNode }, { depth: 30 })
+
+  await cache.set(wireStateFile, Promise.resolve(scopeNode))
   const generator = makeGenerator()
   console.log(generator.generate(cache))
 }, error => {

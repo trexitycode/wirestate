@@ -194,9 +194,9 @@ const parseImportNode = (scanner) => {
 
   scanner.consume({ value: '}' })
   scanner.consume({ value: 'from' })
-  const file = scanner.consume({ type: 'string' }).value
+  const wireStateFile = scanner.consume({ type: 'string' }).value
 
-  let importNode = new ImportNode(ids, file)
+  let importNode = new ImportNode(ids, wireStateFile)
   importNode.line = firstToken.line
   importNode.column = firstToken.column
   return importNode

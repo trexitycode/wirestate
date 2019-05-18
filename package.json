@@ -14,7 +14,7 @@
     "test:react": "parcel test/index.html --out-dir test/build",
     "build": "tsc -p .",
     "lint": "eslint --fix src",
-    "clean": "rimraf build lib"
+    "clean": "rimraf build lib .wirestate"
   },
   "author": "Darren Schnare <dschnare@launchfort.com>",
   "dependencies": {

@@ -46,7 +46,7 @@ class Node {
 
 export class ScopeNode extends Node {
   static fromJSON (json) {
-    let inst = new ScopeNode(json.fileName)
+    let inst = new ScopeNode(json.wireStateFile)
     inst.line = json.line
     inst.column = json.column
     inst._machines = json.machines.map(MachineNode.fromJSON)
@@ -56,9 +56,9 @@ export class ScopeNode extends Node {
     return inst
   }
 
-  constructor (fileName = '') {
+  constructor (wireStateFile = '') {
     super('scope')
-    this._fileName = fileName
+    this._wireStateFile = wireStateFile
     /**
      * @private
      * @type {ImportNode[]}
@@ -71,7 +71,7 @@ export class ScopeNode extends Node {
     this._machines = []
   }
 
-  get fileName () { return this._fileName }
+  get wireStateFile () { return this._wireStateFile }
   get imports () { return this._imports }
   get machines () { return this._machines }
   set parent (value) {
@@ -80,6 +80,7 @@ export class ScopeNode extends Node {
 
   toJSON () {
     let json = super.toJSON()
+    json.wireStateFile = this.wireStateFile
     json.imports = this._imports.map(n => n.toJSON())
     json.machines = this._machines.map(n => n.toJSON())
     return json
@@ -88,7 +89,7 @@ export class ScopeNode extends Node {
 
 export class ImportNode extends Node {
   static fromJSON (json) {
-    let inst = new ImportNode(json.machineIds, json.file)
+    let inst = new ImportNode(json.machineIds, json.wireStateFile)
     inst.line = json.line
     inst.column = json.column
     return inst
@@ -96,17 +97,17 @@ export class ImportNode extends Node {
 
   /**
    * @param {string[]} machineIds
-   * @param {string} file
+   * @param {string} wireStateFile
    */
-  constructor (machineIds, file) {
+  constructor (machineIds, wireStateFile) {
     super('import')
     /** @private */
     this._machineIds = machineIds.slice()
     /** @private */
-    this._file = file
+    this._wireStateFile = wireStateFile
   }
 
-  get file () { return this._file }
+  get wireStateFile () { return this._wireStateFile }
   get machineIds () { return this._machineIds }
   /** @type {ScopeNode} */
   get parent () {
@@ -123,7 +124,7 @@ export class ImportNode extends Node {
 
   toJSON () {
     let json = super.toJSON()
-    json.file = this.file
+    json.wireStateFile = this.wireStateFile
     json.machineIds = this.machineIds.slice()
     return json
   }

@@ -1,17 +1,18 @@
 import * as Path from 'path'
 import * as FS from 'fs'
 import { promisify } from 'util'
-import * as Mkdirp from 'mkdirp'
 import { ScopeNode } from './ast-nodes'
+import * as FileSystem from './file-system'
+import { requireWireStateFile } from './analyzer'
 
 const fsReadFile = promisify(FS.readFile)
 const fsWriteFile = promisify(FS.writeFile)
 const fsUnlink = promisify(FS.unlink)
 const fsStat = promisify(FS.stat)
-const mkdirp = promisify(Mkdirp)
 
 export class Cache {
-  constructor ({ cacheDir = '.wirestate' } = {}) {
+  constructor ({ srcDir = '', cacheDir = '.wirestate' } = {}) {
+    this._srcDir = srcDir
     this._cacheDir = cacheDir
     // Table used to prevent multiple file load calls from occuring
     // i.e. if we save a promise then the get() method returns this promise
@@ -22,38 +23,36 @@ export class Cache {
     this._scopes = new Map()
   }
 
+  get srcDir () { return this._srcDir }
   get cacheDir () { return this._cacheDir }
+  get keys () { return this._table.keys() }
 
-  get keys () {
-    return this._table.keys()
-  }
-
-  async set (fileName, promise) {
-    this._table.set(fileName, promise)
+  async set (wireStateFile, promise) {
+    this._table.set(wireStateFile, promise)
     const scopeNode = await promise
     const text = JSON.stringify(scopeNode, null, 2)
-    const file = Path.resolve(this.cacheDir, fileName)
+    const fileName = Path.resolve(this.cacheDir, wireStateFile)
 
-    this._scopes.set(fileName, scopeNode)
+    this._scopes.set(wireStateFile, scopeNode)
 
-    await mkdirp(Path.dirname(file))
-    await fsWriteFile(file, text, 'utf8')
+    await FileSystem.mkdirp(Path.dirname(fileName))
+    await fsWriteFile(fileName, text, 'utf8')
   }
 
-  async has (fileName) {
-    if (this._isInTable(fileName)) return true
-    return this._isInCacheDir(fileName)
+  async has (wireStateFile) {
+    if (this._isInTable(wireStateFile)) return true
+    return this._isInCacheDir(wireStateFile)
   }
 
-  async get (fileName) {
-    if (this._isInTable(fileName)) {
-      return this._loadFromTable(fileName)
+  async get (wireStateFile) {
+    if (this._isInTable(wireStateFile)) {
+      return this._loadFromTable(wireStateFile)
     } else {
-      const isInCacheDir = await this._isInCacheDir(fileName)
+      const isInCacheDir = await this._isInCacheDir(wireStateFile)
 
       if (isInCacheDir) {
-        const promise = this._loadFromCacheDir(fileName)
-        this.set(fileName, promise)
+        const promise = this._loadFromCacheDir(wireStateFile)
+        this.set(wireStateFile, promise)
         return promise
       } else {
         return null
@@ -61,12 +60,12 @@ export class Cache {
     }
   }
 
-  async delete (fileName) {
-    if (this._isInTable(fileName)) {
-      this._table.delete(fileName)
-      this._scopes.delete(fileName)
+  async delete (wireStateFile) {
+    if (this._isInTable(wireStateFile)) {
+      this._table.delete(wireStateFile)
+      this._scopes.delete(wireStateFile)
 
-      const file = Path.resolve(this.cacheDir, fileName)
+      const file = Path.resolve(this.cacheDir, wireStateFile)
 
       try {
         await fsUnlink(file)
@@ -93,23 +92,35 @@ export class Cache {
   toJSON () {
     let json = {}
 
-    for (let fileName of this._scopes.keys()) {
-      json[fileName] = this._scopes.get(fileName)
+    for (let wireStateFile of this._scopes.keys()) {
+      json[wireStateFile] = this._scopes.get(wireStateFile)
     }
 
     return json
   }
 
-  _isInTable (fileName) {
-    return this._table.has(fileName)
+  _isInTable (wireStateFile) {
+    return this._table.has(wireStateFile)
   }
 
-  async _isInCacheDir (fileName) {
-    const file = Path.resolve(this.cacheDir, fileName)
+  async _isInCacheDir (wireStateFile) {
+    const cachedFileName = Path.resolve(this.cacheDir, wireStateFile)
+    const srcFileName = Path.resolve(this.srcDir, wireStateFile)
+
+    // Load stat for the source file and the cached file
+    // If any file does not exist or is not a file then return false
+    // If cached file modified time is older than source file return false
+    // Otherwise return true
 
     try {
-      const stats = await fsStat(file)
-      return stats.isFile()
+      const cachedStats = await fsStat(cachedFileName)
+      const srcStats = await fsStat(srcFileName)
+
+      if (cachedStats.isFile() && srcStats.isFile()) {
+        return cachedStats.mtimeMs >= srcStats.mtimeMs
+      } else {
+        return false
+      }
     } catch (error) {
       if (error.code === 'ENOENT') {
         return false
@@ -119,14 +130,24 @@ export class Cache {
     }
   }
 
-  _loadFromTable (fileName) {
-    return this._table.get(fileName)
+  _loadFromTable (wireStateFile) {
+    return this._table.get(wireStateFile)
   }
 
-  async _loadFromCacheDir (fileName) {
-    const file = Path.resolve(this.cacheDir, fileName)
-    const text = await fsReadFile(file, 'utf8')
+  async _loadFromCacheDir (wireStateFile) {
+    const fileName = Path.resolve(this.cacheDir, wireStateFile)
+    const text = await fsReadFile(fileName, 'utf8')
     const json = JSON.parse(text)
-    return ScopeNode.fromJSON(json)
+    const scopeNode = ScopeNode.fromJSON(json)
+
+    await Promise.all(
+      scopeNode.imports.map(async importNode => {
+        const cacheHit = await this.has(importNode.wireStateFile)
+        if (cacheHit) return this.get(importNode.wireStateFile)
+        return requireWireStateFile(importNode.wireStateFile, { cache: this, srcDir: this.srcDir })
+      })
+    )
+
+    return scopeNode
   }
 }
