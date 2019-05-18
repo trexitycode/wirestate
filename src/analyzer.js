@@ -77,7 +77,7 @@ export async function requireWireStateFile (wireStateFile, { cache, srcDir = '' 
     return cache.get(wireStateFile)
   }
 
-  cache.set(wireStateFile, new Promise((resolve, reject) => {
+  const promise = new Promise((resolve, reject) => {
     readFile(fileName, 'utf8').then(text => {
       const tokenizer = makeTokenizer({ wireStateFile })
       const parser = makeParser({ wireStateFile })
@@ -86,9 +86,11 @@ export async function requireWireStateFile (wireStateFile, { cache, srcDir = '' 
 
       resolve(analyze(scopeNode, { cache, srcDir }))
     }, reject)
-  }))
+  })
 
-  return cache.get(wireStateFile)
+  await cache.set(wireStateFile, promise)
+
+  return promise
 }
 
 /**

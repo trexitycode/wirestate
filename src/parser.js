@@ -464,11 +464,11 @@ const parseUseDirectiveNode = (scanner) => {
 
 export const makeParser = ({ wireStateFile = '' } = {}) => {
   if (Path.isAbsolute(wireStateFile)) {
-    throw new Error('Parse wireStateFile must be relative')
+    throw new Error('WireStateFile must be relative')
   }
 
   if (wireStateFile.startsWith('.')) {
-    throw new Error('Parse wireStateFile cannot be prefixed with ./ or ../')
+    throw new Error('WireStateFile cannot be prefixed with ./ or ../')
   }
 
   const parse = (tokens) => {
