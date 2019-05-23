@@ -44,7 +44,7 @@ const makeScanner = (str) => {
   }
 }
 
-export const makeTokenizer = () => {
+export const makeTokenizer = ({ wireStateFile = '' } = {}) => {
   const commentToken = {
     canRead (scanner) { return scanner.c === '#' },
     read (scanner) {
@@ -64,32 +64,42 @@ export const makeTokenizer = () => {
     }
   }
 
-  const newlineToken = {
+  const indentToken = {
     canRead (scanner) { return scanner.c === '\n' || scanner.look('\r\n') },
     read (scanner) {
-      let nl = scanner.c
       if (scanner.look('\r\n')) {
-        nl += scanner.advance()
+        scanner.advance()
       }
 
       scanner.advance()
 
+      let value = ''
+      while (scanner.c === ' ') {
+        value += scanner.c
+        scanner.advance()
+      }
+
       return {
-        type: 'newline',
-        value: nl,
-        raw: nl
+        type: 'indent',
+        value: value,
+        raw: value
       }
     }
   }
 
   const whitespaceToken = {
-    canRead (scanner) { return scanner.c === ' ' },
+    canRead (scanner) { return scanner.c === ' ' || scanner.c === '\t' },
     read (scanner) {
-      scanner.advance()
+      let value = ''
+      while (scanner.c === ' ' || scanner.c === '\t') {
+        value += scanner.c
+        scanner.advance()
+      }
+
       return {
         type: 'whitespace',
-        value: ' ',
-        raw: ' '
+        value: value,
+        raw: value
       }
     }
   }
@@ -108,7 +118,7 @@ export const makeTokenizer = () => {
         } else if (c === '\\') {
           c = scanner.advance()
           if (!c) {
-            isTerminated = false
+            // isTerminated = false
             break
           }
           switch (c) {
@@ -129,11 +139,13 @@ export const makeTokenizer = () => {
               break
             case 'u':
               if (scanner.index >= scanner.text.len) {
-                isTerminated = false
+                // isTerminated = false
+                break
               }
               c = parseInt(scanner.text.substr(scanner.index + 1, 4), 16)
               if (!isFinite(c) || c < 0) {
-                isTerminated = false
+                // isTerminated = false
+                break
               }
               c = String.fromCharCode(c)
               scanner.advance(4)
@@ -143,7 +155,7 @@ export const makeTokenizer = () => {
           c = scanner.advance()
         } else if (c === quote) {
           isTerminated = true
-          c = scanner.advance()
+          scanner.advance()
           break
         } else {
           buffer += c
@@ -152,7 +164,10 @@ export const makeTokenizer = () => {
       }
 
       if (!isTerminated) {
-        throw new Error(`LexicalError: Unterminated string "${buffer}"`)
+        throw Object.assign(
+          new Error(`LexicalError: Unterminated string "${buffer}" [L:${scanner.line} C:${scanner.column} File:${wireStateFile}]`),
+          { line: scanner.line, column: scanner.column, fileName: wireStateFile }
+        )
       }
 
       return {
@@ -163,26 +178,31 @@ export const makeTokenizer = () => {
     }
   }
 
-  const operatorToken = {
-    canRead (scanner) { return scanner.look('->') },
+  const symbolToken = {
+    canRead (scanner) {
+      return scanner.look('->') || scanner.look('<-')
+    },
     read (scanner) {
-      scanner.advance(2)
+      const value = scanner.c + scanner.advance()
+
+      scanner.advance()
+
       return {
-        type: 'operator',
-        value: '->',
-        raw: '->'
+        type: 'symbol',
+        value,
+        raw: value
       }
     }
   }
 
-  const symbolToken = {
-    symbols: '?&*!.',
-    canRead (scanner) { return this.symbols.indexOf(scanner.c) >= 0 },
+  const operatorToken = {
+    operators: '?&*!.{}',
+    canRead (scanner) { return this.operators.indexOf(scanner.c) >= 0 },
     read (scanner) {
       const c = scanner.c
       scanner.advance()
       return {
-        type: 'symbol',
+        type: 'operator',
         value: c,
         raw: c
       }
@@ -254,21 +274,21 @@ export const makeTokenizer = () => {
 
   const tokenReaders = [
     commentToken,
-    newlineToken,
-    whitespaceToken,
+    indentToken,
     stringToken,
     directiveToken,
-    operatorToken,
     symbolToken,
-    identifierToken
+    operatorToken,
+    identifierToken,
+    whitespaceToken
   ]
   const tokenReaderCount = tokenReaders.length
 
   const tokenize = (text) => {
     const scanner = makeScanner(text)
     let tokens = []
-    let line = scanner.line
-    let column = scanner.column
+    let line = 0
+    let column = 0
     let noMatch = true
     let token = null
 
@@ -288,9 +308,9 @@ export const makeTokenizer = () => {
       }
 
       if (noMatch) {
-        throw new Error(
-          `LexicalError: Unknown charcter: ${scanner.c} [L:${line} C:${column}]`
-        )
+        throw Object.assign(new Error(
+          `LexicalError: Unknown charcter: ${scanner.c} [L:${line} C:${column} File:${wireStateFile}]`
+        ), { line, column, fileName: wireStateFile })
       }
     }
 

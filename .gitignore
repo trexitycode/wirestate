@@ -1,4 +1,6 @@
 .cache
+.sonarlint
+.wirestate
 node_modules
 build
 dist

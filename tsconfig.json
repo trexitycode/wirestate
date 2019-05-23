@@ -2,19 +2,24 @@
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
-    "target": "es5",
+    "target": "es2015",
     "moduleResolution": "node",
     "module": "commonjs",
+    "sourceMap": true,
+    "incremental": true,
     "outDir": "lib",
     "newLine": "LF",
     "jsx": "react",
     "reactNamespace": "React",
     "lib": [
-      "dom",
       "es2015"
     ]
   },
   "include": [
-    "src/**/*.js"
+    "src"
+  ],
+  "exclude": [
+    "src/interpreter",
+    "src/bindings"
   ]
 }

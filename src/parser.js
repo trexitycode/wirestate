@@ -1,8 +1,9 @@
-import { StateNode, TransitionNode, DirectiveNode, IncludeDirectiveNode } from './ast-nodes'
+import * as Path from 'path'
+import { StateNode, TransitionNode, ImportNode, ScopeNode, MachineNode, UseDirectiveNode, EventProtocolNode } from './ast-nodes'
 
-const makeScanner = (tokens) => {
-  // Remove the comments
-  tokens = tokens.filter(t => t.type !== 'comment')
+const makeScanner = (tokens, { wireStateFile = '' } = {}) => {
+  // Remove the comments and whitespace
+  tokens = tokens.filter(t => t.type !== 'comment' && t.type !== 'whitespace')
 
   let i = 0
   let token = tokens[i]
@@ -16,7 +17,8 @@ const makeScanner = (tokens) => {
     if (token) {
       message = message || `Unexpected token ${token.type}:"${token.value}"`
       return Object.assign(
-        new Error(`SyntaxError${message ? ': ' + message : ''} near [L:${token.line} C:${token.column}]`)
+        new Error(`SyntaxError${message ? ': ' + message : ''} near [L:${token.line} C:${token.column} WireState File:${wireStateFile}]`),
+        { line: token.line, column: token.column, wireStateFile }
       )
     } else {
       return new Error(`SyntaxError: Unexpected end of input`)
@@ -50,13 +52,11 @@ const makeScanner = (tokens) => {
             p -= 1
             t += 1
           }
-          patternDoesMatch = true
         // Zero or one token type (0 or 1)
         } else if (pattern.endsWith('?')) {
           if (token.type === pattern.substr(0, pattern.length - 1)) {
             t += 1
           }
-          patternDoesMatch = true
         } else {
           t += 1
           patternDoesMatch = token.type === pattern
@@ -79,7 +79,7 @@ const makeScanner = (tokens) => {
 
     for (let t = 0; t + i < tokens.length && !canConsumeTo; t += 1) {
       const token = tokens[i + t]
-      if (token.type === 'newline') break
+      if (token.type === 'indent') break
       if (typeof typeOrObj === 'string') {
         canConsumeTo = token.type === typeOrObj
       } else {
@@ -98,6 +98,7 @@ const makeScanner = (tokens) => {
 
     for (; i < tokens.length && !done; i += 1) {
       const token = tokens[i]
+      if (token.type === 'indent') break
       if (typeof typeOrObj === 'string') {
         done = token.type === typeOrObj
         if (!done) toks.push(token)
@@ -120,7 +121,10 @@ const makeScanner = (tokens) => {
       advance()
       return t
     } else {
-      throw syntaxError()
+      const message = pattern.type || typeof pattern === 'string'
+        ? `Expected ${pattern.type || pattern} token but got ${token ? token.type : 'END'}`
+        : `Expected "${pattern.value}" but got ${token ? '"' + token.value + '"' : 'END'}`
+      throw syntaxError(message)
     }
   }
 
@@ -137,148 +141,266 @@ const makeScanner = (tokens) => {
   }
 }
 
-const parseImplicitStateNode = (scanner, name) => {
-  let node = new StateNode()
-  Object.assign(node, {
-    name,
-    stateType: 'atomic',
-    indent: 0,
-    line: 1,
-    column: 0
-  })
+const parseScopeNode = (scanner, { wireStateFile = '' } = {}) => {
+  const scopeNode = new ScopeNode(wireStateFile)
+  let importNodesValid = true
   let indent = 0
 
   while (scanner.token) {
-    if (scanner.look('identifier') || scanner.look([ { value: '*' } ])) {
-      // Is indentation too much?
-      if (indent > 0) {
+    if (scanner.look({ type: 'indent' })) {
+      indent = scanner.consume({ type: 'indent' }).value.length
+    } else if (importNodesValid && scanner.look({ value: '@import' })) {
+      if (indent !== 0) {
         throw scanner.syntaxError(`Expected indentation 0 but got ${indent}`)
       }
 
-      // event ->
-      // event. ->
-      // event.* ->
-      // * ->
-      // *. ->
-      // *.event ->
-      if (scanner.canConsumeTo({ value: '->' })) {
-        indent = 0
-        node.transitions.push(Object.assign(
-          parseTransitionNode(scanner), { parent: node }
-        ))
-      } else if (scanner.look('identifier')) { // another state
-        // child state
-        node.states.push(Object.assign(
-          parseStateNode(scanner, { indentLevel: 0 }), { parent: node }
-        ))
-        indent = 0
-      } else {
-        throw scanner.syntaxError()
-      }
-    // Is the next token directive, transition or child state?
-    } else if (scanner.look('directive')) { // a directive
-      // Is indentation too much?
-      if (indent > 0) {
+      const importNode = parseImportNode(scanner)
+      importNode.parent = scopeNode
+      scopeNode.imports.push(importNode)
+    } else if (scanner.look({ value: '@machine' })) {
+      if (indent !== 0) {
         throw scanner.syntaxError(`Expected indentation 0 but got ${indent}`)
       }
 
-      indent = 0
-      // @ts-ignore
-      node.states.push(Object.assign(
-        parseDirectiveNode(scanner), { parent: node }
-      ))
-    } else if (scanner.look('newline')) {
-      indent = 0
-      scanner.advance()
-    } else if (scanner.look('whitespace')) {
-      indent += 1
-      scanner.advance()
+      importNodesValid = false
+      const machineNode = parseMachineNode(scanner)
+      machineNode.parent = scopeNode
+      scopeNode.machines.push(machineNode)
     } else {
       throw scanner.syntaxError()
     }
   }
 
+  return scopeNode
+}
+
+const parseImportNode = (scanner) => {
+  // @import { a, b, c } from 'file'
+  const firstToken = scanner.consume({ value: '@import' })
+  scanner.consume({ value: '{' })
+
+  let ids = []
+  while (scanner.look({ type: 'identifier' })) {
+    if (scanner.look({ value: ',' })) {
+      scanner.consume({ value: ',' })
+    } else {
+      ids.push(scanner.consume({ type: 'identifier' }).value)
+    }
+  }
+
+  if (ids.length === 0) {
+    throw scanner.syntaxError()
+  }
+
+  scanner.consume({ value: '}' })
+  scanner.consume({ value: 'from' })
+  const wireStateFile = scanner.consume({ type: 'string' }).value
+
+  let importNode = new ImportNode(ids, wireStateFile)
+  importNode.line = firstToken.line
+  importNode.column = firstToken.column
+  return importNode
+}
+
+const parseMachineNode = (scanner) => {
+  const firstToken = scanner.consume({ value: '@machine' })
+  const machineId = scanner.consume({ type: 'identifier' }).value
+  const machineNode = new MachineNode(machineId)
+  let indent = 0
+
+  machineNode.line = firstToken.line
+  machineNode.column = firstToken.column
+
+  while (scanner.token) {
+    if (scanner.look({ type: 'indent' })) {
+      if (scanner.look([ { type: 'indent' }, { value: '@machine' } ])) {
+        break
+      } else {
+        indent = scanner.consume({ type: 'indent' }).value.length
+      }
+    } else if (scanner.look({ value: '@machine' })) {
+      throw scanner.syntaxError()
+    } else if (scanner.look('identifier') || scanner.look({ value: '*' })) {
+      // Is indentation too much?
+      if (indent > 2) {
+        throw scanner.syntaxError(`Expected indentation 2 but got ${indent}`)
+      }
+
+      if (indent < 2) {
+        throw scanner.syntaxError('Unexpected dedentation')
+      }
+
+      // event ->
+      // event.something else ->
+      // * ->
+      if (scanner.canConsumeTo({ value: '->' })) {
+        machineNode.transitions.push(Object.assign(
+          parseTransitionNode(scanner), { parent: machineNode }
+        ))
+      } else if (scanner.look('identifier')) { // another state
+        // child state
+        machineNode.states.push(Object.assign(
+          parseStateNode(scanner, { indentLevel: indent }), { parent: machineNode }
+        ))
+      } else {
+        throw scanner.syntaxError()
+      }
+    } else if (scanner.look({ value: '<-' })) {
+      // Is indentation too much?
+      if (indent > 2) {
+        throw scanner.syntaxError(`Expected indentation 2 but got ${indent}`)
+      }
+
+      if (indent < 2) {
+        throw scanner.syntaxError('Unexpected dedentation')
+      }
+
+      const firstToken = scanner.consume({ value: '<-' })
+      let event = scanner.consume({ type: 'identifier' }).value
+
+      while (scanner.look({ value: '.' })) {
+        event += scanner.consume({ value: '.' }).value
+        event += scanner.consume({ type: 'identifier' }).value
+      }
+
+      if (scanner.look({ value: '?' })) {
+        event += scanner.consume({ value: '?' }).value
+      }
+
+      let ep = new EventProtocolNode(event)
+      ep.line = firstToken.line
+      ep.column = firstToken.column
+      ep.parent = machineNode
+      machineNode.eventProtocols.push(ep)
+    } else {
+      throw scanner.syntaxError()
+    }
+  }
+
+  return machineNode
+}
+
+const parseTransitionNode = (scanner) => {
+  let eventDescriptor = ''
+  let firstToken = null
+
+  if (scanner.look({ value: '*' })) {
+    firstToken = scanner.consume({ value: '*' })
+    eventDescriptor = firstToken.value
+  } else {
+    firstToken = scanner.consume({ type: 'identifier' })
+    eventDescriptor += firstToken.value
+
+    while (scanner.look({ value: '.' })) {
+      eventDescriptor += scanner.consume({ value: '.' }).value
+      eventDescriptor += scanner.consume({ type: 'identifier' }).value
+    }
+
+    if (scanner.look({ value: '?' })) {
+      eventDescriptor += scanner.consume({ value: '?' }).value
+    }
+  }
+
+  scanner.consume({ value: '->' })
+
+  let target = scanner.consume('identifier').value
+
+  if (scanner.look({ type: 'operator' })) {
+    const t = scanner.consume({ type: 'operator' })
+    if (t.value === '?' || t.value === '!') {
+      target += t.value
+    } else {
+      throw scanner.syntaxError()
+    }
+  }
+
+  let node = new TransitionNode(eventDescriptor, target)
+  Object.assign(node, {
+    line: firstToken.line,
+    column: firstToken.column
+  })
+
   return node
 }
 
 const parseStateNode = (scanner, { indentLevel }) => {
-  const nameToken = scanner.consume('identifier')
-  let node = new StateNode()
+  const idToken = scanner.consume('identifier')
+  let node = new StateNode(idToken.value, indentLevel)
   Object.assign(node, {
-    name: nameToken.value,
-    stateType: 'atomic',
-    indent: indentLevel,
-    line: nameToken.line,
-    column: nameToken.column
+    line: idToken.line,
+    column: idToken.column
   })
-  let indent = 0
 
-  let symbols = []
-  while (scanner.look('symbol')) {
-    symbols.push(scanner.consume('symbol'))
+  let operators = []
+  while (scanner.look('operator')) {
+    operators.push(scanner.consume('operator'))
   }
 
   // (all) *?&!
-  // (valid co-symbols) &!*
-  // (valid co-symbols) ?*
+  // (valid co-operators) &!*
+  // (valid co-operators) ?*
 
-  if (symbols.find(s => s.value === '?')) {
-    if (symbols.find(s => ['!', '&'].indexOf(s.value) >= 0)) {
-      throw scanner.syntaxError('Unsupported state symbol')
+  if (operators.find(s => s.value === '?')) {
+    if (operators.find(s => ['!', '&'].indexOf(s.value) >= 0)) {
+      throw scanner.syntaxError('Unsupported state operator')
     }
   }
 
-  symbols.forEach(s => {
+  operators.forEach(s => {
     if (s.value === '*') node.initial = true
     if (s.value === '!') {
       node.final = true
-      node.name += '!'
+      node.id += '!'
     }
     if (s.value === '&') node.parallel = true
     if (s.value === '?') {
       node.stateType = 'transient'
-      node.name += '?'
+      node.id += '?'
     }
   })
 
   while (scanner.token) {
-    if (scanner.look('identifier') || scanner.look([ { value: '*' } ])) {
+    const indent = scanner.consume({ type: 'indent' }).value.length
+
+    if (scanner.look({ value: '@machine' })) {
+      scanner.advance(-1)
+      break
+    } else if (scanner.look('identifier') || scanner.look({ value: '*' })) {
       // Is indentation too much?
       if (indent > indentLevel + 2) {
         throw scanner.syntaxError(`Expected indentation ${indentLevel + 2} but got ${indent}`)
       }
 
       // event ->
-      // event. ->
-      // event.* ->
+      // event.something else ->
       // * ->
-      // *. ->
-      // *.event ->
       if (scanner.canConsumeTo({ value: '->' })) {
         if (indent < indentLevel) {
           throw scanner.syntaxError('Unexpected dedentation')
         }
-        indent = 0
+
         node.transitions.push(Object.assign(
           parseTransitionNode(scanner), { parent: node }
         ))
       } else if (scanner.look('identifier')) { // another state
         if (indent <= indentLevel) { // ancestor state
           // Backtrack so the ancestor parent will re-read the indentation
-          scanner.advance(-indent)
-          indent = 0
+          scanner.advance(-1)
           break
         } else { // child state
+          if (node.stateType === 'transient') {
+            throw scanner.syntaxError('Transient states cannot have child states')
+          }
+
           node.states.push(Object.assign(
-            parseStateNode(scanner, { indentLevel: indent }), { parent: node }
+            parseStateNode(scanner, { indentLevel: indent }),
+            { parent: node }
           ))
-          indent = 0
         }
       } else {
         throw scanner.syntaxError()
       }
-    // Is the next token directive, transition or child state?
-    } else if (scanner.look('directive')) { // a directive
+    } else if (scanner.look({ value: '@use' })) {
       // Is indentation too much?
       if (indent > indentLevel + 2) {
         throw scanner.syntaxError(`Expected indentation ${indentLevel + 2} but got ${indent}`)
@@ -288,93 +410,71 @@ const parseStateNode = (scanner, { indentLevel }) => {
         throw scanner.syntaxError('Unexpected dedentation')
       }
 
-      indent = 0
-      // @ts-ignore
-      node.states.push(Object.assign(
-        parseDirectiveNode(scanner), { parent: node }
-      ))
-    } else if (scanner.look('newline')) {
-      indent = 0
-      scanner.advance()
-    } else if (scanner.look('whitespace')) {
-      indent += 1
-      scanner.advance()
-    } else {
-      throw scanner.syntaxError()
+      if (node.useDirective) {
+        // Advance so that when we throw the proper column is reported
+        scanner.consume({ value: '@use' })
+        throw scanner.syntaxError('Multiple @use encountered')
+      }
+
+      node.useDirective = Object.assign(parseUseDirectiveNode(scanner), { parent: node })
+    } else if (scanner.look({ value: '<-' })) {
+      // Is indentation too much?
+      if (indent > indentLevel + 2) {
+        throw scanner.syntaxError(`Expected indentation ${indentLevel + 2} but got ${indent}`)
+      }
+
+      if (indent < indentLevel) {
+        throw scanner.syntaxError('Unexpected dedentation')
+      }
+
+      const firstToken = scanner.consume({ value: '<-' })
+      let event = scanner.consume({ type: 'identifier' }).value
+
+      while (scanner.look({ value: '.' })) {
+        event += scanner.consume({ value: '.' }).value
+        event += scanner.consume({ type: 'identifier' }).value
+      }
+
+      if (scanner.look({ value: '?' })) {
+        event += scanner.consume({ value: '?' }).value
+      }
+
+      let ep = new EventProtocolNode(event)
+      ep.line = firstToken.line
+      ep.column = firstToken.column
+      ep.parent = node
+      node.eventProtocols.push(ep)
     }
   }
 
   return node
 }
 
-const parseTransitionNode = (scanner) => {
-  const eventDescriptorTokens = scanner.consumeTo({ value: '->' })
-  let eventDescriptor = eventDescriptorTokens.map(t => t.value).join('').trim()
+const parseUseDirectiveNode = (scanner) => {
+  const typeToken = scanner.consume({ value: '@use' })
 
-  if (/^(\*|([a-zA-Z0-9_-][a-zA-Z0-9_\- ?]*))(\.(\*|([a-zA-Z0-9_-][a-zA-Z0-9_\- ?]*)*))*$/.test(eventDescriptor) === false) {
-    throw scanner.syntaxError(`Invalid event descriptor: ${eventDescriptor}`)
-  }
-
-  scanner.consume({ value: '->' })
-
-  while (scanner.look('whitespace')) {
-    scanner.consume('whitespace')
-  }
-
-  let target = scanner.consume('identifier').value
-
-  if (scanner.look('symbol')) {
-    const symbolToken = scanner.consume('symbol')
-    if (symbolToken.value === '?' || symbolToken.value === '!') {
-      target += symbolToken.value
-    } else {
-      throw scanner.syntaxError()
-    }
-  }
-
-  let node = new TransitionNode()
+  let node = new UseDirectiveNode(scanner.consume('identifier').value)
   Object.assign(node, {
-    event: eventDescriptor,
-    target,
-    line: eventDescriptorTokens[0].line,
-    column: eventDescriptorTokens[0].column
+    line: typeToken.line,
+    column: typeToken.column
   })
 
   return node
 }
 
-const parseDirectiveNode = (scanner) => {
-  const typeToken = scanner.consume('directive')
-
-  while (scanner.look('whitespace')) {
-    scanner.consume('whitespace')
+export const makeParser = ({ wireStateFile = '' } = {}) => {
+  if (Path.isAbsolute(wireStateFile)) {
+    throw new Error('WireStateFile must be relative')
   }
 
-  let node = null
-
-  if (typeToken.value === '@include') {
-    node = new IncludeDirectiveNode()
-    Object.assign(node, {
-      fileName: scanner.consume('string').value,
-      line: typeToken.line,
-      column: typeToken.column
-    })
-  } else {
-    node = new DirectiveNode()
-    Object.assign({
-      directiveType: typeToken.value,
-      line: typeToken.line,
-      column: typeToken.column
-    })
+  if (wireStateFile.startsWith('.')) {
+    throw new Error('WireStateFile cannot be prefixed with ./ or ../')
   }
 
-  return node
-}
-
-export const makeParser = () => {
-  const parse = (tokens, name = 'StateChart') => {
-    const scanner = makeScanner(tokens)
-    return parseImplicitStateNode(scanner, name)
+  const parse = (tokens) => {
+    const scanner = makeScanner(tokens, { wireStateFile })
+    return parseScopeNode(scanner, { wireStateFile })
   }
+
   return { parse }
 }
