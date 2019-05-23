@@ -1182,6 +1182,12 @@
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/ast-nodes.js",
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/parser.js",
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/file-system/index.js",
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/cache.js",
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/analyzer.js",
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/generator.js",
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/compile.js",
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/compile.test.js",
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/index.js",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/globals.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/assert.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/async_hooks.d.ts",
@@ -1226,13 +1232,7 @@
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/util.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/globals.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/index.d.ts",
-      "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/q/index.d.ts",
-      "/users/darren/workspace/launchfort/sandbox/wirestate/src/cache.js",
-      "/users/darren/workspace/launchfort/sandbox/wirestate/src/analyzer.js",
-      "/users/darren/workspace/launchfort/sandbox/wirestate/src/generator.js",
-      "/users/darren/workspace/launchfort/sandbox/wirestate/src/compile.js",
-      "/users/darren/workspace/launchfort/sandbox/wirestate/src/compile.test.js",
-      "/users/darren/workspace/launchfort/sandbox/wirestate/src/index.js"
+      "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/q/index.d.ts"
     ]
   },
   "version": "3.4.5"

@@ -20,7 +20,7 @@ const WireState = require('../lib/index')
  * @return {any[]|any}
  */
 function readOption (names, args, { defaultValue = null }) {
-  let argValues = [].concat(defaultValue)
+  let argValues = []
   let argCount = 0
 
   names.forEach(name => {
@@ -52,8 +52,12 @@ function readOption (names, args, { defaultValue = null }) {
   } else {
     if (argCount === 1) {
       return argValues[0]
-    } else if (argCount === 0 && (defaultValue === null || defaultValue === undefined)) {
-      throw new Error(`Option ${names} is required`)
+    } else if (argCount === 0) {
+      if ((defaultValue === null || defaultValue === undefined)) {
+        throw new Error(`Option ${names} is required`)
+      } else {
+        return defaultValue
+      }
     } else {
       throw new Error(`Option ${names} only allows one value`)
     }
@@ -68,7 +72,21 @@ function main () {
   const args = process.argv.slice(2)
   const help = () => {
     console.log(`Usage:
-wirestate {input file} [--output {output type}]`
+wirestate {input file} [--srcDir directory] [--cacheDir directory] [--generator name]
+
+Compiles a wirestate statechart and writes the generated result to stdout.
+
+--srcDir              The source directory where imported wirestate files can be found [default {current directory}]
+--cacheDir            The directory where the compiled files will be saved between compiles [default .wirestate]
+--generator           The name of the generator to use [default json]
+
+Generators:
+json                  Generates the statechart in JSON format
+json-commonjs         Generates a CommonJS module that exports the statechart in JSON format (named export "statechart")
+json-esm              Generates an ESM module that exports the statechart in JSON format (named export "statechart")
+
+Example:
+wirestate statechart/App.wirestate --srcDir statechart > App.wirestate.json`
     )
   }
 
