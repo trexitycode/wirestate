@@ -1,6 +1,7 @@
 .cache
 .sonarlint
 .wirestate
+.scannerwork
 node_modules
 build
 dist

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
-    "target": "es2015",
+    "target": "es2017",
     "moduleResolution": "node",
     "module": "commonjs",
     "sourceMap": true,
@@ -12,7 +12,7 @@
     "jsx": "react",
     "reactNamespace": "React",
     "lib": [
-      "es2015"
+      "es2017"
     ]
   },
   "include": [
