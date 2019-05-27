@@ -13,7 +13,9 @@ import {
   // eslint-disable-next-line no-unused-vars
   StateNode,
   // eslint-disable-next-line no-unused-vars
-  UseDirectiveNode
+  UseDirectiveNode,
+  // eslint-disable-next-line no-unused-vars
+  EventProtocolNode
 } from './ast-nodes'
 // eslint-disable-next-line no-unused-vars
 import { Cache } from './cache'
@@ -397,12 +399,14 @@ async function analyzeStateNode (stateNode, { cache }) {
  */
 async function analyzeUseDirectiveNode (useDirectiveNode, { cache }) {
   if (useDirectiveNode) {
+    // Attempt to find the used machine in the current scope
     const machineId = useDirectiveNode.machineId
     const scopeNode = useDirectiveNode.parent.scopeNode
     let machineNode = scopeNode.machines.find(machineNode => {
       return machineNode.id === machineId
     })
 
+    // Otherwise attempt to find the used machine from imports
     if (!machineNode) {
       const importedScopeNodes = await Promise.all(
         scopeNode.imports.map(importNode => cache.get(importNode.wireStateFile))
@@ -415,9 +419,40 @@ async function analyzeUseDirectiveNode (useDirectiveNode, { cache }) {
       })
     }
 
-    if (!machineNode) {
+    // Ensure that all event protocols are met by the state node using the machine
+    if (machineNode) {
+      const visitStateNode = (eventProtocols, stateNode) => {
+        eventProtocols.push(...stateNode.eventProtocols)
+        return stateNode.states.reduce(visitStateNode, eventProtocols)
+      }
+      /** @type {EventProtocolNode[]} */
+      const eventProtocols = [].concat(
+        machineNode.eventProtocols,
+        machineNode.states.reduce(visitStateNode, [])
+      )
+      const stateNode = useDirectiveNode.parent
+      // An event protocol is unmet iff the state does not have a transition
+      // with a matching event and no event protocol with a maching event.
+      const unmetEventProtocols = eventProtocols.filter(eventProtocolNode => {
+        const noMatchingTransition = !stateNode.transitions.some(transitionNode => {
+          return transitionNode.event === eventProtocolNode.eventName
+        })
+        const noMatchingEventProtocol = !stateNode.eventProtocols.some(childEventProtocolNode => {
+          return childEventProtocolNode.eventName === eventProtocolNode.eventName
+        })
+        return noMatchingTransition && noMatchingEventProtocol
+      })
+
+      if (unmetEventProtocols.length) {
+        throw new SemanticError(`Unmet event requirements\n  State ID: ${stateNode.id}\n  Unmet events: ${unmetEventProtocols.map(x => x.eventName)}`, {
+          fileName: scopeNode.wireStateFile,
+          line: stateNode.line,
+          column: stateNode.column
+        })
+      }
+    } else {
       throw new SemanticError(`Machine not found\n  Machine ID: ${useDirectiveNode.machineId}`, {
-        fileName: useDirectiveNode.parent.scopeNode.wireStateFile,
+        fileName: scopeNode.wireStateFile,
         line: useDirectiveNode.line,
         column: useDirectiveNode.column
       })
