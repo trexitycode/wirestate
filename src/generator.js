@@ -72,7 +72,10 @@ async function xstateConfigGenerator (cache) {
 
     if (stateNode.useDirective) {
       xstateNode.entry = {
-        actions: rawstring(`assign({ child: spawn(Machines['${stateNode.useDirective.machineId}']) })`)
+        actions: rawstring(`assign((ctx) => ({ children: { ...ctx.children, ['${stateNode.id}']: spawn(Machines['${stateNode.useDirective.machineId}']) } }))`)
+      }
+      xstateNode.exit = {
+        actions: rawstring(`(ctx) => ctx.children['${stateNode.id}'].stop()`)
       }
     }
 
@@ -81,6 +84,7 @@ async function xstateConfigGenerator (cache) {
 
   function toXstateMachine (machineNode) {
     let xstateMachineNode = {
+      context: { children: {} },
       id: machineNode.id,
       initial: (machineNode.states.find(state => !!state.initial) || { id: undefined }).id
     }
@@ -120,7 +124,7 @@ async function xstateConfigGenerator (cache) {
     return [
       'import { assign, spawn } from \'xstate\'\n',
       'export const Machines = {}\n',
-      machines.join('\n\n').replace(/<!(.+)!>/g, '$1')
+      machines.join('\n\n').replace(/"<!(.+)!>"/g, '$1')
     ].join('\n')
   }
 
