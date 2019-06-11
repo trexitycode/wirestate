@@ -12,11 +12,7 @@ Supported output formats:
 - json
 - json-commonjs
 - json-esm
-- xstate-config
-- xstate-config-commonjs
-- xstate-config-esm
-- xstate-machine-commonjs
-- xstate-machine-esm
+- xstate
 
 ## Interpreter API
 
