@@ -59,7 +59,7 @@ async function xstateConfigGenerator (cache) {
         rawstring(`action('${stateNode.id}/entry')`)
       ],
       exit: [
-        rawstring(`action('${stateNode.machineNode.id}/exit')`),
+        rawstring(`action('${stateNode.machineNode.id}/${stateNode.id}/exit')`),
         rawstring(`action('${stateNode.id}/exit')`)
       ]
     }
@@ -162,8 +162,8 @@ async function xstateConfigGenerator (cache) {
       'export function wirestate ({ main, actions = {}, catch = (error, actionKey) => console.error({ actionKey, error }), interpret = xstateInterpret }) {',
       '  const noaction = () => {}',
       '  // Look up an action (avoids XState throwing if an action is not found)',
-      '  const action = id => {',
-      '    const axn = actions[id] || noaction',
+      '  const action = actionKey => {',
+      '    const axn = actions[actionKey] || noaction',
       '    return (ctx, e) => {',
       '      new Promise(resolve => resolve(axn(ctx, e, send, sendToParent, sendTo)).catch(error => catch(error, id))',
       '    }',
