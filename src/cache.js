@@ -79,8 +79,6 @@ export class Cache {
 
   async clear () {
     const fileNames = [ ...this._table.keys() ]
-    this._table.clear()
-    this._scopes.clear()
 
     await Promise.all(
       fileNames.map(fileName => {

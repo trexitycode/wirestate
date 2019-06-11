@@ -118,19 +118,19 @@
         "version": "55ac63ee5a205eebef2353d89defc45071ba602854164f9e1f297b0379b6e927"
       },
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/cache.js": {
-        "version": "f60fce5a095878607fae57ba54c5c53b276f4f3fe646f9a8a85b2e59ae402d65"
+        "version": "6fcf30c652846cfcda2a20cb834a23a4a371645f7117e38b066a18ef69c791fb"
       },
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/analyzer.js": {
         "version": "2a531b22cd08531c22eb3bacb21eaaf8aa4265432837f3a2675f75c3b3e9a506"
       },
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/generator.js": {
-        "version": "e7ae0c982fe17ef222ebcd26b96b017d980849c6cfa6509f5a69abde7b5c0713"
+        "version": "36dce9c32044258f33e4a477c9f5a988b653b2ea978250d30396320e61adbeb5"
       },
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/compile.js": {
         "version": "52789c628c273d3a517573b3dac90288c029c23cd301994878eba6f455b4cf57"
       },
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/compile.test.js": {
-        "version": "4a23dcbaa61ff9051e6014c201c551492208691f540425d22e2834dcab9e3d60"
+        "version": "0774cd63ec259a03cb7dd5534e07ba438c2d5d3c7be732bc4c17334d477293db"
       },
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/index.js": {
         "version": "b4d57e2c1130b1cd9caf7f5a5522febca95682fa2b6bda69ebf38cc5358343ee"
@@ -1182,6 +1182,8 @@
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/ast-nodes.js",
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/parser.js",
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/file-system/index.js",
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/cache.js",
+      "/users/darren/workspace/launchfort/sandbox/wirestate/src/analyzer.js",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/globals.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/assert.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/async_hooks.d.ts",
@@ -1227,8 +1229,6 @@
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/globals.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/node/ts3.2/index.d.ts",
       "/users/darren/workspace/launchfort/sandbox/wirestate/node_modules/@types/q/index.d.ts",
-      "/users/darren/workspace/launchfort/sandbox/wirestate/src/cache.js",
-      "/users/darren/workspace/launchfort/sandbox/wirestate/src/analyzer.js",
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/generator.js",
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/compile.js",
       "/users/darren/workspace/launchfort/sandbox/wirestate/src/compile.test.js",
