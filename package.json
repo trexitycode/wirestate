@@ -1,6 +1,6 @@
 {
   "name": "wirestate",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Behavioral statechart compiler",
   "bin": {
     "wirestate": "bin/wirestate.js"

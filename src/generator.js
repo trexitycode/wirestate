@@ -142,14 +142,22 @@ import { assign, spawn, Machine, send, sendParent, SpecialTargets, Interpreter, 
 if (!spawn) throw new Error('Please install the latest version of "xstate"')
 
 /**
- * Hooks up actions for all WireState machines and interprets the main application machine.',
- *',
+ * Hooks up actions for all WireState machines and interprets the main application machine.
+ *
  * Where actions are keyed by action keys. Action keys come in two forms:
  * - Machine qualified: MachineID/StateID/entry or MachineID/StateID/exit
  * - State qualified: StateID/entry or StateID/exit
  *
- * This way actions can be hooked up to a specific state activation/deactivation or to the general state ID if
- * it's used in several machines.
+ * This way actions can be hooked up to a specific state activation/deactivation
+ * or to the general state ID if it's used in several machines.
+ *
+ * Every \`@use MachineID\` WireState statement results in the state with the
+ * @use statement having an entry action that assigns the spawned child actor to
+ * the \`children\` object on the context.
+ *
+ * \`\`\`
+ * entry: assign(ctx => ({ children: { ...ctx.children, [StateID]: spawn() } }))
+ * \`\`\`
  *
  * @example
  * wirestate({
@@ -184,7 +192,7 @@ export function wirestate ({ main, actions = {}, catch = (error, actionKey) => c
   if (!MainMachine) throw new Error(\`Main machine '\${main}' not found\`)
 
   const interpreter = interpret(MainMachine)
-  const send = event => interpreter.send(event)
+  const send = (event, payload = undefined) => interpreter.send(event, payload)
   const sendTo = (event, to) => interpreter.send(event, to)
   const sendToParent = (event) => sendTo(event, SpecialTargets.Parent)
 
