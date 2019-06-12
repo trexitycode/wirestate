@@ -55,12 +55,10 @@ async function xstateConfigGenerator (cache) {
       final: stateNode.final ? true : undefined,
       type: stateNode.parallel ? 'parallel' : undefined,
       entry: [
-        rawstring(`action('${stateNode.machineNode.id}/${stateNode.id}/entry')`),
-        rawstring(`action('${stateNode.id}/entry')`)
+        rawstring(`action('${stateNode.machineNode.id}/${stateNode.id}/entry')`)
       ],
       exit: [
-        rawstring(`action('${stateNode.machineNode.id}/${stateNode.id}/exit')`),
-        rawstring(`action('${stateNode.id}/exit')`)
+        rawstring(`action('${stateNode.machineNode.id}/${stateNode.id}/exit')`)
       ]
     }
 
