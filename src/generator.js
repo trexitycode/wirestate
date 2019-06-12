@@ -47,10 +47,11 @@ function jsonEsmGenerator (cache) {
 
 /** @param {Cache} cache */
 async function xstateConfigGenerator (cache) {
+  let xstateStateIdPrefixCount = 1
   const rawstring = s => `<!${s}!>`
-  const toXstateNode = stateNode => {
+  async function toXstateNode (stateNode, { xstateStateIdPrefix = '' } = {}) {
     let xstateNode = {
-      id: stateNode.id,
+      id: `${xstateStateIdPrefix}${stateNode.id}`,
       initial: (stateNode.states.find(state => !!state.initial) || { id: undefined }).id,
       final: stateNode.final ? true : undefined,
       type: stateNode.parallel ? 'parallel' : undefined,
@@ -66,34 +67,40 @@ async function xstateConfigGenerator (cache) {
 
     if (stateNode.transitions.length) {
       xstateNode.on = stateNode.transitions.reduce((o, transition) => {
-        o[transition.event] = transition.target.split(',').map(s => `#${s.trim()}`).join(', ')
+        o[transition.event] = transition.target.split(',').map(s => `#${xstateStateIdPrefix}${s.trim()}`).join(', ')
         return o
       }, {})
     }
 
     if (stateNode.states.length) {
-      xstateNode.states = stateNode.states.reduce((states, stateNode) => {
-        states[stateNode.id] = toXstateNode(stateNode)
+      const childXstateNodes = await Promise.all(stateNode.states.map(stateNode => toXstateNode(stateNode, { xstateStateIdPrefix })))
+      xstateNode.states = childXstateNodes.reduce((states, childXstateNode, index) => {
+        states[stateNode.states[index].id] = childXstateNode
         return states
       }, {})
     }
 
     if (stateNode.useDirective) {
-      xstateNode.entry.unshift(
-        rawstring(`assign((ctx) => ({ children: { ...ctx.children, ['${stateNode.id}']: spawn(Machines['${stateNode.useDirective.machineId}']) } }))`)
-      )
-      xstateNode.exit.unshift(
-        rawstring(`(ctx) => ctx.children['${stateNode.id}'].stop()`)
-      )
+      const xstateStateIdPrefix = `${stateNode.useDirective.machineId}${xstateStateIdPrefixCount++}::`
+      const machineNode = await cache.findMachineById(stateNode.useDirective.machineId)
+      const name = stateNode.useDirective.machineId
+      const xstateMachine = await toXstateMachine(machineNode, { xstateStateIdPrefix })
+
+      delete xstateMachine.id
+
+      xstateNode.initial = name
+      xstateNode.states = {
+        [name]: xstateMachine
+      }
     }
 
     return xstateNode
   }
 
-  function toXstateMachine (machineNode) {
+  async function toXstateMachine (machineNode, { xstateStateIdPrefix = '' } = {}) {
     let xstateMachineNode = {
       context: { children: {} },
-      id: machineNode.id,
+      id: `${xstateStateIdPrefix}${machineNode.id}`,
       initial: (machineNode.states.find(state => !!state.initial) || { id: undefined }).id,
       entry: [ rawstring(`action('${machineNode.id}/entry')`) ],
       exit: [ rawstring(`action('${machineNode.id}/exit')`) ]
@@ -101,14 +108,15 @@ async function xstateConfigGenerator (cache) {
 
     if (machineNode.transitions.length) {
       xstateMachineNode.on = machineNode.transitions.reduce((o, transition) => {
-        o[transition.event] = transition.target.split(',').map(s => `#${s.trim()}`).join(', ')
+        o[transition.event] = transition.target.split(',').map(s => `#${xstateStateIdPrefix}${s.trim()}`).join(', ')
         return o
       }, {})
     }
 
     if (machineNode.states.length) {
-      xstateMachineNode.states = machineNode.states.reduce((states, stateNode) => {
-        states[stateNode.id] = toXstateNode(stateNode)
+      const childXstateNodes = await Promise.all(machineNode.states.map(stateNode => toXstateNode(stateNode, { xstateStateIdPrefix })))
+      xstateMachineNode.states = childXstateNodes.reduce((states, childXstateNode, index) => {
+        states[machineNode.states[index].id] = childXstateNode
         return states
       }, {})
     }
@@ -121,7 +129,8 @@ async function xstateConfigGenerator (cache) {
     let machines = await Promise.all(
       wireStateFiles.map(async wireStateFile => {
         const scopeNode = await cache.get(wireStateFile)
-        const machines = scopeNode.machines.map(toXstateMachine).map(xstateMachineNode => {
+        const xstateMachines = await Promise.all(scopeNode.machines.map(m => toXstateMachine(m)))
+        const machines = xstateMachines.map(xstateMachineNode => {
           return `machines['${xstateMachineNode.id}'] = Machine(${JSON.stringify(xstateMachineNode, null, 2)})`
         })
         return machines.join('\n\n')

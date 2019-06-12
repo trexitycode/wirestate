@@ -14,6 +14,8 @@ const text = `
 @machine Modal
   <- go
   Start
+    done -> Done!
+  Done!
 `
 
 const wireStateFile = 'App.wirestate'
