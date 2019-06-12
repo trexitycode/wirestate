@@ -56,12 +56,10 @@ async function xstateConfigGenerator (cache) {
       final: stateNode.final ? true : undefined,
       type: stateNode.parallel ? 'parallel' : undefined,
       entry: [
-        rawstring(`action('${stateNode.machineNode.id}/${stateNode.id}/entry')`),
-        rawstring(`action('${stateNode.id}/entry')`)
+        rawstring(`action('${stateNode.machineNode.id}/${stateNode.id}/entry')`)
       ],
       exit: [
-        rawstring(`action('${stateNode.machineNode.id}/${stateNode.id}/exit')`),
-        rawstring(`action('${stateNode.id}/exit')`)
+        rawstring(`action('${stateNode.machineNode.id}/${stateNode.id}/exit')`)
       ]
     }
 
@@ -155,7 +153,7 @@ if (!spawn) throw new Error('Please install the latest version of "xstate"')
  *
  * Where actions are keyed by action keys. Action keys come in two forms:
  * - Machine qualified: MachineID/StateID/entry or MachineID/StateID/exit
- * - State qualified: StateID/entry or StateID/exit
+ * - Machine only: MachineID/entry or MachineID/exit
  *
  * This way actions can be hooked up to a specific state activation/deactivation
  * or to the general state ID if it's used in several machines.
