@@ -184,7 +184,8 @@ export function wirestate ({ main, actions = {}, catch = (error, actionKey) => c
   if (!MainMachine) throw new Error(\`Main machine '\${main}' not found\`)
 
   const interpreter = interpret(MainMachine)
-  const { send, sendTo } = interpreter
+  const send = event => interpreter.send(event)
+  const sendTo = (event, to) => interpreter.send(event, to)
   const sendToParent = (event) => sendTo(event, SpecialTargets.Parent)
 
   return interpreter
