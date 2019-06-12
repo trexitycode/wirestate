@@ -8,8 +8,9 @@ TODO
 
 ## Documentation
 
-- [Guide](./docs/GUIDE.md)
-- [API](./docs/API.md)
+- [Guide -- outdated](./docs/GUIDE.md)
+- [CLI](./docs/CLI.md)
+- [API -- outdated](./docs/API.md)
 
 ## Contributing
 

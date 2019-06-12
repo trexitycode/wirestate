@@ -1,19 +1,5 @@
 # WireState APIs
 
-## CLI
-
-> wirestate {input file} [--output {output type}]
-
-Takes as input a wirestate behavioural statechart file and generates a new
-form that can be used in code.
-
-Supported output formats:
-
-- json
-- json-commonjs
-- json-esm
-- xstate
-
 ## Interpreter API
 
 TODO

@@ -84,9 +84,10 @@ Generators:
 json                  Generates the statechart in JSON format
 json-commonjs         Generates a CommonJS module that exports the statechart in JSON format (named export "statechart")
 json-esm              Generates an ESM module that exports the statechart in JSON format (named export "statechart")
+xstate                Generates an ESM module that exports the statechart as an xstate Interpreter factory (named export "wirestate")
 
 Example:
-wirestate statechart/App.wirestate --srcDir statechart > App.wirestate.json`
+wirestate statechart/App.wirestate --generator xstate --srcDir statechart > App.wirestate.js`
     )
   }
 
