@@ -55,12 +55,7 @@ async function xstateConfigGenerator (cache) {
       initial: (stateNode.states.find(state => !!state.initial) || { id: undefined }).id,
       final: stateNode.final ? true : undefined,
       type: stateNode.parallel ? 'parallel' : undefined,
-      entry: [
-        rawstring(`action('${stateNode.machineNode.id}/${stateNode.id}/entry')`)
-      ],
-      exit: [
-        rawstring(`action('${stateNode.machineNode.id}/${stateNode.id}/exit')`)
-      ]
+      invoke: { src: rawstring(`action('${stateNode.machineNode.id}/${stateNode.id}')`) }
     }
 
     if (stateNode.transitions.length) {
@@ -100,8 +95,7 @@ async function xstateConfigGenerator (cache) {
       context: { children: {} },
       id: `${xstateStateIdPrefix}${machineNode.id}`,
       initial: (machineNode.states.find(state => !!state.initial) || { id: undefined }).id,
-      entry: [ rawstring(`action('${machineNode.id}/entry')`) ],
-      exit: [ rawstring(`action('${machineNode.id}/exit')`) ]
+      invoke: { src: rawstring(`action('${machineNode.id}')`) }
     }
 
     if (machineNode.transitions.length) {
@@ -144,7 +138,7 @@ async function xstateConfigGenerator (cache) {
 /* Generated on ${new Date().toISOString()} using @launchfort/wirestate */
 
 /* eslint-disable-next-line */
-import { Machine, send, Interpreter, interpret as xstateInterpret } from 'xstate'
+import { Machine, send, StateNode } from 'xstate'
 
 /**
  * Hooks up actions for all WireState machines and interprets the main application machine.
@@ -159,25 +153,24 @@ import { Machine, send, Interpreter, interpret as xstateInterpret } from 'xstate
  *
  * @example
  * wirestate({
- *   main: 'App',
  *   actions: { 'App/Some Initial State/entry': (event, send) => send('Go') },
  *   catchFn: (e, key) => console.error({ actionKey: key, error: e })
  * })
- * @param {string} main The ID of the root/main machine
  * @param { { [key:string]: (event, send: Function) => any } } [actions]
  * @param { (error, actionKey) => void } [catchFn] Optional error callback called when an action throws an error
- * @param { (machine: StateMachine) => Interpreter } [interpret] The interpreter factory function
- * @return {Interpreter}
+ * @return {{ [id: string]: StateNode }} The state machine nodes
  */
-export function wirestate ({ main, actions = {}, catchFn = (error, actionKey) => console.error({ actionKey, error }), interpret = xstateInterpret }) {
+export function wirestate ({ actions = {}, catchFn = (error, actionKey) => console.error({ actionKey, error }) }) {
   const noaction = () => {}
   // Look up an action (avoids XState throwing if an action is not found)
   const action = actionKey => {
     const axn = actions[actionKey] || noaction
     return (ctx, e) => {
-      new Promise(resolve => {
-        resolve(axn(e, send))
-      }).catch(error => catchFn(error, actionKey))
+      return (send, receive) => {
+        new Promise(resolve => {
+          resolve(axn(e, send, receive))
+        }).catch(error => catchFn(error, actionKey))
+      }
     }
   }
 
@@ -185,14 +178,7 @@ export function wirestate ({ main, actions = {}, catchFn = (error, actionKey) =>
 
   ${machines.join('\n\n').replace(/"<!(.+)!>"/g, '$1').replace(/\n/g, '\n  ')}
 
-  const MainMachine = machines[main]
-
-  if (!MainMachine) throw new Error(\`Main machine '\${main}' not found\`)
-
-  const interpreter = interpret(MainMachine)
-  const send = (event, payload = undefined) => interpreter.send(event, payload)
-
-  return interpreter
+  return machines
 }`
     )
 
