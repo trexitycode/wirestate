@@ -144,9 +144,7 @@ async function xstateConfigGenerator (cache) {
 /* Generated on ${new Date().toISOString()} using @launchfort/wirestate */
 
 /* eslint-disable-next-line */
-import { assign, spawn, Machine, send, sendParent, SpecialTargets, Interpreter, interpret as xstateInterpret } from 'xstate'
-
-if (!spawn) throw new Error('Please install the latest version of "xstate"')
+import { assign, Machine, send, sendParent, SpecialTargets, Interpreter, interpret as xstateInterpret } from 'xstate'
 
 /**
  * Hooks up actions for all WireState machines and interprets the main application machine.
@@ -155,38 +153,31 @@ if (!spawn) throw new Error('Please install the latest version of "xstate"')
  * - Machine qualified: MachineID/StateID/entry or MachineID/StateID/exit
  * - Machine only: MachineID/entry or MachineID/exit
  *
- * This way actions can be hooked up to a specific state activation/deactivation
- * or to the general state ID if it's used in several machines.
- *
  * Every \`@use MachineID\` WireState statement results in the state with the
- * @use statement having an entry action that assigns the spawned child actor to
- * the \`children\` object on the context.
- *
- * \`\`\`
- * entry: assign(ctx => ({ children: { ...ctx.children, [StateID]: spawn() } }))
- * \`\`\`
+ * @use statement having a child state created where the used machine is inserted
+ * by namespacing all state IDs.
  *
  * @example
  * wirestate({
- *  'main: 'App',
- *   actions: { 'App/Some Initial State/entry': (ctx, event, send) => send('Go') },
+ *   main: 'App',
+ *   actions: { 'App/Some Initial State/entry': (event, send) => send('Go') },
  *   catch: (e, key) => console.error({ actionKey: key, error: e })
  * })
  * @param {string} main The ID of the root/main machine
- * @param { { [key:string]: (context, event, send: Function, sendToParent: Function, sendTo: Function) => any } } [actions]
- * @param { (error, actionKey) => void } [catch] Optional error callback called when an action throws an error
+ * @param { { [key:string]: (event, send: Function, sendToParent: Function, sendTo: Function) => any } } [actions]
+ * @param { (error, actionKey) => void } [catchFn] Optional error callback called when an action throws an error
  * @param { (machine: StateMachine) => Interpreter } [interpret] The interpreter factory function
  * @return {Interpreter}
  */
-export function wirestate ({ main, actions = {}, catch = (error, actionKey) => console.error({ actionKey, error }), interpret = xstateInterpret }) {
+export function wirestate ({ main, actions = {}, catchFn = (error, actionKey) => console.error({ actionKey, error }), interpret = xstateInterpret }) {
   const noaction = () => {}
   // Look up an action (avoids XState throwing if an action is not found)
   const action = actionKey => {
     const axn = actions[actionKey] || noaction
     return (ctx, e) => {
       new Promise(resolve => {
-        resolve(axn(ctx, e, send, sendToParent, sendTo))
-      }).catch(error => catch(error, id))
+        resolve(axn(e, send, sendToParent, sendTo))
+      }).catch(error => catchFn(error, actionKey))
     }
   }
 
@@ -195,7 +186,7 @@ export function wirestate ({ main, actions = {}, catch = (error, actionKey) => c
   ${machines.join('\n\n').replace(/"<!(.+)!>"/g, '$1').replace(/\n/g, '\n  ')}
 
   const MainMachine = machines[main]
-  // eslint-disable-next-line no-template-curly-in-string
+
   if (!MainMachine) throw new Error(\`Main machine '\${main}' not found\`)
 
   const interpreter = interpret(MainMachine)
