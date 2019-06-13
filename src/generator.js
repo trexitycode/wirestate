@@ -144,7 +144,7 @@ async function xstateConfigGenerator (cache) {
 /* Generated on ${new Date().toISOString()} using @launchfort/wirestate */
 
 /* eslint-disable-next-line */
-import { assign, Machine, send, sendParent, SpecialTargets, Interpreter, interpret as xstateInterpret } from 'xstate'
+import { Machine, send, Interpreter, interpret as xstateInterpret } from 'xstate'
 
 /**
  * Hooks up actions for all WireState machines and interprets the main application machine.
@@ -161,10 +161,10 @@ import { assign, Machine, send, sendParent, SpecialTargets, Interpreter, interpr
  * wirestate({
  *   main: 'App',
  *   actions: { 'App/Some Initial State/entry': (event, send) => send('Go') },
- *   catch: (e, key) => console.error({ actionKey: key, error: e })
+ *   catchFn: (e, key) => console.error({ actionKey: key, error: e })
  * })
  * @param {string} main The ID of the root/main machine
- * @param { { [key:string]: (event, send: Function, sendToParent: Function, sendTo: Function) => any } } [actions]
+ * @param { { [key:string]: (event, send: Function) => any } } [actions]
  * @param { (error, actionKey) => void } [catchFn] Optional error callback called when an action throws an error
  * @param { (machine: StateMachine) => Interpreter } [interpret] The interpreter factory function
  * @return {Interpreter}
@@ -176,7 +176,7 @@ export function wirestate ({ main, actions = {}, catchFn = (error, actionKey) =>
     const axn = actions[actionKey] || noaction
     return (ctx, e) => {
       new Promise(resolve => {
-        resolve(axn(e, send, sendToParent, sendTo))
+        resolve(axn(e, send))
       }).catch(error => catchFn(error, actionKey))
     }
   }
@@ -191,8 +191,6 @@ export function wirestate ({ main, actions = {}, catchFn = (error, actionKey) =>
 
   const interpreter = interpret(MainMachine)
   const send = (event, payload = undefined) => interpreter.send(event, payload)
-  const sendTo = (event, to) => interpreter.send(event, to)
-  const sendToParent = (event) => sendTo(event, SpecialTargets.Parent)
 
   return interpreter
 }`
