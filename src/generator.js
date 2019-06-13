@@ -138,7 +138,7 @@ async function xstateConfigGenerator (cache) {
 /* Generated on ${new Date().toISOString()} using @launchfort/wirestate */
 
 /* eslint-disable-next-line */
-import { Machine, send, StateNode } from 'xstate'
+import { Machine, StateNode } from 'xstate'
 
 /**
  * Hooks up actions for all WireState machines and interprets the main application machine.
@@ -167,9 +167,11 @@ export function wirestate ({ actions = {}, catchFn = (error, actionKey) => conso
     const axn = actions[actionKey] || noaction
     return (ctx, e) => {
       return (send, receive) => {
-        new Promise(resolve => {
-          resolve(axn(e, send, receive))
-        }).catch(error => catchFn(error, actionKey))
+        try {
+          return axn(e, send, receive)
+        } catch(error) {
+          catchFn(error, actionKey)
+        }
       }
     }
   }
