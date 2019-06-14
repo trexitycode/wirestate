@@ -40,7 +40,7 @@ export async function toStateConfig ({ stateNode, cache, toMachineConfig, counte
   const initialStateNode = stateNode.states.find(state => !!state.initial)
 
   if (initialStateNode) {
-    stateConfig.initial = `#${ID(initialStateNode.id)}`
+    stateConfig.initial = initialStateNode.id
   }
 
   if (stateNode.transitions.length) {
