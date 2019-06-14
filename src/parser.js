@@ -1,5 +1,5 @@
 import * as Path from 'path'
-import { StateNode, TransitionNode, ImportNode, ScopeNode, MachineNode, UseDirectiveNode, EventProtocolNode } from './ast-nodes'
+import { StateNode, TransitionNode, ImportNode, ScopeNode, MachineNode, UseDirectiveNode } from './ast-nodes'
 import { SyntaxError } from './errors'
 
 const makeScanner = (tokens, { wireStateFile = '' } = {}) => {
@@ -243,33 +243,6 @@ const parseMachineNode = (scanner) => {
       } else {
         throw scanner.syntaxError()
       }
-    } else if (scanner.look({ value: '<-' })) {
-      // Is indentation too much?
-      if (indent > 2) {
-        throw scanner.syntaxError(`Expected indentation 2 but got ${indent}`)
-      }
-
-      if (indent < 2) {
-        throw scanner.syntaxError('Unexpected dedentation')
-      }
-
-      const firstToken = scanner.consume({ value: '<-' })
-      let event = scanner.consume({ type: 'identifier' }).value
-
-      while (scanner.look({ value: '.' })) {
-        event += scanner.consume({ value: '.' }).value
-        event += scanner.consume({ type: 'identifier' }).value
-      }
-
-      if (scanner.look({ value: '?' })) {
-        event += scanner.consume({ value: '?' }).value
-      }
-
-      let ep = new EventProtocolNode(event)
-      ep.line = firstToken.line
-      ep.column = firstToken.column
-      ep.parent = machineNode
-      machineNode.eventProtocols.push(ep)
     } else {
       throw scanner.syntaxError()
     }
@@ -415,34 +388,6 @@ const parseStateNode = (scanner, { indentLevel }) => {
       }
 
       node.useDirective = Object.assign(parseUseDirectiveNode(scanner), { parent: node })
-    } else if (scanner.look({ value: '<-' })) {
-      // Is indentation too much?
-      if (indent > indentLevel + 2) {
-        throw scanner.syntaxError(`Expected indentation ${indentLevel + 2} but got ${indent}`)
-      }
-
-      if (indent < indentLevel) {
-        throw scanner.syntaxError('Unexpected dedentation')
-      }
-
-      const firstToken = scanner.consume({ value: '<-' })
-      let event = scanner.consume({ type: 'identifier' }).value
-
-      while (scanner.look({ value: '.' })) {
-        event += scanner.consume({ value: '.' }).value
-        event += scanner.consume({ type: 'identifier' }).value
-      }
-
-      if (scanner.look({ value: '?' })) {
-        event += scanner.consume({ value: '?' }).value
-      }
-
-      let ep = new EventProtocolNode(event)
-      ep.line = firstToken.line
-      ep.column = firstToken.column
-      ep.parent = node
-      // NOTE (dschnare): We are currently ignoring event protocols
-      // node.eventProtocols.push(ep)
     }
   }
 

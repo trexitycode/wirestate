@@ -148,23 +148,16 @@ class CompoundNode extends Node {
      * @type {TransitionNode[]}
      */
     this._transitions = []
-    /**
-     * @private
-     * @type {EventProtocolNode[]}
-     */
-    this._eventProtocols = []
   }
 
   get states () { return this._states }
   get transitions () { return this._transitions }
-  get eventProtocols () { return this._eventProtocols }
 
   toJSON () {
     let json = super.toJSON()
     json.id = this.id
     json.states = this._states.map(n => n.toJSON())
     json.transitions = this._transitions.map(n => n.toJSON())
-    json.eventProtocols = this._eventProtocols.map(n => n.toJSON())
     return json
   }
 }
@@ -178,8 +171,6 @@ export class MachineNode extends CompoundNode {
     inst._states.forEach(n => (n.parent = inst))
     inst._transitions = json.transitions.map(TransitionNode.fromJSON)
     inst._transitions.forEach(n => (n.parent = inst))
-    inst._eventProtocols = json.eventProtocols.map(EventProtocolNode.fromJSON)
-    inst._eventProtocols.forEach(n => (n.parent = inst))
     return inst
   }
 
@@ -201,39 +192,6 @@ export class MachineNode extends CompoundNode {
   }
 }
 
-export class EventProtocolNode extends Node {
-  static fromJSON (json) {
-    let inst = new EventProtocolNode(json.eventName)
-    inst.line = json.line
-    inst.column = json.column
-    return inst
-  }
-
-  /** @param {string} eventName */
-  constructor (eventName) {
-    super('eventProtocol')
-    this.eventName = eventName
-  }
-
-  /** @type {CompoundNode} */
-  get parent () {
-    return /** @type {CompoundNode} */(this._parent)
-  }
-  set parent (value) {
-    if (value instanceof CompoundNode) {
-      this._parent = value
-    } else {
-      throw new Error('EventProtocolNode parent must be an instance of MachineNode or StateNode')
-    }
-  }
-
-  toJSON () {
-    let json = super.toJSON()
-    json.eventName = this.eventName
-    return json
-  }
-}
-
 export class StateNode extends CompoundNode {
   static fromJSON (json) {
     let inst = new StateNode(json.id, json.indent)
@@ -250,8 +208,6 @@ export class StateNode extends CompoundNode {
     inst._states.forEach(n => (n.parent = inst))
     inst._transitions = json.transitions.map(TransitionNode.fromJSON)
     inst._transitions.forEach(n => (n.parent = inst))
-    inst._eventProtocols = json.eventProtocols.map(EventProtocolNode.fromJSON)
-    inst._eventProtocols.forEach(n => (n.parent = inst))
     return inst
   }
 
@@ -447,12 +403,10 @@ export const walk = (node, visit) => {
       stack.unshift(...node.machines)
     } else if (node instanceof StateNode) {
       stack.unshift(...node.transitions)
-      stack.unshift(...node.eventProtocols)
       node.useDirective && stack.unshift(node.useDirective)
       stack.unshift(...node.states)
     } else if (node instanceof MachineNode) {
       stack.unshift(...node.transitions)
-      stack.unshift(...node.eventProtocols)
       stack.unshift(...node.states)
     }
   }

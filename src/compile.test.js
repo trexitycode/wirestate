@@ -12,7 +12,6 @@ const text = `
   Done!
 
 @machine Modal
-  <- go
   Start
     done -> Done!
   Done!
