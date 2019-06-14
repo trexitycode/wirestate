@@ -1,5 +1,6 @@
 import * as Path from 'path'
 import { StateNode, TransitionNode, ImportNode, ScopeNode, MachineNode, UseDirectiveNode, EventProtocolNode } from './ast-nodes'
+import { SyntaxError } from './errors'
 
 const makeScanner = (tokens, { wireStateFile = '' } = {}) => {
   // Remove the comments and whitespace
@@ -16,12 +17,9 @@ const makeScanner = (tokens, { wireStateFile = '' } = {}) => {
   const syntaxError = (message = null) => {
     if (token) {
       message = message || `Unexpected token ${token.type}:"${token.value}"`
-      return Object.assign(
-        new Error(`SyntaxError${message ? ': ' + message : ''} near [L:${token.line} C:${token.column} WireState File:${wireStateFile}]`),
-        { line: token.line, column: token.column, wireStateFile }
-      )
+      throw new SyntaxError(`Syntax error near line ${token.line}`, { line: token.line, column: token.column, fileName: wireStateFile })
     } else {
-      return new Error(`SyntaxError: Unexpected end of input`)
+      throw new SyntaxError('Unexpected end of input')
     }
   }
 
@@ -443,7 +441,8 @@ const parseStateNode = (scanner, { indentLevel }) => {
       ep.line = firstToken.line
       ep.column = firstToken.column
       ep.parent = node
-      node.eventProtocols.push(ep)
+      // NOTE (dschnare): We are currently ignoring event protocols
+      // node.eventProtocols.push(ep)
     }
   }
 

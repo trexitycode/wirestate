@@ -18,6 +18,23 @@ const text = `
   Done!
 `
 
+// Should raise a SemanticError due to the fact we have two states in the machine
+// with the same ID.
+// const text2 = `
+// @machine App
+//   Application&
+//     Menu
+//       dashboard -> Dashboard
+//       other -> Other
+//       Dashboard
+//       Other
+//     Screens
+//       Dashboard
+//         next -> Other
+//       Other
+//         back -> Dashboard
+// `
+
 const wireStateFile = 'App.wirestate'
 
 // compileFromText(text, wireStateFile).then(async jsonString => {

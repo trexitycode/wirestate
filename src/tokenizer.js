@@ -1,3 +1,5 @@
+import { LexicalError } from './errors'
+
 const makeScanner = (str) => {
   let i = 0
   let c = str[i]
@@ -164,10 +166,7 @@ export const makeTokenizer = ({ wireStateFile = '' } = {}) => {
       }
 
       if (!isTerminated) {
-        throw Object.assign(
-          new Error(`LexicalError: Unterminated string "${buffer}" [L:${scanner.line} C:${scanner.column} File:${wireStateFile}]`),
-          { line: scanner.line, column: scanner.column, fileName: wireStateFile }
-        )
+        throw new LexicalError(`Unterminated string "${buffer}"`, { line: scanner.line, column: scanner.column, fileName: wireStateFile })
       }
 
       return {
@@ -308,9 +307,7 @@ export const makeTokenizer = ({ wireStateFile = '' } = {}) => {
       }
 
       if (noMatch) {
-        throw Object.assign(new Error(
-          `LexicalError: Unknown charcter: ${scanner.c} [L:${line} C:${column} File:${wireStateFile}]`
-        ), { line, column, fileName: wireStateFile })
+        throw new LexicalError(`Unknown charcter: ${scanner.c}`, { line, column, fileName: wireStateFile })
       }
     }
 

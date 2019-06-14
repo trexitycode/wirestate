@@ -26,6 +26,7 @@ const readFile = promisify(FS.readFile)
 class SemanticError extends Error {
   constructor (message, { fileName = 'Unknown', line = 0, column = 0 }) {
     super(message)
+    this.name = 'SemanticError'
     this.fileName = fileName
     this.line = line
     this.column = column
@@ -163,6 +164,7 @@ async function analyzeImportNode (importNode, { cache, srcDir = '' }) {
 
   importNode._wireStateFile = file
 
+  // Safe to let this load in the background since the promise is cached in the cache
   requireWireStateFile(file, { cache, srcDir })
 
   return importNode
@@ -175,15 +177,20 @@ async function analyzeImportNode (importNode, { cache, srcDir = '' }) {
  * @return {Promise<MachineNode>}
  */
 async function analyzeMachineNode (machineNode, { cache }) {
-  // Ensure that we have unique state IDs
-  const stateIds = machineNode.states.map(stateNode => stateNode.id)
+  // Ensure that we have unique state IDs across the entire machine
+  const visitStateNode = (stateNodes, stateNode) => {
+    stateNodes.push(stateNode)
+    return stateNode.states.reduce(visitStateNode, stateNodes)
+  }
+  const stateNodes = machineNode.states.reduce(visitStateNode, [])
+  const stateIds = stateNodes.map(stateNode => stateNode.id)
   const uniqueStateIds = new Set(stateIds)
   for (let stateId of uniqueStateIds) {
     const k = stateIds.indexOf(stateId)
     const l = stateIds.lastIndexOf(stateId)
 
     if (k !== l) {
-      const stateNode = machineNode.states.find(n => n.id === stateId)
+      const stateNode = stateNodes.find(n => n.id === stateId)
       throw new SemanticError(`Duplicate state\n  State ID: "${stateId}"`, {
         fileName: stateNode.scopeNode.wireStateFile,
         line: stateNode.line,
@@ -290,23 +297,6 @@ async function analyzeStateNode (stateNode, { cache }) {
   // For atomic states that have child states, set their stateType to "compound"
   if (stateNode.stateType === 'atomic' && stateNode.states.length > 0) {
     stateNode.stateType = 'compound'
-  }
-
-  // Ensure that we have unique state IDs
-  const stateIds = stateNode.states.map(stateNode => stateNode.id)
-  const uniqueStateIds = new Set(stateIds)
-  for (let stateId of uniqueStateIds) {
-    const k = stateIds.indexOf(stateId)
-    const l = stateIds.lastIndexOf(stateId)
-
-    if (k !== l) {
-      const childStateNode = stateNode.states.find(n => n.id === stateId)
-      throw new SemanticError(`Duplicate state\n  State ID: "${stateId}"`, {
-        fileName: stateNode.scopeNode.wireStateFile,
-        line: childStateNode.line,
-        column: childStateNode.column
-      })
-    }
   }
 
   // Ensure that we have unique transitions

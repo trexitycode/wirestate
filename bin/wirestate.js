@@ -68,10 +68,8 @@ async function generate (inputFileName, { generatorName, srcDir, cacheDir }) {
   return WireState.compile(inputFileName, { generatorName, srcDir, cacheDir })
 }
 
-function main () {
-  const args = process.argv.slice(2)
-  const help = () => {
-    console.log(`Usage:
+const help = () => {
+  console.log(`Usage:
 wirestate {input file} [--srcDir directory] [--cacheDir directory] [--generator name]
 
 Compiles a wirestate statechart and writes the generated result to stdout.
@@ -88,8 +86,11 @@ xstate                Generates an ESM module that exports the statechart as an 
 
 Example:
 wirestate statechart/App.wirestate --generator xstate --srcDir statechart > App.wirestate.js`
-    )
-  }
+  )
+}
+
+function main () {
+  const args = process.argv.slice(2)
 
   if (args.some(arg => [ '--help', '-h' ].indexOf(arg) >= 0)) {
     help()
@@ -118,6 +119,26 @@ main().then(output => {
     })
   })
 }).catch(error => {
-  console.error(error)
-  process.exit(10)
+  if (error.name === 'SemanticError') {
+    console.error(
+      JSON.stringify(
+        error,
+        null,
+        2
+      )
+    )
+    process.exit(10)
+  } else if (error.name === 'LexicalError') {
+    console.error(
+      JSON.stringify(
+        error,
+        null,
+        2
+      )
+    )
+    process.exit(20)
+  } else {
+    console.error(error)
+    process.exit(30)
+  }
 })
