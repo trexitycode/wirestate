@@ -2,6 +2,7 @@
   "name": "wirestate",
   "version": "1.0.0-alpha.1",
   "description": "Behavioral statechart compiler",
+  "main": "lib/index",
   "bin": {
     "wirestate": "bin/wirestate.js"
   },
