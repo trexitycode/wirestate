@@ -47,13 +47,14 @@ export function wirestate ({ actions = {}, catchFn = DEFAULT_CATCH_FN }) {
   const noaction = () => {}
   // Look up an action (avoids XState throwing if an action is not found)
   const action = actionKey => {
-  const axn = actions[actionKey] || noaction
-  return (ctx, e) => {
-    return (send, receive) => {
-      try {
-        return axn(e, send, receive)
-      } catch(error) {
-        catchFn(error, actionKey)
+    const axn = actions[actionKey] || noaction
+    return (ctx, e) => {
+      return (send, receive) => {
+        try {
+          return axn(e, send, receive)
+        } catch(error) {
+          catchFn(error, actionKey)
+        }
       }
     }
   }
