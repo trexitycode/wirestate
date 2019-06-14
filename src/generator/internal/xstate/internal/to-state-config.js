@@ -10,8 +10,9 @@ import { Counter, CountingObject } from './counter'
  * @param {Cache} options.cache
  * @param {(...args) => any} options.toMachineConfig
  * @param {CountingObject} [options.counter]
+ * @param {boolean} [options.disableActions]
  */
-export async function toStateConfig ({ stateNode, cache, toMachineConfig, counter = null }) {
+export async function toStateConfig ({ stateNode, cache, toMachineConfig, counter = null, disableActions = false }) {
   // const machineNode = stateNode.machineNode
   /**
    * Transforms a state ID into a qualified state ID for XState
@@ -27,8 +28,13 @@ export async function toStateConfig ({ stateNode, cache, toMachineConfig, counte
   let stateConfig = {
     // id: ID(stateNode.id),
     final: stateNode.final ? true : undefined,
-    type: stateNode.parallel ? 'parallel' : undefined,
-    invoke: { src: rawstring(`action('${stateNode.machineNode.id}/${stateNode.id}')`) }
+    type: stateNode.parallel ? 'parallel' : undefined
+  }
+
+  if (!disableActions) {
+    stateConfig.invoke = {
+      src: rawstring(`action('${stateNode.machineNode.id}/${stateNode.id}')`)
+    }
   }
 
   const initialStateNode = stateNode.states.find(state => !!state.initial)
@@ -50,7 +56,7 @@ export async function toStateConfig ({ stateNode, cache, toMachineConfig, counte
 
   if (stateNode.states.length) {
     const childXstateNodes = await Promise.all(stateNode.states.map(stateNode => {
-      return toStateConfig({ stateNode, cache, toMachineConfig, counter })
+      return toStateConfig({ stateNode, cache, toMachineConfig, counter, disableActions })
     }))
     stateConfig.states = childXstateNodes.reduce((states, childXstateNode, index) => {
       states[stateNode.states[index].id] = childXstateNode
@@ -63,7 +69,7 @@ export async function toStateConfig ({ stateNode, cache, toMachineConfig, counte
     const name = stateNode.useDirective.machineId
     // const machineCounter = Counter.get(machineNode.id)
     // machineCounter.incr()
-    const machineConfig = await toMachineConfig({ machineNode, cache })
+    const machineConfig = await toMachineConfig({ machineNode, cache, disableActions })
 
     delete machineConfig.id
 

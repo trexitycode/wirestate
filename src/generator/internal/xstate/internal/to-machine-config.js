@@ -10,8 +10,9 @@ import { toStateConfig } from './to-state-config'
  * @param {MachineNode} options.machineNode
  * @param {Cache} options.cache
  * @param {CountingObject} [options.counter]
+ * @param {boolean} [options.disableActions]
  */
-export async function toMachineConfig ({ machineNode, cache, counter = null }) {
+export async function toMachineConfig ({ machineNode, cache, counter = null, disableActions = false }) {
   /**
    * Transforms a state ID into a qualified state ID for XState
    *
@@ -25,8 +26,11 @@ export async function toMachineConfig ({ machineNode, cache, counter = null }) {
 
   let machineConfig = {
     id: ID(machineNode.id),
-    initial: (machineNode.states.find(state => !!state.initial) || { id: undefined }).id,
-    invoke: { src: rawstring(`action('${machineNode.id}')`) }
+    initial: (machineNode.states.find(state => !!state.initial) || { id: undefined }).id
+  }
+
+  if (!disableActions) {
+    machineConfig.invoke = { src: rawstring(`action('${machineNode.id}')`) }
   }
 
   const initialStateNode = machineNode.states.find(state => !!state.initial)
@@ -47,7 +51,7 @@ export async function toMachineConfig ({ machineNode, cache, counter = null }) {
 
   if (machineNode.states.length) {
     const childStateConfigs = await Promise.all(machineNode.states.map(stateNode => {
-      return toStateConfig({ stateNode, cache, toMachineConfig, counter })
+      return toStateConfig({ stateNode, cache, toMachineConfig, counter, disableActions })
     }))
     machineConfig.states = childStateConfigs.reduce((states, childStateConfig, index) => {
       states[machineNode.states[index].id] = childStateConfig

@@ -136,22 +136,22 @@
         "version": "d88836dbbeaddbbd0c5bbff92380f183b58961604e429ebee63f4e4339ba3e43"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/to-state-config.js": {
-        "version": "9f18fa7a4b33f96ed4d18b130f23d52de2de43509f8888e8d3e4bd0cf642896c"
+        "version": "0f23a44aa2cb4cbe37c24714d0da60aaaccc3cef47ffdf39451270fc64c0212e"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/to-machine-config.js": {
-        "version": "ddd61e04893bd6122a425d24a9dccc272a9b5d780d2375588a6b47744128063b"
+        "version": "e35e28195f2ca19bd1fea0298ea9ea597f4c44ac715fdc6e59f2c2aa4457f09a"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/template.js": {
         "version": "d6ef364bf3e364e594a6c474d56ce662089ee9e877e601986c49844cb6cb5851"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/index.js": {
-        "version": "abf6ad44f73e0b2c7518e02ac824340e3d0b0e6e0422cad42955194aaf97824c"
+        "version": "96b6288b9d768e27ef4ee70f6cedca037816745ab8a4262efaa57e29e90a6421"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/index.js": {
-        "version": "e00dd4a27522e3c202e858f444bdf15bfed51db474592f65f816676e78c51855"
+        "version": "0de6995338474fc974211a69936a783fba01bd4c6597caccbed0f4e219d15305"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/compile.js": {
-        "version": "52789c628c273d3a517573b3dac90288c029c23cd301994878eba6f455b4cf57"
+        "version": "aae2ace5691892137201a61ff56afad9cc8b633df7f91c683fc3c29be9e29bc5"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/compile.test.js": {
         "version": "d5bc381bd1b7fbea0d460a10b2ca98e5f21ec08ac70266ccdefa299d358957f7"
@@ -1261,7 +1261,15 @@
       "/users/darren/workspace/launchfort/fort/wirestate/src/analyzer.js",
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/json-generator.js",
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/rawstring.js",
+      "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/counter.js",
+      "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/to-state-config.js",
+      "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/to-machine-config.js",
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/template.js",
+      "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/index.js",
+      "/users/darren/workspace/launchfort/fort/wirestate/src/generator/index.js",
+      "/users/darren/workspace/launchfort/fort/wirestate/src/compile.js",
+      "/users/darren/workspace/launchfort/fort/wirestate/src/compile.test.js",
+      "/users/darren/workspace/launchfort/fort/wirestate/src/index.js",
       "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/globals.d.ts",
       "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/assert.d.ts",
       "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/async_hooks.d.ts",
@@ -1306,15 +1314,7 @@
       "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts",
       "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/globals.d.ts",
       "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/index.d.ts",
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/q/index.d.ts",
-      "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/counter.js",
-      "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/to-state-config.js",
-      "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/to-machine-config.js",
-      "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/index.js",
-      "/users/darren/workspace/launchfort/fort/wirestate/src/generator/index.js",
-      "/users/darren/workspace/launchfort/fort/wirestate/src/compile.js",
-      "/users/darren/workspace/launchfort/fort/wirestate/src/compile.test.js",
-      "/users/darren/workspace/launchfort/fort/wirestate/src/index.js"
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/q/index.d.ts"
     ]
   },
   "version": "3.4.5"

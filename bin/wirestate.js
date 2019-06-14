@@ -64,8 +64,8 @@ function readOption (names, args, { defaultValue = null }) {
   }
 }
 
-async function generate (inputFileName, { generatorName, srcDir, cacheDir }) {
-  return WireState.compile(inputFileName, { generatorName, srcDir, cacheDir })
+async function generate (inputFileName, { generatorName, srcDir, cacheDir, disableActions }) {
+  return WireState.compile(inputFileName, { generatorName, srcDir, cacheDir, disableActions })
 }
 
 const help = () => {
@@ -77,11 +77,10 @@ Compiles a wirestate statechart and writes the generated result to stdout.
 --srcDir              The source directory where imported wirestate files can be found [default {current directory}]
 --cacheDir            The directory where the compiled files will be saved between compiles [default .wirestate]
 --generator           The name of the generator to use [default json]
+--disableActions      Flag to disable action mapping when using the XState generator
 
 Generators:
 json                  Generates the statechart in JSON format
-json-commonjs         Generates a CommonJS module that exports the statechart in JSON format (named export "statechart")
-json-esm              Generates an ESM module that exports the statechart in JSON format (named export "statechart")
 xstate                Generates an ESM module that exports the statechart as an xstate Interpreter factory (named export "wirestate")
 
 Example:
@@ -101,13 +100,14 @@ function main () {
   const srcDir = readOption([ '--srcDir' ], args, { defaultValue: '' })
   const cacheDir = readOption([ '--cacheDir' ], args, { defaultValue: '.wirestate' })
   const generatorName = readOption([ '--generator' ], args, { defaultValue: 'json' })
+  const disableActions = readOption([ '--disableActions' ], args, { defaultValue: false })
 
   if (!inputFileName) {
     help()
     process.exit(20)
   }
 
-  return generate(inputFileName, { srcDir, generatorName, cacheDir })
+  return generate(inputFileName, { srcDir, generatorName, cacheDir, disableActions })
 }
 
 // Entry ---------

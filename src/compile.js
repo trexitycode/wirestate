@@ -12,8 +12,9 @@ import { Cache } from './cache'
  * @param {string} [options.srcDir]
  * @param {string} [options.cacheDir]
  * @param {string} [options.generatorName]
+ * @param {boolean} [options.disableActions] Flag when generating XState to disable action mapping
  */
-export const compileFromText = async (text, wireStateFile, { srcDir = '', cacheDir = '.wirestate', generatorName = 'json' } = {}) => {
+export const compileFromText = async (text, wireStateFile, { srcDir = '', cacheDir = '.wirestate', generatorName = 'json', disableActions = false } = {}) => {
   if (Path.isAbsolute(wireStateFile)) {
     throw new Error('WireStateFile must be relative')
   }
@@ -40,7 +41,7 @@ export const compileFromText = async (text, wireStateFile, { srcDir = '', cacheD
 
   await cache.set(wireStateFile, Promise.resolve(scopeNode))
 
-  return generator.generate(cache, { generatorName })
+  return generator.generate(cache, { generatorName, disableActions })
 }
 
 /**
@@ -49,8 +50,9 @@ export const compileFromText = async (text, wireStateFile, { srcDir = '', cacheD
  * @param {string} [options.srcDir]
  * @param {string} [options.cacheDir]
  * @param {string} [options.generatorName]
+ * @param {boolean} [options.disableActions] Flag when generating XState to disable action mapping
  */
-export const compile = async (fileName, { srcDir = '', cacheDir = '.wirestate', generatorName = 'json' } = {}) => {
+export const compile = async (fileName, { srcDir = '', cacheDir = '.wirestate', generatorName = 'json', disableActions = false } = {}) => {
   const cache = new Cache({ srcDir, cacheDir })
   let wireStateFile = Path.relative(Path.resolve(srcDir), Path.resolve(fileName))
 
@@ -73,5 +75,5 @@ export const compile = async (fileName, { srcDir = '', cacheDir = '.wirestate', 
   }
 
   const generator = makeGenerator()
-  return generator.generate(cache, { generatorName })
+  return generator.generate(cache, { generatorName, disableActions })
 }
