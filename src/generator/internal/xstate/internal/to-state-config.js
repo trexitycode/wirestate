@@ -13,20 +13,20 @@ import { Counter, CountingObject } from './counter'
  * @param {boolean} [options.disableActions]
  */
 export async function toStateConfig ({ stateNode, cache, toMachineConfig, counter = null, disableActions = false }) {
-  // const machineNode = stateNode.machineNode
+  const machineNode = stateNode.machineNode
   /**
    * Transforms a state ID into a qualified state ID for XState
    *
    * @param {string} id The state ID to transform
    */
-  // const ID = id => {
-  //   return counter
-  //     ? `${machineNode.id} ${id} ${counter.value}`
-  //     : id
-  // }
+  const ID = id => {
+    return counter
+      ? `${machineNode.id} ${id} ${counter.value}`
+      : id
+  }
 
   let stateConfig = {
-    // id: ID(stateNode.id),
+    id: ID(stateNode.id),
     final: stateNode.final ? true : undefined,
     type: stateNode.parallel ? 'parallel' : undefined
   }
@@ -40,16 +40,14 @@ export async function toStateConfig ({ stateNode, cache, toMachineConfig, counte
   const initialStateNode = stateNode.states.find(state => !!state.initial)
 
   if (initialStateNode) {
-    // stateConfig.initial = `#${ID(initialStateNode.id)}`
-    stateConfig.initial = initialStateNode.id
+    stateConfig.initial = `#${ID(initialStateNode.id)}`
   }
 
   if (stateNode.transitions.length) {
     stateConfig.on = stateNode.transitions.reduce((o, transition) => {
-      o[transition.event] = transition.target
-      // o[transition.event] = transition.target.split(',').map(s => {
-      //   return `#${ID(s.trim())}`
-      // }).join(', ')
+      o[transition.event] = transition.target.split(',').map(s => {
+        return `#${ID(s.trim())}`
+      }).join(', ')
       return o
     }, {})
   }
@@ -67,9 +65,9 @@ export async function toStateConfig ({ stateNode, cache, toMachineConfig, counte
   if (stateNode.useDirective) {
     const machineNode = await cache.findMachineById(stateNode.useDirective.machineId)
     const name = stateNode.useDirective.machineId
-    // const machineCounter = Counter.get(machineNode.id)
-    // machineCounter.incr()
-    const machineConfig = await toMachineConfig({ machineNode, cache, disableActions })
+    const machineCounter = Counter.get(machineNode.id)
+    machineCounter.incr()
+    const machineConfig = await toMachineConfig({ machineNode, cache, disableActions, counter: machineCounter })
 
     delete machineConfig.id
 

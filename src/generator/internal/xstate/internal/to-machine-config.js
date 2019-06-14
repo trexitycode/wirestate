@@ -41,10 +41,9 @@ export async function toMachineConfig ({ machineNode, cache, counter = null, dis
 
   if (machineNode.transitions.length) {
     machineConfig.on = machineNode.transitions.reduce((o, transition) => {
-      o[transition.event] = transition.target
-      // o[transition.event] = transition.target.split(',').map(s => {
-      //   return `#${ID(s.trim())}`
-      // }).join(', ')
+      o[transition.event] = transition.target.split(',').map(s => {
+        return `#${ID(s.trim())}`
+      }).join(', ')
       return o
     }, {})
   }
