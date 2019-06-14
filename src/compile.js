@@ -13,6 +13,7 @@ import { Cache } from './cache'
  * @param {string} [options.cacheDir]
  * @param {string} [options.generatorName]
  * @param {boolean} [options.disableActions] Flag when generating XState to disable action mapping
+ * @return {Promise<string>}
  */
 export const compileFromText = async (text, wireStateFile, { srcDir = '', cacheDir = '.wirestate', generatorName = 'json', disableActions = false } = {}) => {
   if (Path.isAbsolute(wireStateFile)) {
@@ -51,6 +52,7 @@ export const compileFromText = async (text, wireStateFile, { srcDir = '', cacheD
  * @param {string} [options.cacheDir]
  * @param {string} [options.generatorName]
  * @param {boolean} [options.disableActions] Flag when generating XState to disable action mapping
+ * @return {Promise<string>}
  */
 export const compile = async (fileName, { srcDir = '', cacheDir = '.wirestate', generatorName = 'json', disableActions = false } = {}) => {
   const cache = new Cache({ srcDir, cacheDir })
