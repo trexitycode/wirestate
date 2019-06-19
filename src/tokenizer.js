@@ -194,6 +194,24 @@ export const makeTokenizer = ({ wireStateFile = '' } = {}) => {
     }
   }
 
+  const keywordToken = {
+    keywords: [ 'as' ],
+    canRead (scanner) {
+      return this.keywords.some(kw => scanner.look(kw))
+    },
+    read (scanner) {
+      const value = this.keywords.find(kw => scanner.look(kw))
+
+      scanner.advance(value.length)
+
+      return {
+        type: 'keyword',
+        value,
+        raw: value
+      }
+    }
+  }
+
   const operatorToken = {
     operators: '?&*!.{}',
     canRead (scanner) { return this.operators.indexOf(scanner.c) >= 0 },
@@ -211,11 +229,14 @@ export const makeTokenizer = ({ wireStateFile = '' } = {}) => {
   const identifierToken = {
     canRead (scanner) {
       const c = scanner.c
-      return (c >= 'a' && c <= 'z') ||
-        (c >= 'A' && c <= 'Z') ||
-        (c >= '0' && c <= '9') ||
-        c === '_' ||
-        c === '-'
+      return !scanner.look('as') &&
+        (
+          (c >= 'a' && c <= 'z') ||
+          (c >= 'A' && c <= 'Z') ||
+          (c >= '0' && c <= '9') ||
+          c === '_' ||
+          c === '-'
+        )
     },
     read (scanner) {
       let id = ''
@@ -225,7 +246,8 @@ export const makeTokenizer = ({ wireStateFile = '' } = {}) => {
           const t = scanner.text.substr(scanner.index + 1, 2)
           // Don't cosume the space if it is immediately followed by:
           // '->' (the transition operator)
-          if (t === '->') {
+          // 'as' (the as keyword)
+          if (t === '->' || t === 'as') {
             break
           } else {
             id += c
@@ -278,8 +300,9 @@ export const makeTokenizer = ({ wireStateFile = '' } = {}) => {
     directiveToken,
     symbolToken,
     operatorToken,
-    identifierToken,
-    whitespaceToken
+    keywordToken,
+    whitespaceToken,
+    identifierToken
   ]
   const tokenReaderCount = tokenReaders.length
 

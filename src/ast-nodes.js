@@ -345,7 +345,7 @@ class DirectiveNode extends Node {
 
 export class UseDirectiveNode extends DirectiveNode {
   static fromJSON (json) {
-    let inst = new UseDirectiveNode(json.machineId)
+    let inst = new UseDirectiveNode(json.machineId, json.alias)
     inst.line = json.line
     inst.column = json.column
     return inst
@@ -353,14 +353,18 @@ export class UseDirectiveNode extends DirectiveNode {
 
   /**
    * @param {string} machineId
+   * @param {string} [alias]
    */
-  constructor (machineId) {
+  constructor (machineId, alias = null) {
     super('@use')
     /** @private */
     this._machineId = machineId
+    /** @private */
+    this._alias = alias
   }
 
   get machineId () { return this._machineId }
+  get alias () { return this._alias }
 
   /** @type {StateNode} */
   get parent () {

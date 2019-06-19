@@ -397,7 +397,22 @@ const parseStateNode = (scanner, { indentLevel }) => {
 const parseUseDirectiveNode = (scanner) => {
   const typeToken = scanner.consume({ value: '@use' })
 
-  let node = new UseDirectiveNode(scanner.consume('identifier').value)
+  const machineId = scanner.look('string')
+    ? scanner.consume('string').value
+    : scanner.consume('identifier').value
+
+  let alias = null
+
+  console.log('------>', scanner.token)
+  if (scanner.look({ value: 'as' })) {
+    scanner.consume({ value: 'as' })
+    alias = scanner.look('string')
+      ? scanner.consume('string').value
+      : scanner.consume('identifier').value
+  }
+
+  const node = new UseDirectiveNode(machineId, alias)
+
   Object.assign(node, {
     line: typeToken.line,
     column: typeToken.column

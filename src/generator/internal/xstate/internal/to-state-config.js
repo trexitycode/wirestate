@@ -63,10 +63,17 @@ export async function toStateConfig ({ stateNode, cache, toMachineConfig, counte
   }
 
   if (stateNode.useDirective) {
-    const machineNode = await cache.findMachineById(stateNode.useDirective.machineId)
-    const name = stateNode.useDirective.machineId
+    let machineNode = await cache.findMachineById(stateNode.useDirective.machineId)
+    const name = stateNode.useDirective.alias || stateNode.useDirective.machineId
     const machineCounter = Counter.get(machineNode.id)
     machineCounter.incr()
+
+    // Override the machine ID based on the alias of the @use directive
+    if (name !== stateNode.useDirective.machineId) {
+      machineNode = machineNode.clone()
+      machineNode.id = name
+    }
+
     const machineConfig = await toMachineConfig({ machineNode, cache, disableActions, counter: machineCounter })
 
     delete machineConfig.id

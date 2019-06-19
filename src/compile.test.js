@@ -6,7 +6,7 @@ const text = `
 
   Yellow
     go -> Green
-    @use Modal
+    @use Modal as "My Better Modal"
 
   Green
   Done!
