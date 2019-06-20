@@ -1,14 +1,14 @@
 import { unwrap } from './rawstring'
 
 /**
- * Render the WireState XState machine config objects to JavaScript.
+ * Render a WireState XState machine config object to JavaScript.
  *
- * @param {Map<string, Object>} machineConfigs Mapping of WireState machine ID to XState machine config objects
+ * @param {Object} machineConfig XState machine config object
  */
-export const render = (machineConfigs) => {
+export const render = (machineConfig) => {
   return [
     _head(),
-    _body(machineConfigs),
+    _body(machineConfig),
     _foot()
   ].join('\n')
 }
@@ -35,13 +35,14 @@ const DEFAULT_CATCH_FN = (error, actionKey) => {
 * by namespacing all state IDs.
 *
 * @example
-* wirestate({
+* const machine = wirestate({
 *   actions: { 'App/Some Initial State/entry': (event, send) => send('Go') },
 *   catchFn: (e, key) => console.error({ actionKey: key, error: e })
 * })
+* machine.transition(machine.initial, 'go')
 * @param { { [key:string]: (event, send: Function, receive: Function) => void|Function } } [actions]
 * @param { (error, actionKey) => void } [catchFn] Optional error callback called when an action throws an error
-* @return {Object} The XState machine config objects keyed by machine ID
+* @return {Object} The XState machine instance
 */
 export function wirestate ({ actions = {}, catchFn = DEFAULT_CATCH_FN }) {
   const noaction = () => {}
@@ -58,33 +59,15 @@ export function wirestate ({ actions = {}, catchFn = DEFAULT_CATCH_FN }) {
       }
     }
   }
-
-  const machines = {}
 `
 )
 
 /**
- * @param {Map<string, Object>} machineConfigs Mapping of WireState machine ID to XState machine config objects
+ * @param {Object} machineConfig XState machine config object
  */
-const _body = machineConfigs => {
-  let lines = []
-
-  for (let [wireStateMachineId, machineConfig] of machineConfigs) {
-    lines.push(
-      `machines['${wireStateMachineId}'] = Machine(${JSON.stringify(machineConfig, null, 2)})`
-    )
-  }
-
-  return unwrap(
-    // Indent each line appropriately
-    lines.map(line => {
-      return '  ' + line.replace(/\n/g, '\n  ')
-    }).join('\n\n')
-  )
+const _body = machineConfig => {
+  return unwrap(`  return Machine(${JSON.stringify(machineConfig, null, 2)})`)
+    .replace(/\n/g, '\n  ')
 }
 
-const _foot = () => (
-  `
-  return machines
-}`
-)
+const _foot = () => `}`

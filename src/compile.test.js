@@ -36,14 +36,8 @@ const text = `
 
 const wireStateFile = 'App.wirestate'
 
-// compileFromText(text, wireStateFile).then(async jsonString => {
-//   console.log(jsonString)
-// }, error => {
-//   console.error(error)
-// })
-
-compileFromText(text, wireStateFile, { generatorName: 'xstate' }).then(async jsonString => {
-  console.log(jsonString)
+compileFromText(text, wireStateFile).then(async jsString => {
+  console.log(jsString)
 }, error => {
   console.error(error)
 })

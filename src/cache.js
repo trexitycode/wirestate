@@ -101,23 +101,6 @@ export class Cache {
     return null
   }
 
-  // /**
-  //  * Get machines saved in the cache in dependency order based on the @use usage.
-  //  */
-  // async getMachinesInDepedencyOrder (mainMachineId) {
-  //   const machine = await this.findMachineById(mainMachineId)
-  //   const depGraph = [ machine ]
-  //   const visitState = state => {
-  //     if (state.useDirective) {
-
-  //     } else {
-  //       state.states.forEach(visitState)
-  //     }
-  //   }
-
-  //   machine.states.forEach(visitState)
-  // }
-
   toJSON () {
     let json = {}
 

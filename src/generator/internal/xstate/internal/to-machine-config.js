@@ -2,7 +2,7 @@
 import { MachineNode } from '../../../../ast-nodes'
 import { Cache } from '../../../../cache'
 import { rawstring } from './rawstring'
-import { Counter, CountingObject } from './counter'
+import { CountingObject } from './counter'
 import { toStateConfig } from './to-state-config'
 
 /**

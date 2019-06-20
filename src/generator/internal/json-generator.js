@@ -1,11 +1,17 @@
 /* eslint-disable-next-line */
 import { Cache } from '../../cache'
+/* eslint-disable-next-line */
+import { MachineNode } from '../../ast-nodes'
 
 const BLACKLISTED_PROPS = [ 'line', 'column', 'indent' ]
 
-/** @param {Cache} cache */
-export function jsonGenerator (cache) {
-  const replacer = DiscardJsonReplacer(BLACKLISTED_PROPS)
+/**
+ * @deprecated
+ * @param {MachineNode} mainMachineNode
+ * @param {Cache} cache
+ */
+export async function jsonGenerator (mainMachineNode, cache) {
+  const replacer = _DiscardJsonReplacer(BLACKLISTED_PROPS)
   return JSON.stringify(cache, replacer, 2)
 }
 
@@ -16,7 +22,7 @@ export function jsonGenerator (cache) {
  * @param { string[] } props Property names to discard from all objects
  * @return { (key: string, value) => any }
  */
-function DiscardJsonReplacer (props) {
+function _DiscardJsonReplacer (props) {
   return (key, value) => {
     if (props.includes(key)) {
       return undefined

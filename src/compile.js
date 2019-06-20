@@ -11,11 +11,11 @@ import { Cache } from './cache'
  * @param {Object} [options]
  * @param {string} [options.srcDir]
  * @param {string} [options.cacheDir]
- * @param {string} [options.generatorName]
  * @param {boolean} [options.disableActions] Flag when generating XState to disable action mapping
+ * @param {string} [options.mainMachine] The ID of the machine to compile (defaults to the first machine)
  * @return {Promise<string>}
  */
-export const compileFromText = async (text, wireStateFile, { srcDir = '', cacheDir = '.wirestate', generatorName = 'json', disableActions = false } = {}) => {
+export const compileFromText = async (text, wireStateFile, { srcDir = '', cacheDir = '.wirestate', disableActions = false, mainMachine = '' } = {}) => {
   if (Path.isAbsolute(wireStateFile)) {
     throw new Error('WireStateFile must be relative')
   }
@@ -41,8 +41,19 @@ export const compileFromText = async (text, wireStateFile, { srcDir = '', cacheD
   scopeNode = await analyzer.analyze(scopeNode)
 
   await cache.set(wireStateFile, Promise.resolve(scopeNode))
+  let mainMachineNode = null
 
-  return generator.generate(cache, { generatorName, disableActions })
+  if (mainMachine) {
+    mainMachineNode = await cache.findMachineById(mainMachine)
+    if (!mainMachineNode) {
+      throw new Error(`Main machine ${mainMachine} not found`)
+    }
+  } else {
+    const scopeNode = await cache.get(wireStateFile)
+    mainMachineNode = scopeNode.machines[0]
+  }
+
+  return generator.generate(mainMachineNode, cache, { disableActions })
 }
 
 /**
@@ -52,9 +63,10 @@ export const compileFromText = async (text, wireStateFile, { srcDir = '', cacheD
  * @param {string} [options.cacheDir]
  * @param {string} [options.generatorName]
  * @param {boolean} [options.disableActions] Flag when generating XState to disable action mapping
+ * @param {string} [options.mainMachine] The ID of the machine to compile (defaults to the first machine)
  * @return {Promise<string>}
  */
-export const compile = async (fileName, { srcDir = '', cacheDir = '.wirestate', generatorName = 'json', disableActions = false } = {}) => {
+export const compile = async (fileName, { srcDir = '', cacheDir = '.wirestate', generatorName = 'xstate', disableActions = false, mainMachine = '' } = {}) => {
   const cache = new Cache({ srcDir, cacheDir })
   let wireStateFile = Path.relative(Path.resolve(srcDir), Path.resolve(fileName))
 
@@ -68,14 +80,19 @@ export const compile = async (fileName, { srcDir = '', cacheDir = '.wirestate', 
     ? wireStateFile
     : `${wireStateFile}.wirestate`
 
-  const cacheHit = await cache.has(wireStateFile)
+  await requireWireStateFile(wireStateFile, { cache, srcDir })
+  let mainMachineNode = null
 
-  if (cacheHit) {
-    await cache.get(wireStateFile)
+  if (mainMachine) {
+    const mainMachineNode = await cache.findMachineById(mainMachine)
+    if (!mainMachineNode) {
+      throw new Error(`Main machine ${mainMachine} not found`)
+    }
   } else {
-    await requireWireStateFile(wireStateFile, { cache, srcDir })
+    const scopeNode = await cache.get(wireStateFile)
+    mainMachineNode = scopeNode.machines[0]
   }
 
   const generator = makeGenerator()
-  return generator.generate(cache, { generatorName, disableActions })
+  return generator.generate(mainMachineNode, cache, { generatorName, disableActions })
 }

@@ -64,27 +64,27 @@ function readOption (names, args, { defaultValue = null }) {
   }
 }
 
-async function generate (inputFileName, { generatorName, srcDir, cacheDir, disableActions }) {
-  return WireState.compile(inputFileName, { generatorName, srcDir, cacheDir, disableActions })
+async function generate (inputFileName, { srcDir, cacheDir, disableActions, mainMachine }) {
+  return WireState.compile(inputFileName, { srcDir, cacheDir, disableActions, mainMachine })
 }
 
 const help = () => {
   console.log(`Usage:
-wirestate {input file} [--srcDir directory] [--cacheDir directory] [--generator name]
+wirestate {input file} [--srcDir directory] [--cacheDir directory] [--disableActions] [--mainMachine id]
 
 Compiles a wirestate statechart and writes the generated result to stdout.
 
 --srcDir              The source directory where imported wirestate files can be found [default {current directory}]
 --cacheDir            The directory where the compiled files will be saved between compiles [default .wirestate]
---generator           The name of the generator to use [default json]
---disableActions      Flag to disable action mapping when using the XState generator
+--disableActions      Flag to disable action mapping
+--mainMachine         The ID of the machine to compile (first machine parsed by default)
 
-Generators:
-json                  Generates the statechart in JSON format
-xstate                Generates an ESM module that exports the statechart as an xstate Interpreter factory (named export "wirestate")
+Generates an ESM module that exports the statechart as a factory function that
+generates an XState Machine instance. The factory is exported by the name
+"wirestate".
 
 Example:
-wirestate statechart/App.wirestate --generator xstate --srcDir statechart > App.wirestate.js`
+wirestate statechart/App.wirestate --srcDir statechart > App.wirestate.js`
   )
 }
 
@@ -99,15 +99,15 @@ function main () {
   const inputFileName = args.find(arg => !arg.startsWith('-'))
   const srcDir = readOption([ '--srcDir' ], args, { defaultValue: '' })
   const cacheDir = readOption([ '--cacheDir' ], args, { defaultValue: '.wirestate' })
-  const generatorName = readOption([ '--generator' ], args, { defaultValue: 'json' })
   const disableActions = readOption([ '--disableActions' ], args, { defaultValue: false })
+  const mainMachine = readOption([ '--mainMachine' ], args, { defaultValue: '' })
 
   if (!inputFileName) {
     help()
     process.exit(20)
   }
 
-  return generate(inputFileName, { srcDir, generatorName, cacheDir, disableActions })
+  return generate(inputFileName, { srcDir, cacheDir, disableActions, mainMachine })
 }
 
 // Entry ---------
