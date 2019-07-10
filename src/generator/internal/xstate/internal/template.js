@@ -19,8 +19,8 @@ const _head = () => (
 /* eslint-disable-next-line */
 import { Machine, StateNode } from 'xstate'
 
-const DEFAULT_CATCH_FN = (error, actionKey) => {
-  console.error({ actionKey, error })
+const DEFAULT_CATCH_FN = (error, callbackKey) => {
+  console.error({ callbackKey, error })
 }
 
 /**
@@ -37,10 +37,10 @@ const DEFAULT_CATCH_FN = (error, actionKey) => {
 * @example
 * wirestate({
 *   callbacks: { 'App/Some Initial State/entry': (event, send) => send('Go') },
-*   catchFn: (e, key) => console.error({ actionKey: key, error: e })
+*   catchFn: (e, key) => console.error({ callbackKey: key, error: e })
 * })
 * @param { { [key:string]: (event, send: Function, receive: Function) => void|Function } } [actions]
-* @param { (error, actionKey) => void } [catchFn] Optional error callback called when an action throws an error
+* @param { (error, callbackKey) => void } [catchFn] Optional error callback called when an action throws an error
 * @return {Object} The XState machine config objects keyed by machine ID
 */
 export function wirestate ({ callbacks = {}, catchFn = DEFAULT_CATCH_FN }) {

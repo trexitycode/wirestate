@@ -115,7 +115,7 @@
         "version": "5717e0f59540af2f4520f9e76decfd303e4c9738fca220b2dd748c4076b68d4d"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/parser.js": {
-        "version": "cfb9068d0750a16bf767ae4369b8e1f4ae98a4325c801f9c65679e3066981374"
+        "version": "3433a7f160b05051b13c85167be32847c102851831f4d8244778b74f3d85cb64"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/file-system/index.js": {
         "version": "55ac63ee5a205eebef2353d89defc45071ba602854164f9e1f297b0379b6e927"
@@ -136,13 +136,13 @@
         "version": "d88836dbbeaddbbd0c5bbff92380f183b58961604e429ebee63f4e4339ba3e43"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/to-state-config.js": {
-        "version": "53d233bf23157d360906ead239c4fc85122fce8544ebbd64b294f8ee41e1295e"
+        "version": "675001a6f006870896d937071c69511ea978a8b70882f6bb668f05aa59ed7b66"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/to-machine-config.js": {
-        "version": "4e3ef4b544506e408e1c24a1b3af2203ac9b64abf62162110d87ef3b85bc0fbf"
+        "version": "1ad86bfef9e4d14131146bb5f50b692dbaf5d79f24f5f703c0f37e2c418f52b5"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/template.js": {
-        "version": "e42621d131468b7fe037ed3112c331d7a23836d7f5a06d012aaee2d2aefdd9e5"
+        "version": "996f0b5c065f82fa917f9657dbb26c4bf7ce4ac0b532765254f19212f44ce591"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/index.js": {
         "version": "96b6288b9d768e27ef4ee70f6cedca037816745ab8a4262efaa57e29e90a6421"
@@ -154,10 +154,10 @@
         "version": "a0ba7758150090594b2daf0111fe5faedde526c1b8a5184e445b6cdea82489f3"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/compile.test.js": {
-        "version": "cf4f282e589fd898abfd9efbd0bc2bf5749b81ea12d95ff17566573eaa1b0a2a"
+        "version": "269b50e4c2968b223107645adf6270a0489e54a8db1ed40b0cb16d6c9e260cdd"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/index.js": {
-        "version": "b4d57e2c1130b1cd9caf7f5a5522febca95682fa2b6bda69ebf38cc5358343ee"
+        "version": "f811937b2d0e8159bf1df03ff759c77f9a84839ae757266811b21f566b8805e6"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/globals.d.ts": {
         "version": "9ae4bfd042044be3249b63bbb453a392283dc690d65842194d80bbff90ae0c81",
