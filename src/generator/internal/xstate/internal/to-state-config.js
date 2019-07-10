@@ -33,7 +33,7 @@ export async function toStateConfig ({ stateNode, cache, toMachineConfig, counte
 
   if (!disableActions) {
     stateConfig.invoke = {
-      src: rawstring(`action('${stateNode.machineNode.id}/${stateNode.id}')`)
+      src: rawstring(`callback('${stateNode.machineNode.id}/${stateNode.id}')`)
     }
   }
 

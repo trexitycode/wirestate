@@ -403,7 +403,6 @@ const parseUseDirectiveNode = (scanner) => {
 
   let alias = null
 
-  console.log('------>', scanner.token)
   if (scanner.look({ value: 'as' })) {
     scanner.consume({ value: 'as' })
     alias = scanner.look('string')

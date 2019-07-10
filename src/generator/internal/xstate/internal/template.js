@@ -36,24 +36,24 @@ const DEFAULT_CATCH_FN = (error, actionKey) => {
 *
 * @example
 * wirestate({
-*   actions: { 'App/Some Initial State/entry': (event, send) => send('Go') },
+*   callbacks: { 'App/Some Initial State/entry': (event, send) => send('Go') },
 *   catchFn: (e, key) => console.error({ actionKey: key, error: e })
 * })
 * @param { { [key:string]: (event, send: Function, receive: Function) => void|Function } } [actions]
 * @param { (error, actionKey) => void } [catchFn] Optional error callback called when an action throws an error
 * @return {Object} The XState machine config objects keyed by machine ID
 */
-export function wirestate ({ actions = {}, catchFn = DEFAULT_CATCH_FN }) {
+export function wirestate ({ callbacks = {}, catchFn = DEFAULT_CATCH_FN }) {
   const noaction = () => {}
-  // Look up an action (avoids XState throwing if an action is not found)
-  const action = actionKey => {
-    const axn = actions[actionKey] || noaction
+  // Look up a callback (avoids XState throwing if a callback service is not found)
+  const callback = callbackKey => {
+    const cb = callbacks[callbackKey] || noaction
     return (ctx, e) => {
       return (send, receive) => {
         try {
-          return axn(e, send, receive)
+          return cb(e, send, receive)
         } catch(error) {
-          catchFn(error, actionKey)
+          catchFn(error, callbackKey)
         }
       }
     }

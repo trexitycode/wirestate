@@ -30,7 +30,7 @@ export async function toMachineConfig ({ machineNode, cache, counter = null, dis
   }
 
   if (!disableActions) {
-    machineConfig.invoke = { src: rawstring(`action('${machineNode.id}')`) }
+    machineConfig.invoke = { src: rawstring(`callback('${machineNode.id}')`) }
   }
 
   const initialStateNode = machineNode.states.find(state => !!state.initial)
