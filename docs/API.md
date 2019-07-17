@@ -146,6 +146,8 @@ effects.
 
 ## Callbacks
 
+Each state may or may not have a `callback` function.
+Think of it as something that happens when we enter a state, however it is not required as some states don't need anything to happen upon entering. So, in other words, not all states need callbacks, but the callbacks must belong to a state.
 
 ### Setup
 The `callbacks` object needs to be passed in the wirestate function when setting up the machine.
@@ -169,8 +171,7 @@ service.start()
 
 ### Usage
 
-The callbacks object will have the callback function for the states in the statemachine.
-Think of it as something that happens when we enter a state, however it is not required as some states don't need anything to happen upon entering. So, in other words, not all states need callbacks, but the callbacks must belong to a state.
+The callbacks object will have the callback functions.
 
 The callback object will map each function to a particular state. Say you have the following machine:
 
