@@ -214,6 +214,42 @@ const callbacks = {
 }
 ```
 
+If you are deling with two separate machines, the callback properties for those machines will need to follow the same pattern.
+Say you have the following machine:
+
+```
+@machine App
+  Start
+    stop -> Stop!
+  OtherMachine
+    back -> Start
+    @use "OtherMachine"
+  Stop!
+
+@machine OtherMachine
+  DoSomething
+```
+
+If we would like `OtherMachine` and `DoSomething` to have callbacks, they must be done as follows:
+
+```
+const callbacks = {
+  // App callbacks here
+  'OtherMachine': (evt, send) => {
+    console.warn('Got in to the other machine!')
+    return () => {
+      console.warn('Left the other machine')
+    }
+  },
+  'OtherMachine/DoSomething': (evt, send) => {
+    console.warn('Do something!')
+    return () => {
+      console.warn('Left do something')
+    }
+  }
+}
+```
+
 ### Callback Parameters
 
 The callback functions have two parameters: `evt` and `send`.
