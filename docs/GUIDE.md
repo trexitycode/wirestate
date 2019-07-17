@@ -155,7 +155,7 @@ ReactDOM.render(<Root />, document.getElementById('app'))
 
 ## Behaviour Statechart Syntax
 
-Behaviour statecharts are typically files ending with `.state`. The statechart
+Behaviour statecharts are typically files ending with `.wirestate`. The statechart
 consistes of states and their transitions.
 
 States:
@@ -177,8 +177,8 @@ Transitions:
 
 ```
 # Transitions are typically all lowercased, indented 2 spaces and are of the
-# form `name -> State` or `name.name.name -> State` (events can be arbitrarily
-# namespaced by using '.')
+# form `name -> State`.
+
 About
   home -> Home
   about -> About
@@ -206,48 +206,62 @@ By default the first nested/child state is a parent state's initial state:
 ```
 # Home is the initial state of state App
 App
-  home -> Home
-
   Home
+  About
 ```
+
+
+## Modifiers
 
 Each state can have optional modifiers that change the state's behaviour:
 
+### Initial State: Asterisk (`*`)
+
+`*` indicates the `initial state`. This is an alternative to putting the `initial state` as the first.
+
+```
+# Home is the initial state of state App
+App
+  About
+  Home*
+```
+
+### Parallel State: Ampersand (`&`)
+
+`&` indicates a `parallel state`.
+
+`Parallel states` are states that when active, all child states will be active
+
 ```
 App
-  home -> Home
-
-  About
-  # '*' indicates Home is initial
-  Home*
-
   # '&' indicates that Contact is a parallel state
-  #
-  # Parallel states are states that when active, all child states will be active
   Contact&
     One
     Two
     Three
-
-  Blog
-    Four
-    # '!' indicates that Five! is final
-    #
-    # Final states are states that will cause the interpreter to trigger a
-    # 'done.state.{state id}' event. Where `state id` is the fully qualified
-    # path of the parent state (i.e. in this example: 'done.state.App.Blog').
-    #
-    # When referencing final states as transition targets '!' is part of the
-    # state name.
-    Five!
 ```
 
-Transient states are states that are suffixed with `?`. There's no special
-meaning to these states other than tranditionally these states are used to
-model logic behaviour of the system being modelled.
+### Final State: Exclamation (`!`)
+`!` indicates the `final state`.
+
+`Final states` are states that will cause the interpreter to trigger a 'done.state.{state id}' event. Where `state id` is the fully qualified path of the parent state (i.e. in this example: 'done.state.App.Blog').
+
+Unlike the other modifiers, when referencing final states as transition targets `!` is part of the state name.
 
 ```
-# App.state
+App
+  One
+    next -> Two
+  Two
+    next -> Three! # see that the exclamation myst be included in the transition target
+  Three!
+```
+
+### Transient State: Interrogation (`?`)
+
+`Transient states` are states that are suffixed with `?`. There's no special meaning to these states other than tranditionally these states are used to model logic behaviour of the system being modelled.
+
+```
 Launch*
   Is User Authenticated?*
     yes? -> Loading Profile
@@ -273,8 +287,7 @@ Launch*
 Home
 ```
 
-Notice that when referencing transiet states the `?` is always included in the
-state name.
+Notice that when referencing transiet states the `?` is always included in the state name.
 
 Transient states are not meant to model a long-lasting state of the machine
 but to indicate to the system to perform a synchronous logic behaviour. Also,
@@ -327,3 +340,4 @@ TODO
   when it does the new application state values will be used
 - you can use things like redux or veux, etc. but know that this will lead to
   extra redraws
+
