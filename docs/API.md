@@ -149,7 +149,8 @@ effects.
 Each state may or may not have a `callback` function.
 Think of it as something that happens when we enter a state, however it is not required as some states don't need anything to happen upon entering. So, in other words, not all states need callbacks, but the callbacks must belong to a state.
 
-### Setup
+### Example Setup
+
 The `callbacks` object needs to be passed in the wirestate function when setting up the machine.
 
 In the root of your project, have a file called `machine.js` and set it up as such.
@@ -187,25 +188,25 @@ If you want to add a `callback` once you have entered the `App` machine, the fol
 ```
 const callbacks = {
   'App': (evt, send) => {
-    console.warn('I am in the App machine)
+    console.warn('I have entered the App machine')
     return () => {
-      console.warn('I have left the app machine)
+      console.warn('I have left the app machine')
     }
   }
 }
 ```
 
-Notice that we return a function. This is no accident. As a pattern in  the wirestate callbacks, you want to always return a function that will run once you leave that state (or machine).
+Notice that we return a function. This is no accident. As a pattern in the wirestate callbacks, you can optionally return a function that will run once you leave that state (or machine).
 
-Say you no want to add a callback to the `Start` state. Because it belongs to the `App` machine, this has to be indicated in the name of the callback in the object. This is done with the following naming pattern: `[MACHINE_NAME]/[STATE_NAME]`. Using the previous machine, this is what the object will now look like:
+Say you want to add a callback to the `Start` state. Because it belongs to the `App` machine, this has to be indicated in the name of the callback in the object. This is done with the following naming pattern: `[MACHINE_NAME]/[STATE_NAME]`. Using the previous machine, this is what the object will now look like:
 
 ```
 const callbacks = {
   'App': (evt, send) => {
-    console.warn('I am in the App machine)
+    console.warn('I have entered the App machine')
     return () => {
       console.warn('I have left the app machine)
-    }
+  },
   'App/Start': (evt, send) => {
     console.warn('START')
     return () => {
@@ -215,7 +216,7 @@ const callbacks = {
 }
 ```
 
-If you are deling with two separate machines, the callback properties for those machines will need to follow the same pattern.
+If you are dealing with two separate machines, the callback properties for those machines will need to follow the same pattern.
 Say you have the following machine:
 
 ```
@@ -231,7 +232,7 @@ Say you have the following machine:
   DoSomething
 ```
 
-If we would like `OtherMachine` and `DoSomething` to have callbacks, they must be done as follows:
+If you would like `OtherMachine` and `DoSomething` to have callbacks, they must be done as follows:
 
 ```
 const callbacks = {
