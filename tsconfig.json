@@ -17,9 +17,5 @@
   },
   "include": [
     "src"
-  ],
-  "exclude": [
-    "src/interpreter",
-    "src/bindings"
   ]
 }

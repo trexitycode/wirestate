@@ -30,6 +30,23 @@ const makeScanner = (str) => {
     return c
   }
 
+  const backTrack = (step = 1) => {
+    for (let k = step; k > 0; k -= 1) {
+      let char = str[i - k]
+      if (char === '\n') {
+        line -= 1
+        column = 0
+      } else {
+        column -= 1
+      }
+    }
+
+    i -= step
+    c = str[i]
+
+    return c
+  }
+
   const look = (text) => {
     return str.substr(i, text.length) === text
   }
@@ -40,8 +57,14 @@ const makeScanner = (str) => {
     get index () { return i },
     get c () { return c },
     get text () { return str },
+    at (index) {
+      if (index >= str.length) return this.EOF
+      return str[index]
+    },
+    EOF: '--EOF--',
     reset,
     advance,
+    backTrack,
     look
   }
 }
@@ -178,13 +201,14 @@ export const makeTokenizer = ({ wireStateFile = '' } = {}) => {
   }
 
   const symbolToken = {
+    symbols: [ '->' ],
     canRead (scanner) {
-      return scanner.look('->')
+      return this.symbols.some(s => scanner.look(s))
     },
     read (scanner) {
-      const value = scanner.c + scanner.advance()
+      const value = this.symbols.find(s => scanner.look(s))
 
-      scanner.advance()
+      scanner.advance(value.length)
 
       return {
         type: 'symbol',
@@ -197,7 +221,11 @@ export const makeTokenizer = ({ wireStateFile = '' } = {}) => {
   const keywordToken = {
     keywords: [ 'as' ],
     canRead (scanner) {
-      return this.keywords.some(kw => scanner.look(kw))
+      return this.keywords.some(kw => {
+        const nextChar = scanner.at(scanner.index + kw.length)
+        // Keyword followed by whitespace
+        return scanner.look(kw) && (nextChar === ' ' || nextChar === scanner.EOF)
+      })
     },
     read (scanner) {
       const value = this.keywords.find(kw => scanner.look(kw))
@@ -229,27 +257,26 @@ export const makeTokenizer = ({ wireStateFile = '' } = {}) => {
   const identifierToken = {
     canRead (scanner) {
       const c = scanner.c
-      return !scanner.look('as') &&
-        (
-          (c >= 'a' && c <= 'z') ||
-          (c >= 'A' && c <= 'Z') ||
-          (c >= '0' && c <= '9') ||
-          c === '_' ||
-          c === '-'
-        )
+      return (
+        (c >= 'a' && c <= 'z') ||
+        (c >= 'A' && c <= 'Z') ||
+        (c >= '0' && c <= '9') ||
+        c === '_' ||
+        c === '-'
+      )
     },
     read (scanner) {
       let id = ''
       let c = scanner.c
       while ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c === ' ' || c === '_' || c === '-') {
         if (c === ' ') {
-          const t = scanner.text.substr(scanner.index + 1, 2)
-          // Don't cosume the space if it is immediately followed by:
-          // '->' (the transition operator)
-          // 'as' (the as keyword)
-          if (t === '->' || t === 'as') {
+          scanner.advance()
+          // Don't cosume the space if it is immediately followed by a symbol or a keyword
+          if (symbolToken.canRead(scanner) || keywordToken.canRead(scanner)) {
+            scanner.backTrack()
             break
           } else {
+            scanner.backTrack()
             id += c
             c = scanner.advance()
           }
@@ -300,8 +327,8 @@ export const makeTokenizer = ({ wireStateFile = '' } = {}) => {
     directiveToken,
     symbolToken,
     operatorToken,
-    keywordToken,
     whitespaceToken,
+    keywordToken,
     identifierToken
   ]
   const tokenReaderCount = tokenReaders.length
