@@ -11,14 +11,17 @@
   },
   "scripts": {
     "prepublish": "tsc -p .",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "pretest": "npm run build",
+    "test": "mocha --opts .mocha.opts './lib/**/*.test.js'",
     "build": "tsc -p .",
     "lint": "eslint --fix src",
     "clean": "rimraf build lib .wirestate"
   },
   "author": "Darren Schnare <dschnare@launchfort.com>",
   "dependencies": {
-    "mkdirp": "^0.5.1"
+    "@types/mocha": "5.2.7",
+    "mkdirp": "^0.5.1",
+    "mocha": "6.2.0"
   },
   "devDependencies": {
     "@types/node": "11.10.5",
