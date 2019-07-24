@@ -1,6 +1,6 @@
 {
   "name": "@launchfort/wirestate",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Behavioral statechart compiler",
   "main": "lib/index",
   "bin": {
