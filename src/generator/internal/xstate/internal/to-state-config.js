@@ -46,7 +46,7 @@ export async function toStateConfig ({ stateNode, cache, toMachineConfig, counte
   if (stateNode.transitions.length) {
     stateConfig.on = stateNode.transitions.reduce((o, transition) => {
       o[transition.event] = transition.target.split(',').map(s => {
-        return `#${ID(s.trim())}`
+        return s.trim()
       }).join(', ')
       return o
     }, {})
