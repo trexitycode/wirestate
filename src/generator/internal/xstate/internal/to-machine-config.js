@@ -14,9 +14,9 @@ import { toStateConfig } from './to-state-config'
  */
 export async function toMachineConfig ({ machineNode, cache, counter = null, disableActions = false }) {
   /**
-   * Transforms a state ID into a qualified state ID for XState
+   * Transforms a machine ID into a qualified machine ID for XState
    *
-   * @param {string} id The state ID to transform
+   * @param {string} id The machine ID to transform
    */
   const ID = id => {
     return counter
@@ -42,7 +42,7 @@ export async function toMachineConfig ({ machineNode, cache, counter = null, dis
   if (machineNode.transitions.length) {
     machineConfig.on = machineNode.transitions.reduce((o, transition) => {
       o[transition.event] = transition.target.split(',').map(s => {
-        return `#${ID(s.trim())}`
+        return s.trim()
       }).join(', ')
       return o
     }, {})

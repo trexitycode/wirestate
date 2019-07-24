@@ -17,7 +17,7 @@ const makeScanner = (tokens, { wireStateFile = '' } = {}) => {
   const syntaxError = (message = null) => {
     if (token) {
       message = message || `Unexpected token ${token.type}:"${token.value}"`
-      throw new SyntaxError(`Syntax error near line ${token.line}`, { line: token.line, column: token.column, fileName: wireStateFile })
+      throw new SyntaxError(`Syntax error near line ${token.line}.\n${message}`, { line: token.line, column: token.column, fileName: wireStateFile })
     } else {
       throw new SyntaxError('Unexpected end of input')
     }
