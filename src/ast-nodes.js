@@ -302,6 +302,7 @@ export class TransitionNode extends Node {
 
   get event () { return this._event }
   get target () { return this._target }
+  get targets () { return this.target.split(',').map(t => t.trim()) }
 
   /** @type {CompoundNode} */
   get parent () {
@@ -422,10 +423,12 @@ export const walk = (node, visit) => {
  * Attempts to resolve a transition's target state ID from the transition node's
  * machine node.
  *
+ * Will throw if a transition target state cannot be resolved.
+ *
  * @param {TransitionNode} transitionNode The TransitionNode to resolve
- * @return {StateNode} StateNode if target can be resolved, null otherwise.
+ * @return {StateNode[]} StateNodes if target can be resolved, empty otherwise.
  */
-export const resolveState = (transitionNode) => {
+export const resolveStates = (transitionNode) => {
   /** @type {MachineNode} */
   let machineNode = null
 
@@ -441,15 +444,26 @@ export const resolveState = (transitionNode) => {
     throw new Error('TransitionNode has invalid parent. Expected MachineNode or StateNode.')
   }
 
-  // Search the entire machine for a state who's ID matches our transitionNode target.
-  /** @type {StateNode} */
-  const stateNode = walk(machineNode, node => {
-    if (node instanceof StateNode) {
-      if (node.id === transitionNode.target) {
-        return node
+  // Search the entire machine for a state who's ID matches our transitionNode target(s).
+  /** @type {StateNode[]} */
+  const stateNodes = transitionNode.targets.map(target => {
+    const stateNode = walk(machineNode, node => {
+      if (node instanceof StateNode) {
+        if (node.id === target) {
+          return node
+        }
       }
+    })
+
+    if (!stateNode) {
+      throw Object.assign(
+        new Error(`TransitionNode cannot resolve target state: ${target}`),
+        { transitionTarget: target }
+      )
     }
+
+    return stateNode
   })
 
-  return stateNode || null
+  return stateNodes
 }

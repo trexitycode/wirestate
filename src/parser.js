@@ -273,15 +273,20 @@ const parseTransitionNode = (scanner) => {
   }
 
   scanner.consume({ value: '->' })
+  // Event target can be a comma separated list of state names
+  let target = ''
 
-  let target = scanner.consume('identifier').value
+  while (true) {
+    target += scanner.consume('identifier').value
 
-  if (scanner.look({ type: 'operator' })) {
-    const t = scanner.consume({ type: 'operator' })
-    if (t.value === '?' || t.value === '!') {
-      target += t.value
+    if (scanner.look({ value: '?' }) || scanner.look({ value: '!' })) {
+      target += scanner.consume({ type: 'operator' }).value
+    }
+
+    if (scanner.look({ value: ',' })) {
+      target += scanner.consume({ value: ',' }).value
     } else {
-      throw scanner.syntaxError()
+      break
     }
   }
 

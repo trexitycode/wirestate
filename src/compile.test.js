@@ -19,9 +19,9 @@ describe('a compiler', function () {
     const wireStateFile = 'App.wirestate'
 
     return compileFromText(text, wireStateFile, { generatorName: 'xstate' }).then(async sourceText => {
-      Assert.ok(!!sourceText.match(/"one": "Two"/), 'Incorrectly generated state name')
-      Assert.ok(!!sourceText.match(/"updated potential shipments": "Redisplay"/), 'Incorrectly generated state name')
-      Assert.ok(!sourceText.match(/"updated potential shipments": "#Redisplay 1"/), 'Incorrectly generated state name')
+      Assert.ok(!!sourceText.match(/one": {\s+"target":\s+\[\s+"#Two"\s+\]\s+}/), 'Incorrectly generated state name')
+      Assert.ok(!!sourceText.match(/"updated potential shipments": {\s+"target":\s+\[\s+"#Redisplay"\s+\]\s+}/), 'Incorrectly generated state name')
+      Assert.ok(!!sourceText.match(/"updated potential shipments": {\s+"target":\s+\[\s+"#Shipments Redisplay 1"\s+\]\s+}/), 'Incorrectly generated state name')
     }, error => {
       console.error(error)
       throw error

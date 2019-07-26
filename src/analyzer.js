@@ -4,7 +4,7 @@ import { promisify } from 'util'
 import { makeTokenizer } from './tokenizer'
 import { makeParser } from './parser'
 import {
-  resolveState,
+  resolveStates,
   ScopeNode,
   // eslint-disable-next-line no-unused-vars
   ImportNode,
@@ -220,9 +220,10 @@ async function analyzeMachineNode (machineNode, { cache }) {
 
   // Ensure transitions target a state that can be reached
   machineNode.transitions.forEach(transitionNode => {
-    const stateNode = resolveState(transitionNode)
-    if (!stateNode) {
-      throw new SemanticError(`Transition target cannot be resolved\n  Transition Target: ${transitionNode.target}`, {
+    try {
+      resolveStates(transitionNode)
+    } catch (error) {
+      throw new SemanticError(`Transition target cannot be resolved\n  Transition Target: ${error.transitionTarget}`, {
         fileName: machineNode.parent.wireStateFile,
         line: transitionNode.line,
         column: transitionNode.column
@@ -299,9 +300,10 @@ async function analyzeStateNode (stateNode, { cache }) {
 
   // Ensure transitions target a state that can be reached
   stateNode.transitions.forEach(transitionNode => {
-    const childStateNode = resolveState(transitionNode)
-    if (!childStateNode) {
-      throw new SemanticError(`Transition target cannot be resolved\n  Transition Target: ${transitionNode.target}`, {
+    try {
+      resolveStates(transitionNode)
+    } catch (error) {
+      throw new SemanticError(`Transition target cannot be resolved\n  Transition Target: ${error.transitionTarget}`, {
         fileName: stateNode.scopeNode.wireStateFile,
         line: transitionNode.line,
         column: transitionNode.column
