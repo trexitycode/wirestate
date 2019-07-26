@@ -241,7 +241,7 @@ export const makeTokenizer = ({ wireStateFile = '' } = {}) => {
   }
 
   const operatorToken = {
-    operators: '?&*!.{}',
+    operators: '?&*!.{},',
     canRead (scanner) { return this.operators.indexOf(scanner.c) >= 0 },
     read (scanner) {
       const c = scanner.c

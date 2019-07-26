@@ -109,13 +109,13 @@
         "version": "2de998954d424315bcb817a0f8ac407b6f4ed27629a0131ed9d8bbcbf18cb1d2"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/tokenizer.js": {
-        "version": "d9d6959b0ff1b63564707e7d72622e34e3491a489e003243469123f1a4f753dd"
+        "version": "3819417a435949beb2bef87ffcebf3b64868c611e80eba408a00d506da3534ed"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/ast-nodes.js": {
-        "version": "5717e0f59540af2f4520f9e76decfd303e4c9738fca220b2dd748c4076b68d4d"
+        "version": "37f677f27978a9407f2cb6ca13cba23003a9cf05607273caf0fc2a2bf01027e6"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/parser.js": {
-        "version": "4912795f781e11666d15a39797d413dd958106700bf44a7c330564f95267e46b"
+        "version": "dfee794d3efa3e47aef055faa4eab6a8d42173c814199cc027c874f7c61b30a9"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/file-system/index.js": {
         "version": "55ac63ee5a205eebef2353d89defc45071ba602854164f9e1f297b0379b6e927"
@@ -124,7 +124,10 @@
         "version": "e7a6ca82caf1495f369e47e00c4ce2a788ec3c56ad77c1a6a27bf51fa6e8c2e3"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/analyzer.js": {
-        "version": "a7b366eae68f29142ff5ed7142adc35e167cb622d7e2bf1af5e24b470fd30464"
+        "version": "a836441dfee759858670f9c5e0fc791e3d95cedeb1cd6d9968e349ff48c2af25"
+      },
+      "/users/darren/workspace/launchfort/fort/wirestate/src/analyzer.test.js": {
+        "version": "c344fff2dab0501feef70ee1eb8a95d929c35a84ca20132fd6d50343d8600101"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/json-generator.js": {
         "version": "9a4c812190040a2f2f4036dc3a2c9d72b4587616f01f273dad787bc566fb8438"
@@ -136,10 +139,10 @@
         "version": "d88836dbbeaddbbd0c5bbff92380f183b58961604e429ebee63f4e4339ba3e43"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/to-state-config.js": {
-        "version": "81db7acb903491b03067d98e5084045a7ec408804fb34c89e41cb5bc0d49cd8e"
+        "version": "cb6dac1f5b6dc2df8d3466d9e8c341c356589055ea5fc07dc9a06b467ef3552d"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/to-machine-config.js": {
-        "version": "2de71f45501fb13a337a1ce9a10e48d88584360badfc1c9b2368c54d86c6692c"
+        "version": "8ad1b4942c988bfc637540c452f20f7babb5160f2508220fb147659cb57f0fad"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/template.js": {
         "version": "f3da21ac8f61e33239c01056e925b6406787d1b30d1057cd404e08aad656c832"
@@ -154,13 +157,16 @@
         "version": "a0ba7758150090594b2daf0111fe5faedde526c1b8a5184e445b6cdea82489f3"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/compile.test.js": {
-        "version": "45b7a7f9682d9d26e7e8de163c33c76fb689e4d44898f5e27e4f08f9b520b57d"
+        "version": "0b3fc5f74d9fe31e8b4fd3d34f1b4c400070bdf6413a0cde9765737c02911fc6"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/index.js": {
         "version": "f811937b2d0e8159bf1df03ff759c77f9a84839ae757266811b21f566b8805e6"
       },
+      "/users/darren/workspace/launchfort/fort/wirestate/src/parser.test.js": {
+        "version": "a46bc287c606091396cf83b8a6e4331d8b8e99e0f90e5399e5839d6b6fb0c222"
+      },
       "/users/darren/workspace/launchfort/fort/wirestate/src/tokenizer.test.js": {
-        "version": "70a1ae03f72f746f8b8677076d8998748dc600c1338b3b3e0aa4b2493bcd969d"
+        "version": "5640a7dee20abb17934fa9d1ccf393bdfb02e250694ab51942ee3598cafee51b"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/mocha/index.d.ts": {
         "version": "c4c03cf65951d980ba618ae9601d10438730803fc9c8a1f7b34af8739981e205",
@@ -511,6 +517,15 @@
         "/users/darren/workspace/launchfort/fort/wirestate/src/file-system/index.js",
         "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "/users/darren/workspace/launchfort/fort/wirestate/src/analyzer.test.js": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/assert.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/src/tokenizer.js",
+        "/users/darren/workspace/launchfort/fort/wirestate/src/parser.js",
+        "/users/darren/workspace/launchfort/fort/wirestate/src/analyzer.js",
+        "/users/darren/workspace/launchfort/fort/wirestate/src/cache.js",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/json-generator.js": [
         "/users/darren/workspace/launchfort/fort/wirestate/src/cache.js",
         "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
@@ -583,6 +598,12 @@
         "/users/darren/workspace/launchfort/fort/wirestate/src/cache.js",
         "/users/darren/workspace/launchfort/fort/wirestate/src/generator/index.js",
         "/users/darren/workspace/launchfort/fort/wirestate/src/compile.js",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/src/parser.test.js": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/assert.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/src/parser.js",
         "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
         "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -1269,6 +1290,7 @@
       "/users/darren/workspace/launchfort/fort/wirestate/src/file-system/index.js",
       "/users/darren/workspace/launchfort/fort/wirestate/src/cache.js",
       "/users/darren/workspace/launchfort/fort/wirestate/src/analyzer.js",
+      "/users/darren/workspace/launchfort/fort/wirestate/src/analyzer.test.js",
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/json-generator.js",
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/rawstring.js",
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/counter.js",
@@ -1280,6 +1302,7 @@
       "/users/darren/workspace/launchfort/fort/wirestate/src/compile.js",
       "/users/darren/workspace/launchfort/fort/wirestate/src/compile.test.js",
       "/users/darren/workspace/launchfort/fort/wirestate/src/index.js",
+      "/users/darren/workspace/launchfort/fort/wirestate/src/parser.test.js",
       "/users/darren/workspace/launchfort/fort/wirestate/src/tokenizer.test.js",
       "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/mocha/index.d.ts",
       "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/globals.d.ts",
