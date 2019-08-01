@@ -27,8 +27,9 @@ export async function toStateConfig ({ stateNode, cache, toMachineConfig, counte
 
   let stateConfig = {
     id: ID(stateNode.id),
-    final: stateNode.final ? true : undefined,
-    type: stateNode.parallel ? 'parallel' : undefined
+    type: stateNode.parallel
+      ? 'parallel'
+      : (stateNode.final ? 'final' : undefined)
   }
 
   if (!disableActions) {

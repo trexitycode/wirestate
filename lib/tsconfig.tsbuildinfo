@@ -139,7 +139,7 @@
         "version": "d88836dbbeaddbbd0c5bbff92380f183b58961604e429ebee63f4e4339ba3e43"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/to-state-config.js": {
-        "version": "cb6dac1f5b6dc2df8d3466d9e8c341c356589055ea5fc07dc9a06b467ef3552d"
+        "version": "9d6caf688b14c535870251819eccda1937957ac10c4d11053c19fa8528d6f7c5"
       },
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/to-machine-config.js": {
         "version": "8ad1b4942c988bfc637540c452f20f7babb5160f2508220fb147659cb57f0fad"
@@ -999,6 +999,205 @@
         "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
         "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/async_hooks.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/buffer.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/child_process.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/net.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/cluster.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/child_process.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/net.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/console.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/constants.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/crypto.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/dgram.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/net.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/dns.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/dns.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/domain.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/fs.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/url.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/http.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/net.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/url.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/http2.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/fs.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/net.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/tls.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/url.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/http.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/https.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/tls.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/http.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/url.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/inspector.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/module.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/net.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/dns.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/os.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/path.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/perf_hooks.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/async_hooks.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/process.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/punycode.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/querystring.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/readline.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/repl.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/readline.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/vm.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/string_decoder.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/timers.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/tls.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/crypto.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/dns.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/net.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/trace_events.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/tty.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/net.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/url.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/querystring.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/v8.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/vm.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/worker_threads.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/zlib.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/base.d.ts": [
         "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/globals.d.ts",
         "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/assert.d.ts",
@@ -1042,218 +1241,19 @@
         "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/zlib.d.ts",
         "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/index.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/base.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/globals.d.ts",
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts": [
         "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/async_hooks.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/perf_hooks.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/async_hooks.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/buffer.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/child_process.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/net.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/cluster.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/child_process.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/net.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/console.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/constants.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/crypto.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/tls.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/crypto.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/dns.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/net.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/https.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/tls.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/http.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/url.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/http2.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/fs.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/net.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/tls.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/url.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/http.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/dgram.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/net.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/dns.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/dns.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/net.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/dns.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/tty.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/net.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/http.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/net.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/url.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/domain.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/worker_threads.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/zlib.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/readline.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/repl.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/readline.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/vm.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/fs.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/stream.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/url.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/inspector.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/events.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/module.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/os.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/path.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/process.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/punycode.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/querystring.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/url.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/querystring.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/string_decoder.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/timers.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/trace_events.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
       ],
       "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/globals.d.ts": [
         "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/globals.d.ts",
         "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
         "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts": [
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/index.d.ts": [
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/base.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts",
+        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/globals.d.ts",
         "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/vm.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/v8.d.ts": [
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/util.d.ts",
-        "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts"
       ]
     },
     "semanticDiagnosticsPerFile": [
@@ -1294,14 +1294,7 @@
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/json-generator.js",
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/rawstring.js",
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/counter.js",
-      "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/to-state-config.js",
-      "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/to-machine-config.js",
       "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/template.js",
-      "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/index.js",
-      "/users/darren/workspace/launchfort/fort/wirestate/src/generator/index.js",
-      "/users/darren/workspace/launchfort/fort/wirestate/src/compile.js",
-      "/users/darren/workspace/launchfort/fort/wirestate/src/compile.test.js",
-      "/users/darren/workspace/launchfort/fort/wirestate/src/index.js",
       "/users/darren/workspace/launchfort/fort/wirestate/src/parser.test.js",
       "/users/darren/workspace/launchfort/fort/wirestate/src/tokenizer.test.js",
       "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/mocha/index.d.ts",
@@ -1348,7 +1341,14 @@
       "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/base.d.ts",
       "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/util.d.ts",
       "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/globals.d.ts",
-      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/index.d.ts"
+      "/users/darren/workspace/launchfort/fort/wirestate/node_modules/@types/node/ts3.2/index.d.ts",
+      "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/to-state-config.js",
+      "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/internal/to-machine-config.js",
+      "/users/darren/workspace/launchfort/fort/wirestate/src/generator/internal/xstate/index.js",
+      "/users/darren/workspace/launchfort/fort/wirestate/src/generator/index.js",
+      "/users/darren/workspace/launchfort/fort/wirestate/src/compile.js",
+      "/users/darren/workspace/launchfort/fort/wirestate/src/compile.test.js",
+      "/users/darren/workspace/launchfort/fort/wirestate/src/index.js"
     ]
   },
   "version": "3.4.5"
