@@ -62,4 +62,33 @@ describe('a parser', function () {
     Assert.strictEqual(scopeNode.machines[0].states[0].transitions.length, 1)
     Assert.strictEqual(scopeNode.machines[0].states[0].transitions[0].target, 'About,Away')
   })
+
+  it('should parse transitions with forbidden targets', function () {
+    const parser = makeParser()
+    /*
+    @machine App
+      Home
+        about -> |
+    */
+    const tokens = [
+      { type: 'directive', value: '@machine', raw: '@machine', column: 0, line: 1 },
+      { type: 'whitespace', value: ' ', raw: ' ', column: 8, line: 1 },
+      { type: 'identifier', value: 'App', raw: 'App', column: 9, line: 1 },
+      { type: 'indent', value: '  ', raw: '  ', column: 12, line: 1 },
+      { type: 'identifier', value: 'Home', raw: 'Home', column: 0, line: 2 },
+      { type: 'indent', value: '    ', raw: '    ', column: 6, line: 2 },
+      { type: 'identifier', value: 'about', raw: 'about', column: 4, line: 3 },
+      { type: 'whitespace', value: ' ', raw: ' ', column: 9, line: 3 },
+      { type: 'symbol', value: '->', raw: '->', column: 10, line: 3 },
+      { type: 'whitespace', value: ' ', raw: ' ', column: 12, line: 3 },
+      { type: 'symbol', value: '|', raw: '|', column: 13, line: 3 }
+    ]
+    const scopeNode = parser.parse(tokens)
+    Assert.strictEqual(scopeNode.machines.length, 1)
+    Assert.strictEqual(scopeNode.machines[0].id, 'App')
+    Assert.strictEqual(scopeNode.machines[0].states.length, 1)
+    Assert.strictEqual(scopeNode.machines[0].states[0].id, 'Home')
+    Assert.strictEqual(scopeNode.machines[0].states[0].transitions.length, 1)
+    Assert.ok(scopeNode.machines[0].states[0].transitions[0].isForbidden)
+  })
 })

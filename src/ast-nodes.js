@@ -297,12 +297,13 @@ export class TransitionNode extends Node {
     /** @private */
     this._event = event
     /** @private */
-    this._target = target
+    this._target = (target || '').trim()
   }
 
   get event () { return this._event }
   get target () { return this._target }
   get targets () { return this.target.split(',').map(t => t.trim()) }
+  get isForbidden () { return this.target === '' }
 
   /** @type {CompoundNode} */
   get parent () {
@@ -321,6 +322,7 @@ export class TransitionNode extends Node {
     let json = super.toJSON()
     json.event = this.event
     json.target = this.target
+    json.isForbidden = this.isForbidden
     return json
   }
 }

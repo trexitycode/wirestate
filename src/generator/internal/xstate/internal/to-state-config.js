@@ -10,9 +10,9 @@ import { Counter, CountingObject } from './counter'
  * @param {Cache} options.cache
  * @param {(...args) => any} options.toMachineConfig
  * @param {CountingObject} [options.counter]
- * @param {boolean} [options.disableActions]
+ * @param {boolean} [options.disableCallbacks]
  */
-export async function toStateConfig ({ stateNode, cache, toMachineConfig, counter = null, disableActions = false }) {
+export async function toStateConfig ({ stateNode, cache, toMachineConfig, counter = null, disableCallbacks = false }) {
   const machineNode = stateNode.machineNode
   /**
    * Transforms a state ID into a qualified state ID for XState
@@ -32,7 +32,7 @@ export async function toStateConfig ({ stateNode, cache, toMachineConfig, counte
       : (stateNode.final ? 'final' : undefined)
   }
 
-  if (!disableActions) {
+  if (!disableCallbacks) {
     stateConfig.invoke = {
       src: rawstring(`callback('${stateNode.machineNode.id}/${stateNode.id}')`)
     }
@@ -46,14 +46,20 @@ export async function toStateConfig ({ stateNode, cache, toMachineConfig, counte
 
   if (stateNode.transitions.length) {
     stateConfig.on = stateNode.transitions.reduce((o, transition) => {
-      // NOTE (dschnare): We normalize all transition definitions to objects
-      // since XState is currently buggy in how it handles transitions that are
-      // not defined as objects.
-      // See: https://github.com/davidkpiano/xstate/issues/569
-      o[transition.event] = {
-        target: transition.targets.map(s => {
-          return `#${ID(s)}`
-        })
+      if (transition.isForbidden) {
+        o[transition.event] = {
+          actions: []
+        }
+      } else {
+        // NOTE (dschnare): We normalize all transition definitions to objects
+        // since XState is currently buggy in how it handles transitions that are
+        // not defined as objects.
+        // See: https://github.com/davidkpiano/xstate/issues/569
+        o[transition.event] = {
+          target: transition.targets.map(s => {
+            return `#${ID(s)}`
+          })
+        }
       }
       return o
     }, {})
@@ -61,7 +67,7 @@ export async function toStateConfig ({ stateNode, cache, toMachineConfig, counte
 
   if (stateNode.states.length) {
     const childXstateNodes = await Promise.all(stateNode.states.map(stateNode => {
-      return toStateConfig({ stateNode, cache, toMachineConfig, counter, disableActions })
+      return toStateConfig({ stateNode, cache, toMachineConfig, counter, disableCallbacks })
     }))
     stateConfig.states = childXstateNodes.reduce((states, childXstateNode, index) => {
       states[stateNode.states[index].id] = childXstateNode
@@ -81,7 +87,7 @@ export async function toStateConfig ({ stateNode, cache, toMachineConfig, counte
       machineNode.id = name
     }
 
-    const machineConfig = await toMachineConfig({ machineNode, cache, disableActions, counter: machineCounter })
+    const machineConfig = await toMachineConfig({ machineNode, cache, disableCallbacks, counter: machineCounter })
 
     delete machineConfig.id
 

@@ -12,10 +12,10 @@ import { Cache } from './cache'
  * @param {string} [options.srcDir]
  * @param {string} [options.cacheDir]
  * @param {string} [options.generatorName]
- * @param {boolean} [options.disableActions] Flag when generating XState to disable action mapping
+ * @param {boolean} [options.disableCallbacks] Flag when generating XState to disable action mapping
  * @return {Promise<string>}
  */
-export const compileFromText = async (text, wireStateFile, { srcDir = '', cacheDir = '.wirestate', generatorName = 'json', disableActions = false } = {}) => {
+export const compileFromText = async (text, wireStateFile, { srcDir = '', cacheDir = '.wirestate', generatorName = 'json', disableCallbacks = false } = {}) => {
   if (Path.isAbsolute(wireStateFile)) {
     throw new Error('WireStateFile must be relative')
   }
@@ -42,7 +42,7 @@ export const compileFromText = async (text, wireStateFile, { srcDir = '', cacheD
 
   await cache.set(wireStateFile, Promise.resolve(scopeNode))
 
-  return generator.generate(cache, { generatorName, disableActions })
+  return generator.generate(cache, { generatorName, disableCallbacks })
 }
 
 /**
@@ -51,10 +51,10 @@ export const compileFromText = async (text, wireStateFile, { srcDir = '', cacheD
  * @param {string} [options.srcDir]
  * @param {string} [options.cacheDir]
  * @param {string} [options.generatorName]
- * @param {boolean} [options.disableActions] Flag when generating XState to disable action mapping
+ * @param {boolean} [options.disableCallbacks] Flag when generating XState to disable callback mapping
  * @return {Promise<string>}
  */
-export const compile = async (fileName, { srcDir = '', cacheDir = '.wirestate', generatorName = 'json', disableActions = false } = {}) => {
+export const compile = async (fileName, { srcDir = '', cacheDir = '.wirestate', generatorName = 'json', disableCallbacks = false } = {}) => {
   const cache = new Cache({ srcDir, cacheDir })
   let wireStateFile = Path.relative(Path.resolve(srcDir), Path.resolve(fileName))
 
@@ -77,5 +77,5 @@ export const compile = async (fileName, { srcDir = '', cacheDir = '.wirestate', 
   }
 
   const generator = makeGenerator()
-  return generator.generate(cache, { generatorName, disableActions })
+  return generator.generate(cache, { generatorName, disableCallbacks })
 }

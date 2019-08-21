@@ -201,7 +201,7 @@ export const makeTokenizer = ({ wireStateFile = '' } = {}) => {
   }
 
   const symbolToken = {
-    symbols: [ '->' ],
+    symbols: [ '->', '|' ],
     canRead (scanner) {
       return this.symbols.some(s => scanner.look(s))
     },

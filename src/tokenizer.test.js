@@ -81,4 +81,40 @@ describe('a tokenzier', function () {
       { type: 'identifier', value: 'Away', raw: 'Away', column: 2, line: 5 }
     ])
   })
+
+  it('should tokenize forbidden transitions', function () {
+    const sourceText = `@machine App
+  Home
+    about -> |
+    away -> Away
+  About?
+  Away`
+
+    const tokenizer = makeTokenizer({ wireStateFile: 'App.wirestate' })
+    const tokens = tokenizer.tokenize(sourceText)
+    Assert.deepStrictEqual(tokens, [
+      { type: 'directive', value: '@machine', raw: '@machine', column: 0, line: 1 },
+      { type: 'whitespace', value: ' ', raw: ' ', column: 8, line: 1 },
+      { type: 'identifier', value: 'App', raw: 'App', column: 9, line: 1 },
+      { type: 'indent', value: '  ', raw: '  ', column: 12, line: 1 },
+      { type: 'identifier', value: 'Home', raw: 'Home', column: 2, line: 2 },
+      { type: 'indent', value: '    ', raw: '    ', column: 6, line: 2 },
+      { type: 'identifier', value: 'about', raw: 'about', column: 4, line: 3 },
+      { type: 'whitespace', value: ' ', raw: ' ', column: 9, line: 3 },
+      { type: 'symbol', value: '->', raw: '->', column: 10, line: 3 },
+      { type: 'whitespace', value: ' ', raw: ' ', column: 12, line: 3 },
+      { type: 'symbol', value: '|', raw: '|', column: 13, line: 3 },
+      { type: 'indent', value: '    ', raw: '    ', column: 14, line: 3 },
+      { type: 'identifier', value: 'away', raw: 'away', column: 4, line: 4 },
+      { type: 'whitespace', value: ' ', raw: ' ', column: 8, line: 4 },
+      { type: 'symbol', value: '->', raw: '->', column: 9, line: 4 },
+      { type: 'whitespace', value: ' ', raw: ' ', column: 11, line: 4 },
+      { type: 'identifier', value: 'Away', raw: 'Away', column: 12, line: 4 },
+      { type: 'indent', value: '  ', raw: '  ', column: 16, line: 4 },
+      { type: 'identifier', value: 'About', raw: 'About', column: 2, line: 5 },
+      { type: 'operator', value: '?', raw: '?', column: 7, line: 5 },
+      { type: 'indent', value: '  ', raw: '  ', column: 8, line: 5 },
+      { type: 'identifier', value: 'Away', raw: 'Away', column: 2, line: 6 }
+    ])
+  })
 })
