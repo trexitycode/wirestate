@@ -276,17 +276,21 @@ const parseTransitionNode = (scanner) => {
   // Event target can be a comma separated list of state names
   let target = ''
 
-  while (true) {
-    target += scanner.consume('identifier').value
+  if (scanner.look({ value: '|' })) {
+    scanner.consume('symbol')
+  } else {
+    while (true) {
+      target += scanner.consume('identifier').value
 
-    if (scanner.look({ value: '?' }) || scanner.look({ value: '!' })) {
-      target += scanner.consume({ type: 'operator' }).value
-    }
+      if (scanner.look({ value: '?' }) || scanner.look({ value: '!' })) {
+        target += scanner.consume({ type: 'operator' }).value
+      }
 
-    if (scanner.look({ value: ',' })) {
-      target += scanner.consume({ value: ',' }).value
-    } else {
-      break
+      if (scanner.look({ value: ',' })) {
+        target += scanner.consume({ value: ',' }).value
+      } else {
+        break
+      }
     }
   }
 
@@ -351,7 +355,7 @@ const parseStateNode = (scanner, { indentLevel }) => {
       // event.something else ->
       // * ->
       if (scanner.canConsumeTo({ value: '->' })) {
-        if (indent < indentLevel) {
+        if (indent < indentLevel + 2) {
           throw scanner.syntaxError('Unexpected dedentation')
         }
 

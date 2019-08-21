@@ -7,7 +7,7 @@ import { render } from './internal/template'
  *
  * @param {Cache} cache
  */
-export async function xstateGenerator (cache, { disableActions = false } = {}) {
+export async function xstateGenerator (cache, { disableCallbacks = false } = {}) {
   const wireStateFiles = [ ...cache.keys ]
   // Since the Map constructor takes an initializer like: [ [key, value], ... ]
   // we build an array of: [ [WireState machine ID, XState machine config], ... ]
@@ -20,7 +20,7 @@ export async function xstateGenerator (cache, { disableActions = false } = {}) {
         scopeNode.machines.map(async machineNode => {
           return [
             machineNode.id,
-            await toMachineConfig({ machineNode, cache, disableActions })
+            await toMachineConfig({ machineNode, cache, disableCallbacks })
           ]
         })
       )

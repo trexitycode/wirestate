@@ -221,7 +221,9 @@ async function analyzeMachineNode (machineNode, { cache }) {
   // Ensure transitions target a state that can be reached
   machineNode.transitions.forEach(transitionNode => {
     try {
-      resolveStates(transitionNode)
+      if (!transitionNode.isForbidden) {
+        resolveStates(transitionNode)
+      }
     } catch (error) {
       throw new SemanticError(`Transition target cannot be resolved\n  Transition Target: ${error.transitionTarget}`, {
         fileName: machineNode.parent.wireStateFile,
@@ -301,7 +303,9 @@ async function analyzeStateNode (stateNode, { cache }) {
   // Ensure transitions target a state that can be reached
   stateNode.transitions.forEach(transitionNode => {
     try {
-      resolveStates(transitionNode)
+      if (!transitionNode.isForbidden) {
+        resolveStates(transitionNode)
+      }
     } catch (error) {
       throw new SemanticError(`Transition target cannot be resolved\n  Transition Target: ${error.transitionTarget}`, {
         fileName: stateNode.scopeNode.wireStateFile,

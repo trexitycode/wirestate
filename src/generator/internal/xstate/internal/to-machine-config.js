@@ -2,7 +2,7 @@
 import { MachineNode } from '../../../../ast-nodes'
 import { Cache } from '../../../../cache'
 import { rawstring } from './rawstring'
-import { Counter, CountingObject } from './counter'
+import { CountingObject } from './counter'
 import { toStateConfig } from './to-state-config'
 
 /**
@@ -10,9 +10,9 @@ import { toStateConfig } from './to-state-config'
  * @param {MachineNode} options.machineNode
  * @param {Cache} options.cache
  * @param {CountingObject} [options.counter]
- * @param {boolean} [options.disableActions]
+ * @param {boolean} [options.disableCallbacks]
  */
-export async function toMachineConfig ({ machineNode, cache, counter = null, disableActions = false }) {
+export async function toMachineConfig ({ machineNode, cache, counter = null, disableCallbacks = false }) {
   /**
    * Transforms a machine ID into a qualified machine ID for XState
    *
@@ -40,7 +40,7 @@ export async function toMachineConfig ({ machineNode, cache, counter = null, dis
     initial: (machineNode.states.find(state => !!state.initial) || { id: undefined }).id
   }
 
-  if (!disableActions) {
+  if (!disableCallbacks) {
     machineConfig.invoke = { src: rawstring(`callback('${machineNode.id}')`) }
   }
 
@@ -52,14 +52,20 @@ export async function toMachineConfig ({ machineNode, cache, counter = null, dis
 
   if (machineNode.transitions.length) {
     machineConfig.on = machineNode.transitions.reduce((o, transition) => {
-      // NOTE (dschnare): We normalize all transition definitions to objects
-      // since XState is currently buggy in how it handles transitions that are
-      // not defined as objects.
-      // See: https://github.com/davidkpiano/xstate/issues/569
-      o[transition.event] = {
-        target: transition.targets.map(s => {
-          return `#${StateID(s)}`
-        })
+      if (transition.isForbidden) {
+        o[transition.event] = {
+          actions: []
+        }
+      } else {
+        // NOTE (dschnare): We normalize all transition definitions to objects
+        // since XState is currently buggy in how it handles transitions that are
+        // not defined as objects.
+        // See: https://github.com/davidkpiano/xstate/issues/569
+        o[transition.event] = {
+          target: transition.targets.map(s => {
+            return `#${StateID(s)}`
+          })
+        }
       }
       return o
     }, {})
@@ -67,7 +73,7 @@ export async function toMachineConfig ({ machineNode, cache, counter = null, dis
 
   if (machineNode.states.length) {
     const childStateConfigs = await Promise.all(machineNode.states.map(stateNode => {
-      return toStateConfig({ stateNode, cache, toMachineConfig, counter, disableActions })
+      return toStateConfig({ stateNode, cache, toMachineConfig, counter, disableCallbacks })
     }))
     machineConfig.states = childStateConfigs.reduce((states, childStateConfig, index) => {
       states[machineNode.states[index].id] = childStateConfig

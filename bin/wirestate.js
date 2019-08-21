@@ -64,8 +64,8 @@ function readOption (names, args, { defaultValue = null }) {
   }
 }
 
-async function generate (inputFileName, { generatorName, srcDir, cacheDir, disableActions }) {
-  return WireState.compile(inputFileName, { generatorName, srcDir, cacheDir, disableActions })
+async function generate (inputFileName, { generatorName, srcDir, cacheDir, disableCallbacks }) {
+  return WireState.compile(inputFileName, { generatorName, srcDir, cacheDir, disableCallbacks })
 }
 
 const help = () => {
@@ -100,14 +100,14 @@ function main () {
   const srcDir = readOption([ '--srcDir' ], args, { defaultValue: '' })
   const cacheDir = readOption([ '--cacheDir' ], args, { defaultValue: '.wirestate' })
   const generatorName = readOption([ '--generator' ], args, { defaultValue: 'json' })
-  const disableActions = readOption([ '--disableActions' ], args, { defaultValue: false })
+  const disableCallbacks = readOption([ '--disableCallbacks' ], args, { defaultValue: false })
 
   if (!inputFileName) {
     help()
     process.exit(20)
   }
 
-  return generate(inputFileName, { srcDir, generatorName, cacheDir, disableActions })
+  return generate(inputFileName, { srcDir, generatorName, cacheDir, disableCallbacks })
 }
 
 // Entry ---------

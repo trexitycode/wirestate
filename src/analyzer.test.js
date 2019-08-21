@@ -60,4 +60,18 @@ describe('an analyzer', function () {
 
     Assert.doesNotReject(analyzer.analyze(scopeNode)).catch(_ => {})
   })
+
+  it('should not throw if a forbidden transition is encountered', async function () {
+    const sourceText = `
+@machine App
+  Home
+    about -> |
+  About
+  Away
+`
+    const tokens = tokenizer.tokenize(sourceText)
+    const scopeNode = parser.parse(tokens)
+
+    Assert.doesNotReject(analyzer.analyze(scopeNode)).catch(_ => {})
+  })
 })

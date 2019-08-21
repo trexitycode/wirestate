@@ -12,7 +12,7 @@ Compiles a wirestate statechart and writes the generated result to stdout.
 --srcDir              The source directory where imported wirestate files can be found [default {current directory}]
 --cacheDir            The directory where the compiled files will be saved between compiles [default .wirestate]
 --generator           The name of the generator to use [default json]
---disableActions      Flag to disable action mapping when using the XState generator
+--disableCallbacks    Flag to disable callback mapping when using the XState generator
 
 Generators:
 json                  Generates the statechart in JSON format
