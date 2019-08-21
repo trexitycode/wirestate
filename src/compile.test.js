@@ -1,7 +1,7 @@
 import * as Assert from 'assert'
 import { compileFromText } from './compile'
 
-describe.only('a compiler', function () {
+describe('a compiler', function () {
   it('should compile to XState with proper state names', function () {
     const text = `
 @machine Shipments
