@@ -64,8 +64,8 @@ function readOption (names, args, { defaultValue = null }) {
   }
 }
 
-async function generate (inputFileName, { generatorName, srcDir, cacheDir, disableCallbacks }) {
-  return WireState.compile(inputFileName, { generatorName, srcDir, cacheDir, disableCallbacks })
+async function generate (inputFileName, { generatorName, srcDir, cache, disableCallbacks }) {
+  return WireState.compile(inputFileName, { generatorName, srcDir, cache, disableCallbacks })
 }
 
 const help = () => {
@@ -77,7 +77,7 @@ Compiles a wirestate statechart and writes the generated result to stdout.
 --srcDir              The source directory where imported wirestate files can be found [default {current directory}]
 --cacheDir            The directory where the compiled files will be saved between compiles [default .wirestate]
 --generator           The name of the generator to use [default json]
---disableActions      Flag to disable action mapping when using the XState generator
+--disableCallbacks    Flag to disable callback mapping when using the XState generator
 
 Generators:
 json                  Generates the statechart in JSON format
@@ -102,12 +102,20 @@ function main () {
   const generatorName = readOption([ '--generator' ], args, { defaultValue: 'json' })
   const disableCallbacks = readOption([ '--disableCallbacks' ], args, { defaultValue: false })
 
+  if (!args.some(arg => arg.includes('--cacheDir'))) {
+    process.stdout.write('WARN: --cacheDir must explicitly be set in the next major relase: (example: --cacheDir .wirestate)')
+  }
+
   if (!inputFileName) {
     help()
     process.exit(20)
   }
 
-  return generate(inputFileName, { srcDir, generatorName, cacheDir, disableCallbacks })
+  const cache = cacheDir
+    ? new WireState.MemoryCache()
+    : new WireState.FileCache({ srcDir, cacheDir })
+
+  return generate(inputFileName, { srcDir, generatorName, cache, disableCallbacks })
 }
 
 // Entry ---------

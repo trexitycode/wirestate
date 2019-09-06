@@ -1,6 +1,6 @@
 {
   "name": "@launchfort/wirestate",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Behavioral statechart compiler",
   "main": "lib/index",
   "bin": {
@@ -15,25 +15,22 @@
     "test": "mocha --opts .mocha.opts './lib/**/*.test.js'",
     "build": "tsc -p .",
     "lint": "eslint --fix src",
-    "clean": "rimraf build lib .wirestate"
+    "clean": "rm -rf build lib .wirestate"
   },
   "author": "Darren Schnare <dschnare@launchfort.com>",
-  "dependencies": {
-    "@types/mocha": "5.2.7",
-    "mkdirp": "^0.5.1",
-    "mocha": "6.2.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@types/node": "11.10.5",
-    "eslint": "5.15.3",
-    "eslint-config-standard": "12.0.0",
+    "@types/mocha": "5.2.7",
+    "@types/node": "12.7.4",
+    "eslint": "6.3.0",
+    "eslint-config-standard": "14.1.0",
     "eslint-import-resolver-node": "0.3.2",
-    "eslint-plugin-import": "2.16.0",
-    "eslint-plugin-node": "8.0.1",
-    "eslint-plugin-promise": "4.0.1",
-    "eslint-plugin-standard": "4.0.0",
-    "rimraf": "2.6.3",
-    "source-map-support": "0.5.12",
-    "typescript": "3.4.5"
+    "eslint-plugin-import": "2.18.2",
+    "eslint-plugin-node": "10.0.0",
+    "eslint-plugin-promise": "4.2.1",
+    "eslint-plugin-standard": "4.0.1",
+    "mocha": "6.2.0",
+    "source-map-support": "0.5.13",
+    "typescript": "3.6.2"
   }
 }

@@ -3,19 +3,21 @@ import { makeTokenizer } from './tokenizer'
 import { makeParser } from './parser'
 import { makeAnalyzer, requireWireStateFile } from './analyzer'
 import { makeGenerator } from './generator'
-import { Cache } from './cache'
+/* eslint-disable-next-line */
+import { CacheBase } from './cache-base'
+import { MemoryCache } from './memory-cache'
 
 /**
  * @param {string} text
  * @param {string} wireStateFile
  * @param {Object} [options]
  * @param {string} [options.srcDir]
- * @param {string} [options.cacheDir]
+ * @param {CacheBase} [options.cache]
  * @param {string} [options.generatorName]
  * @param {boolean} [options.disableCallbacks] Flag when generating XState to disable action mapping
  * @return {Promise<string>}
  */
-export const compileFromText = async (text, wireStateFile, { srcDir = '', cacheDir = '.wirestate', generatorName = 'json', disableCallbacks = false } = {}) => {
+export const compileFromText = async (text, wireStateFile, { srcDir = '', cache = new MemoryCache(), generatorName = 'json', disableCallbacks = false } = {}) => {
   if (Path.isAbsolute(wireStateFile)) {
     throw new Error('WireStateFile must be relative')
   }
@@ -30,7 +32,6 @@ export const compileFromText = async (text, wireStateFile, { srcDir = '', cacheD
     ? wireStateFile
     : `${wireStateFile}.wirestate`
 
-  const cache = new Cache({ srcDir, cacheDir })
   const tokenizer = makeTokenizer({ wireStateFile })
   const parser = makeParser({ wireStateFile })
   const analyzer = makeAnalyzer({ cache, srcDir })
@@ -49,13 +50,12 @@ export const compileFromText = async (text, wireStateFile, { srcDir = '', cacheD
  * @param {string} fileName
  * @param {Object} [options]
  * @param {string} [options.srcDir]
- * @param {string} [options.cacheDir]
+ * @param {CacheBase} [options.cache]
  * @param {string} [options.generatorName]
  * @param {boolean} [options.disableCallbacks] Flag when generating XState to disable callback mapping
  * @return {Promise<string>}
  */
-export const compile = async (fileName, { srcDir = '', cacheDir = '.wirestate', generatorName = 'json', disableCallbacks = false } = {}) => {
-  const cache = new Cache({ srcDir, cacheDir })
+export const compile = async (fileName, { srcDir = '', cache = new MemoryCache(), generatorName = 'json', disableCallbacks = false } = {}) => {
   let wireStateFile = Path.relative(Path.resolve(srcDir), Path.resolve(fileName))
 
   if (wireStateFile.startsWith('.')) {

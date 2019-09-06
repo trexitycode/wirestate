@@ -1,9 +1,9 @@
 /* eslint-disable-next-line */
-import { Cache } from '../../cache'
+import { CacheBase } from '../../cache-base'
 
 const BLACKLISTED_PROPS = [ 'line', 'column', 'indent' ]
 
-/** @param {Cache} cache */
+/** @param {CacheBase} cache */
 export function jsonGenerator (cache) {
   const replacer = DiscardJsonReplacer(BLACKLISTED_PROPS)
   return JSON.stringify(cache, replacer, 2)

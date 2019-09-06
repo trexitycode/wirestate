@@ -1,9 +1,9 @@
 import * as FS from 'fs'
-import * as Mkdirp from 'mkdirp'
+import * as Path from 'path'
 import { promisify } from 'util'
 
 const _fsStat = promisify(FS.stat)
-const _mkdirp = promisify(Mkdirp)
+const _mkdir = promisify(FS.mkdir)
 
 /**
  * @param {string} fileName
@@ -23,6 +23,15 @@ export async function fileExists (fileName) {
  * @param {string} dirName
  * @return {Promise<void>}
  */
-export function mkdirp (dirName) {
-  return _mkdirp(dirName)
+export async function mkdirp (dirName) {
+  try {
+    await _mkdir(dirName, { recursive: true })
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      await mkdirp(Path.dirname(dirName))
+      await _mkdir(dirName)
+    } else {
+      throw error
+    }
+  }
 }

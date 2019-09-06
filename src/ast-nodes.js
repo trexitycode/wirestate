@@ -403,8 +403,6 @@ export const walk = (node, visit) => {
   while (stack.length && returnValue === undefined) {
     const node = stack.shift()
 
-    returnValue = visit(node)
-
     if (node instanceof ScopeNode) {
       stack.unshift(...node.imports)
       stack.unshift(...node.machines)
@@ -416,6 +414,8 @@ export const walk = (node, visit) => {
       stack.unshift(...node.transitions)
       stack.unshift(...node.states)
     }
+
+    returnValue = visit(node)
   }
 
   return returnValue

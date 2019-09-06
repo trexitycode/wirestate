@@ -1,11 +1,11 @@
 /* eslint-disable-next-line */
-import { Cache } from '../../../cache'
+import { CacheBase } from '../../../cache-base'
 import { toMachineConfig } from './internal/to-machine-config'
 import { render } from './internal/template'
 
 /**
  *
- * @param {Cache} cache
+ * @param {CacheBase} cache
  */
 export async function xstateGenerator (cache, { disableCallbacks = false } = {}) {
   const wireStateFiles = [ ...cache.keys ]

@@ -2,12 +2,12 @@ import * as Assert from 'assert'
 import { makeTokenizer } from './tokenizer'
 import { makeParser } from './parser'
 import { makeAnalyzer } from './analyzer'
-import { Cache } from './cache'
+import { MemoryCache } from './memory-cache'
 
 describe('an analyzer', function () {
   const tokenizer = makeTokenizer({ wireStateFile: 'App.wirestate' })
   const parser = makeParser({ wireStateFile: 'App.wirestate' })
-  const analyzer = makeAnalyzer({ cache: new Cache() })
+  const analyzer = makeAnalyzer({ cache: new MemoryCache() })
 
   it('should throw if a single transition target cannot be resolved', async function () {
     const sourceText = `

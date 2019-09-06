@@ -3,6 +3,7 @@ import * as Path from 'path'
 import { promisify } from 'util'
 import { makeTokenizer } from './tokenizer'
 import { makeParser } from './parser'
+import { SemanticError } from './errors'
 import {
   resolveStates,
   ScopeNode,
@@ -16,20 +17,10 @@ import {
   UseDirectiveNode
 } from './ast-nodes'
 // eslint-disable-next-line no-unused-vars
-import { Cache } from './cache'
+import { CacheBase } from './cache-base'
 import * as FileSystem from './file-system'
 
 const readFile = promisify(FS.readFile)
-
-class SemanticError extends Error {
-  constructor (message, { fileName = 'Unknown', line = 0, column = 0 }) {
-    super(message)
-    this.name = 'SemanticError'
-    this.fileName = fileName
-    this.line = line
-    this.column = column
-  }
-}
 
 /** @param {string} eventName */
 const normalizeEventName = eventName => {
@@ -39,7 +30,7 @@ const normalizeEventName = eventName => {
 /**
  * @param {ScopeNode} scopeNode
  * @param {Object} options
- * @param {Cache} options.cache
+ * @param {CacheBase} options.cache
  * @param {string} [options.srcDir] The directory to search for wirestate files
  * @return {Promise<ScopeNode>}
  */
@@ -54,7 +45,7 @@ function analyze (scopeNode, { cache, srcDir = '' }) {
 /**
  * @param {string} wireStateFile
  * @param {Object} options
- * @param {Cache} options.cache
+ * @param {CacheBase} options.cache
  * @param {string} [options.srcDir]
  * @return {Promise<ScopeNode>}
  */
@@ -97,7 +88,7 @@ export async function requireWireStateFile (wireStateFile, { cache, srcDir = '' 
 /**
  * @param {ScopeNode} scopeNode
  * @param {Object} options
- * @param {Cache} options.cache
+ * @param {CacheBase} options.cache
  * @param {string} [options.srcDir]
  */
 async function analyzeScopeNode (scopeNode, { cache, srcDir = '' }) {
@@ -138,7 +129,7 @@ async function analyzeScopeNode (scopeNode, { cache, srcDir = '' }) {
 /**
  * @param {ImportNode} importNode
  * @param {Object} options
- * @param {Cache} options.cache
+ * @param {CacheBase} options.cache
  * @param {string} [options.srcDir]
  */
 async function analyzeImportNode (importNode, { cache, srcDir = '' }) {
@@ -171,7 +162,7 @@ async function analyzeImportNode (importNode, { cache, srcDir = '' }) {
 /**
  * @param {MachineNode} machineNode
  * @param {Object} options
- * @param {Cache} options.cache
+ * @param {CacheBase} options.cache
  * @return {Promise<MachineNode>}
  */
 async function analyzeMachineNode (machineNode, { cache }) {
@@ -261,7 +252,7 @@ async function analyzeMachineNode (machineNode, { cache }) {
 /**
  * @param {StateNode} stateNode
  * @param {Object} options
- * @param {Cache} options.cache
+ * @param {CacheBase} options.cache
  * @return {Promise<StateNode>}
  */
 async function analyzeStateNode (stateNode, { cache }) {
@@ -346,7 +337,7 @@ async function analyzeStateNode (stateNode, { cache }) {
 /**
  * @param {UseDirectiveNode} useDirectiveNode
  * @param {Object} options
- * @param {Cache} options.cache
+ * @param {CacheBase} options.cache
  * @return {Promise<UseDirectiveNode>}
  */
 async function analyzeUseDirectiveNode (useDirectiveNode, { cache }) {
@@ -387,7 +378,7 @@ async function analyzeUseDirectiveNode (useDirectiveNode, { cache }) {
 
 /**
  * @param {Object} options
- * @param {Cache} options.cache
+ * @param {CacheBase} options.cache
  * @param {string} [options.srcDir]
  */
 export const makeAnalyzer = ({ cache, srcDir = '' }) => {

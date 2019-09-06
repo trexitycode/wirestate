@@ -1,11 +1,11 @@
 /* eslint-disable-next-line */
-import { Cache } from '../cache'
+import { CacheBase } from '../cache-base'
 import { jsonGenerator } from './internal/json-generator'
 import { xstateGenerator } from './internal/xstate'
 
 export function makeGenerator () {
   /**
-   * @param {Cache} cache
+   * @param {CacheBase} cache
    * @param {Object} [options]
    * @param {string} [options.generatorName]
    * @param {boolean} [options.disableCallbacks] Flag when generating XState to disable callback mapping

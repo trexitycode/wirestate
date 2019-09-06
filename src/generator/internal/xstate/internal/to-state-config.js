@@ -1,13 +1,13 @@
 /* eslint-disable no-unused-vars */
 import { StateNode } from '../../../../ast-nodes'
-import { Cache } from '../../../../cache'
+import { CacheBase } from '../../../../cache-base'
 import { rawstring } from './rawstring'
 import { Counter, CountingObject } from './counter'
 
 /**
  * @param {object} [options]
  * @param {StateNode} options.stateNode
- * @param {Cache} options.cache
+ * @param {CacheBase} options.cache
  * @param {(...args) => any} options.toMachineConfig
  * @param {CountingObject} [options.counter]
  * @param {boolean} [options.disableCallbacks]
@@ -58,7 +58,13 @@ export async function toStateConfig ({ stateNode, cache, toMachineConfig, counte
         o[transition.event] = {
           target: transition.targets.map(s => {
             return `#${ID(s)}`
-          })
+          }),
+          // NOTE (dschnare): We add an empty action function here to workaround
+          // an XState bug where if the target of a transition is a parent node
+          // then it does not cause an exit and re-entry of the parent node.
+          // However, with an empty action function the transition performs as
+          // expected.
+          actions: rawstring('function () {}')
         }
       }
       return o
