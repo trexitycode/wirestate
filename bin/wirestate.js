@@ -53,7 +53,7 @@ function readOption (names, args, { defaultValue = null }) {
     if (argCount === 1) {
       return argValues[0]
     } else if (argCount === 0) {
-      if ((defaultValue === null || defaultValue === undefined)) {
+      if (defaultValue === undefined) {
         throw new Error(`Option ${names} is required`)
       } else {
         return defaultValue
