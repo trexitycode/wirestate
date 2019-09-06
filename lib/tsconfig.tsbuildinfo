@@ -362,17 +362,15 @@
     "options": {
       "allowJs": true,
       "checkJs": true,
-      "target": 4,
+      "target": 5,
       "moduleResolution": 2,
       "module": 1,
       "sourceMap": true,
       "incremental": true,
       "outDir": "./",
       "newLine": 1,
-      "jsx": 2,
-      "reactNamespace": "React",
       "lib": [
-        "lib.es2017.d.ts"
+        "lib.es2018.d.ts"
       ],
       "project": "..",
       "configFilePath": "../tsconfig.json"

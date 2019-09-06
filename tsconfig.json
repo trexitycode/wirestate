@@ -2,17 +2,15 @@
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
-    "target": "es2017",
+    "target": "es2018",
     "moduleResolution": "node",
     "module": "commonjs",
     "sourceMap": true,
     "incremental": true,
     "outDir": "lib",
     "newLine": "LF",
-    "jsx": "react",
-    "reactNamespace": "React",
     "lib": [
-      "es2017"
+      "es2018"
     ]
   },
   "include": [
