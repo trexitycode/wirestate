@@ -19,7 +19,7 @@ const WireState = require('../lib/index')
  * @param {any} [options.defaultValue] The defaultValue of the option
  * @return {any[]|any}
  */
-function readOption (names, args, { defaultValue = null }) {
+function readOption (names, args, { defaultValue = undefined } = {}) {
   let argValues = []
   let argCount = 0
 
