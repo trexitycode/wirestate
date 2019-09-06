@@ -98,20 +98,16 @@ function main () {
 
   const inputFileName = args.find(arg => !arg.startsWith('-'))
   const srcDir = readOption([ '--srcDir' ], args, { defaultValue: '' })
-  const cacheDir = readOption([ '--cacheDir' ], args, { defaultValue: '.wirestate' })
+  const cacheDir = readOption([ '--cacheDir' ], args, { defaultValue: null })
   const generatorName = readOption([ '--generator' ], args, { defaultValue: 'json' })
   const disableCallbacks = readOption([ '--disableCallbacks' ], args, { defaultValue: false })
-
-  if (!args.some(arg => arg.includes('--cacheDir'))) {
-    process.stdout.write('WARN: --cacheDir must explicitly be set in the next major relase: (example: --cacheDir .wirestate)')
-  }
 
   if (!inputFileName) {
     help()
     process.exit(20)
   }
 
-  const cache = cacheDir
+  const cache = cacheDir === null
     ? new WireState.MemoryCache()
     : new WireState.FileCache({ srcDir, cacheDir })
 
