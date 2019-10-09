@@ -46,7 +46,7 @@ class Node {
 
 export class ScopeNode extends Node {
   static fromJSON (json) {
-    let inst = new ScopeNode(json.wireStateFile)
+    const inst = new ScopeNode(json.wireStateFile)
     inst.line = json.line
     inst.column = json.column
     inst._machines = json.machines.map(MachineNode.fromJSON)
@@ -79,7 +79,7 @@ export class ScopeNode extends Node {
   }
 
   toJSON () {
-    let json = super.toJSON()
+    const json = super.toJSON()
     json.wireStateFile = this.wireStateFile
     json.imports = this._imports.map(n => n.toJSON())
     json.machines = this._machines.map(n => n.toJSON())
@@ -89,7 +89,7 @@ export class ScopeNode extends Node {
 
 export class ImportNode extends Node {
   static fromJSON (json) {
-    let inst = new ImportNode(json.machineIds, json.wireStateFile)
+    const inst = new ImportNode(json.machineIds, json.wireStateFile)
     inst.line = json.line
     inst.column = json.column
     return inst
@@ -114,6 +114,7 @@ export class ImportNode extends Node {
     // @ts-ignore
     return this._parent
   }
+
   set parent (value) {
     if (value instanceof ScopeNode) {
       this._parent = value
@@ -123,7 +124,7 @@ export class ImportNode extends Node {
   }
 
   toJSON () {
-    let json = super.toJSON()
+    const json = super.toJSON()
     json.wireStateFile = this.wireStateFile
     json.machineIds = this.machineIds.slice()
     return json
@@ -154,7 +155,7 @@ class CompoundNode extends Node {
   get transitions () { return this._transitions }
 
   toJSON () {
-    let json = super.toJSON()
+    const json = super.toJSON()
     json.id = this.id
     json.states = this._states.map(n => n.toJSON())
     json.transitions = this._transitions.map(n => n.toJSON())
@@ -164,7 +165,7 @@ class CompoundNode extends Node {
 
 export class MachineNode extends CompoundNode {
   static fromJSON (json) {
-    let inst = new MachineNode(json.id)
+    const inst = new MachineNode(json.id)
     inst.line = json.line
     inst.column = json.column
     inst._states = json.states.map(StateNode.fromJSON)
@@ -183,6 +184,7 @@ export class MachineNode extends CompoundNode {
   get parent () {
     return /** @type {ScopeNode} */(this._parent)
   }
+
   set parent (value) {
     if (value instanceof ScopeNode) {
       this._parent = value
@@ -194,7 +196,7 @@ export class MachineNode extends CompoundNode {
 
 export class StateNode extends CompoundNode {
   static fromJSON (json) {
-    let inst = new StateNode(json.id, json.indent)
+    const inst = new StateNode(json.id, json.indent)
     inst.line = json.line
     inst.column = json.column
     inst.initial = json.initial
@@ -230,6 +232,7 @@ export class StateNode extends CompoundNode {
   get parent () {
     return /** @type {CompoundNode} */(this._parent)
   }
+
   set parent (value) {
     if (value instanceof CompoundNode) {
       this._parent = value
@@ -269,7 +272,7 @@ export class StateNode extends CompoundNode {
   }
 
   toJSON () {
-    let json = super.toJSON()
+    const json = super.toJSON()
     json.stateType = this.stateType
     json.initial = this.initial
     json.parallel = this.parallel
@@ -282,7 +285,7 @@ export class StateNode extends CompoundNode {
 
 export class TransitionNode extends Node {
   static fromJSON (json) {
-    let inst = new TransitionNode(json.event, json.target)
+    const inst = new TransitionNode(json.event, json.target)
     inst.line = json.line
     inst.column = json.column
     return inst
@@ -310,6 +313,7 @@ export class TransitionNode extends Node {
     // @ts-ignore
     return this._parent
   }
+
   set parent (value) {
     if (value instanceof CompoundNode) {
       this._parent = value
@@ -319,7 +323,7 @@ export class TransitionNode extends Node {
   }
 
   toJSON () {
-    let json = super.toJSON()
+    const json = super.toJSON()
     json.event = this.event
     json.target = this.target
     json.isForbidden = this.isForbidden
@@ -340,7 +344,7 @@ class DirectiveNode extends Node {
   get directiveType () { return this._directiveType }
 
   toJSON () {
-    let json = super.toJSON()
+    const json = super.toJSON()
     json.directiveType = this.directiveType
     return json
   }
@@ -348,7 +352,7 @@ class DirectiveNode extends Node {
 
 export class UseDirectiveNode extends DirectiveNode {
   static fromJSON (json) {
-    let inst = new UseDirectiveNode(json.machineId, json.alias)
+    const inst = new UseDirectiveNode(json.machineId, json.alias)
     inst.line = json.line
     inst.column = json.column
     return inst
@@ -374,6 +378,7 @@ export class UseDirectiveNode extends DirectiveNode {
     // @ts-ignore
     return this._parent
   }
+
   set parent (value) {
     if (value instanceof StateNode) {
       this._parent = value
@@ -383,7 +388,7 @@ export class UseDirectiveNode extends DirectiveNode {
   }
 
   toJSON () {
-    let json = super.toJSON()
+    const json = super.toJSON()
     json.machineId = this.machineId
     return json
   }
@@ -397,7 +402,7 @@ export class UseDirectiveNode extends DirectiveNode {
  * @return {any}
  */
 export const walk = (node, visit) => {
-  let stack = [ node ]
+  const stack = [node]
   let returnValue
 
   while (stack.length && returnValue === undefined) {

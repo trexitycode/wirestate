@@ -91,7 +91,7 @@ const makeScanner = (tokens, { wireStateFile = '' } = {}) => {
   }
 
   const consumeTo = (typeOrObj) => {
-    let toks = []
+    const toks = []
     let done = false
 
     for (; i < tokens.length && !done; i += 1) {
@@ -177,7 +177,7 @@ const parseImportNode = (scanner) => {
   const firstToken = scanner.consume({ value: '@import' })
   scanner.consume({ value: '{' })
 
-  let ids = []
+  const ids = []
   while (scanner.look({ type: 'identifier' })) {
     if (scanner.look({ value: ',' })) {
       scanner.consume({ value: ',' })
@@ -194,7 +194,7 @@ const parseImportNode = (scanner) => {
   scanner.consume({ value: 'from' })
   const wireStateFile = scanner.consume({ type: 'string' }).value
 
-  let importNode = new ImportNode(ids, wireStateFile)
+  const importNode = new ImportNode(ids, wireStateFile)
   importNode.line = firstToken.line
   importNode.column = firstToken.column
   return importNode
@@ -211,7 +211,7 @@ const parseMachineNode = (scanner) => {
 
   while (scanner.token) {
     if (scanner.look({ type: 'indent' })) {
-      if (scanner.look([ { type: 'indent' }, { value: '@machine' } ])) {
+      if (scanner.look([{ type: 'indent' }, { value: '@machine' }])) {
         break
       } else {
         indent = scanner.consume({ type: 'indent' }).value.length
@@ -294,7 +294,7 @@ const parseTransitionNode = (scanner) => {
     }
   }
 
-  let node = new TransitionNode(eventDescriptor, target)
+  const node = new TransitionNode(eventDescriptor, target)
   Object.assign(node, {
     line: firstToken.line,
     column: firstToken.column
@@ -305,13 +305,13 @@ const parseTransitionNode = (scanner) => {
 
 const parseStateNode = (scanner, { indentLevel }) => {
   const idToken = scanner.consume('identifier')
-  let node = new StateNode(idToken.value, indentLevel)
+  const node = new StateNode(idToken.value, indentLevel)
   Object.assign(node, {
     line: idToken.line,
     column: idToken.column
   })
 
-  let operators = []
+  const operators = []
   while (scanner.look('operator')) {
     operators.push(scanner.consume('operator'))
   }

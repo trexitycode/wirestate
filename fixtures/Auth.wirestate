@@ -1,0 +1,12 @@
+@machine Auth
+  # <- cancel
+  # <- authenticated
+
+  Waiting For Input*
+    authenticate -> Authenticating
+
+  Authenticating
+    failure -> Waiting For Input
+    error -> Waiting For Input
+
+

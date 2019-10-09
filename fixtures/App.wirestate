@@ -1,0 +1,5 @@
+@import { Auth } from './Auth'
+
+@machine App
+  Use Auth
+    @use Auth

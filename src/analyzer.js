@@ -51,7 +51,7 @@ function analyze (scopeNode, { cache, srcDir = '' }) {
  */
 export async function requireWireStateFile (wireStateFile, { cache, srcDir = '' }) {
   if (wireStateFile.startsWith('.')) {
-    throw new Error(`WireState file cannot start with ./ or ../`)
+    throw new Error('WireState file cannot start with ./ or ../')
   }
 
   const fileName = Path.resolve(srcDir, wireStateFile)
@@ -95,7 +95,7 @@ async function analyzeScopeNode (scopeNode, { cache, srcDir = '' }) {
   // Ensure that we have unique machine IDs
   const machineIds = scopeNode.machines.map(machineNode => machineNode.id)
   const uniqueMachineIds = new Set(machineIds)
-  for (let machineId of uniqueMachineIds) {
+  for (const machineId of uniqueMachineIds) {
     const k = machineIds.indexOf(machineId)
     const l = machineIds.lastIndexOf(machineId)
 
@@ -134,7 +134,7 @@ async function analyzeScopeNode (scopeNode, { cache, srcDir = '' }) {
  */
 async function analyzeImportNode (importNode, { cache, srcDir = '' }) {
   if (Path.isAbsolute(importNode.wireStateFile)) {
-    throw new SemanticError(`Import file cannot be absolute`, {
+    throw new SemanticError('Import file cannot be absolute', {
       fileName: importNode.parent.wireStateFile,
       line: importNode.line,
       column: importNode.column
@@ -154,7 +154,7 @@ async function analyzeImportNode (importNode, { cache, srcDir = '' }) {
   importNode._wireStateFile = file
 
   // Safe to let this load in the background since the promise is cached in the cache
-  requireWireStateFile(file, { cache, srcDir })
+  await requireWireStateFile(file, { cache, srcDir })
 
   return importNode
 }
@@ -174,7 +174,7 @@ async function analyzeMachineNode (machineNode, { cache }) {
   const stateNodes = machineNode.states.reduce(visitStateNode, [])
   const stateIds = stateNodes.map(stateNode => stateNode.id)
   const uniqueStateIds = new Set(stateIds)
-  for (let stateId of uniqueStateIds) {
+  for (const stateId of uniqueStateIds) {
     const k = stateIds.indexOf(stateId)
     const l = stateIds.lastIndexOf(stateId)
 
@@ -193,7 +193,7 @@ async function analyzeMachineNode (machineNode, { cache }) {
     return normalizeEventName(transitionNode.event)
   })
   const uniqueTransitionEvents = new Set(transitionEvents)
-  for (let event of uniqueTransitionEvents) {
+  for (const event of uniqueTransitionEvents) {
     const k = transitionEvents.indexOf(event)
     const l = transitionEvents.lastIndexOf(event)
 
@@ -275,7 +275,7 @@ async function analyzeStateNode (stateNode, { cache }) {
     return normalizeEventName(transitionNode.event)
   })
   const uniqueTransitionEvents = new Set(transitionEvents)
-  for (let event of uniqueTransitionEvents) {
+  for (const event of uniqueTransitionEvents) {
     const k = transitionEvents.indexOf(event)
     const l = transitionEvents.lastIndexOf(event)
 

@@ -1,5 +1,5 @@
 import * as Assert from 'assert'
-import { compileFromText } from './compile'
+import { compileFromText, compile } from './compile'
 
 describe('a compiler', function () {
   it('should compile to XState with proper state names', function () {
@@ -20,11 +20,22 @@ describe('a compiler', function () {
 
     const wireStateFile = 'App.wirestate'
 
-    return compileFromText(text, wireStateFile, { generatorName: 'xstate', disableCallbacks: true }).then(async sourceText => {
+    return compileFromText(text, wireStateFile, { generatorName: 'xstate', disableCallbacks: true }).then(sourceText => {
       Assert.ok(!!sourceText.match(/one": {\s+"target":\s+\[\s+"#Two"\s+\],\s+"actions": function \(\) {}\s+}/), 'Incorrectly generated state name')
       Assert.ok(!!sourceText.match(/"updated potential shipments": {\s+"target":\s+\[\s+"#Redisplay"\s+\],\s+"actions": function \(\) {}\s+}/), 'Incorrectly generated state name')
       Assert.ok(!!sourceText.match(/"updated potential shipments": {\s+"target":\s+\[\s+"#Shipments Redisplay 1"\s+\],\s+"actions": function \(\) {}\s+}/), 'Incorrectly generated state name')
       Assert.ok(!!sourceText.match(/"back": {\s+"actions": \[\]\s+}/), 'Incorreclty generated forbidden transitions')
+    }, error => {
+      console.error(error)
+      throw error
+    })
+  })
+
+  it.only('should compile a file with an @import', function () {
+    return compile('fixtures/App.wirestate', { srcDir: 'fixtures', generatorName: 'xstate', disableCallbacks: true }).then(text => {
+      Assert.ok(!!text.match(/machines\['App'\]/), 'App machine not found')
+      Assert.ok(!!text.match(/machines\['Auth'\]/), 'Auth machine not found')
+      Assert.ok(!!text.match(/"Use Auth": \{\s+"id": "Use Auth",\s+"initial": "Auth"/), 'Auth machine not used')
     }, error => {
       console.error(error)
       throw error
