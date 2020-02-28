@@ -37,7 +37,7 @@ export class FileCache extends MemoryCache {
   }
 
   async get (wireStateFile) {
-    let scopeNode = await super.get(wireStateFile)
+    const scopeNode = await super.get(wireStateFile)
 
     if (!scopeNode) {
       const isInCacheDir = await this._isInCacheDir(wireStateFile)

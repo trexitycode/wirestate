@@ -113,7 +113,7 @@
         "version": "2de998954d424315bcb817a0f8ac407b6f4ed27629a0131ed9d8bbcbf18cb1d2"
       },
       "../src/tokenizer.js": {
-        "version": "c3186ef16d77507c381484ad4c4b75ffba198b1a99e03152a042623629464860"
+        "version": "4c22a6dff7549cc884bd73454b3f70011bcb8a5c89686dc7ac8c3044e90fca5b"
       },
       "../src/ast-nodes.js": {
         "version": "c12a97644f2a0fa917777268a9f0377ce85445045113f7258b595a8243b3dd9c"
@@ -131,31 +131,31 @@
         "version": "fbc99d5a36c40294043eebb538379f3f5b0207324d2cf394cea8b6895eff57a7"
       },
       "../src/memory-cache.js": {
-        "version": "ff481395cd4832c673102398d8ac1083b5dbc022247ace8c3996d57fd85662e9"
+        "version": "3c6dd479325d336789b1d9acfbafde210ba57057a56fe6643d41c7c711b68a6a"
       },
       "../src/analyzer.test.js": {
         "version": "9ae3819cc03c11739161c256f15610be11120916a7edaed9e148b21489662fb3"
       },
       "../src/generator/internal/json-generator.js": {
-        "version": "75d2bef96550483d14b2e81b928bf5aa8ce1801566e761300bc73925ca96235f"
+        "version": "ceed10c5152d48b95d224e63ac7071f94b0cb7a760de08f4762d6b30e15bf174"
       },
       "../src/generator/internal/xstate/internal/rawstring.js": {
         "version": "ecb1c2c3501b878cd8d311a3db39bdfc802e9846c78517a224a85863309a1853"
       },
       "../src/generator/internal/xstate/internal/counter.js": {
-        "version": "d88836dbbeaddbbd0c5bbff92380f183b58961604e429ebee63f4e4339ba3e43"
+        "version": "c9d4e4cbb61a6ecc0e9137ec01cae786f077f8361a555f80c289831cb9fa2019"
       },
       "../src/generator/internal/xstate/internal/to-state-config.js": {
-        "version": "dab1fc5b5e41683ce69670fb3825f2b60f621fac2a3af6523730ea9dc7cc3d24"
+        "version": "bf4602c79c833e8d5256f36888d325770201306dd9dfe16c69990ae9d111cce0"
       },
       "../src/generator/internal/xstate/internal/to-machine-config.js": {
-        "version": "fd468a6ce90400fda222ef24890a4706c3a49f4a8eb3ac2a8373d79816dab088"
+        "version": "9df813421b08c9875d94dec0f7c491eb497c4b3ad51a0fa87863fad8b80056e2"
       },
       "../src/generator/internal/xstate/internal/template.js": {
-        "version": "f3da21ac8f61e33239c01056e925b6406787d1b30d1057cd404e08aad656c832"
+        "version": "980c996bf3086486a751ab70399b5def05572f5ca3be8ab934e9d50352541eca"
       },
       "../src/generator/internal/xstate/index.js": {
-        "version": "44fb409010667c445d657a6ee013db860922aeb4f986224dad61b8a37ff3003a"
+        "version": "010bcff3b3c13c84c55e1b11193afd6646cf0e06775cff8ba1212d605414f918"
       },
       "../src/generator/index.js": {
         "version": "3f22f6bc046f60533f08092ffd34fb128fd1e43d7742c61c2b9147a2a748f394"
@@ -164,10 +164,10 @@
         "version": "3a994a169bdc92cae850d69837360496e4533485b4de1c5358afdd44347b8fef"
       },
       "../src/compile.test.js": {
-        "version": "219b4188b9c946419e4ee519d65c5e1cbebca67acb107d3adc26207d7a68ad10"
+        "version": "fa24400c5b5c33cda544f0dcb5be67c62bd2c6a3973975371d527b115495f4c5"
       },
       "../src/file-cache.js": {
-        "version": "0cc7ede5bea57983acff9f78245078a09c58b42d243798a1ecdb2793361bea00"
+        "version": "ded8301fa502f937de0936fd37dd91bcf45b14d81eb097f22217df3a31875f85"
       },
       "../src/index.js": {
         "version": "821b00319a3d5b0fe993ee5fdf9e73bda809f7a506e587138f4b46e0225d80c5"
@@ -176,7 +176,7 @@
         "version": "5475e751542852aa508591c41b7368b0b2a6cd0e09462680655b687f9c54d575"
       },
       "../src/tokenizer.test.js": {
-        "version": "5f1ac2d9d208557f16dc0c9a4fa7726ee14a113736846d066cc1fcc414460a17"
+        "version": "a6aa9c2ae9eb69de12e6edd0e2bf5c93120b0b09501042a6bc644d0bb6a731d0"
       },
       "../node_modules/@types/mocha/index.d.ts": {
         "version": "c4c03cf65951d980ba618ae9601d10438730803fc9c8a1f7b34af8739981e205",
@@ -1294,7 +1294,21 @@
       ]
     },
     "semanticDiagnosticsPerFile": [
+      "../src/tokenizer.js",
+      "../src/tokenizer.test.js",
+      "../src/index.js",
+      "../src/compile.js",
       "../src/compile.test.js",
+      "../src/analyzer.test.js",
+      "../src/analyzer.js",
+      "../src/file-cache.js",
+      "../src/memory-cache.js",
+      "../src/generator/internal/xstate/internal/counter.js",
+      "../src/generator/internal/xstate/internal/to-machine-config.js",
+      "../src/generator/internal/xstate/index.js",
+      "../src/generator/index.js",
+      "../src/generator/internal/xstate/internal/to-state-config.js",
+      "../src/generator/internal/xstate/internal/template.js",
       "../node_modules/typescript/lib/lib.es5.d.ts",
       "../node_modules/typescript/lib/lib.es2015.d.ts",
       "../node_modules/typescript/lib/lib.es2016.d.ts",
@@ -1323,27 +1337,13 @@
       "../node_modules/typescript/lib/lib.esnext.intl.d.ts",
       "../node_modules/typescript/lib/lib.esnext.bigint.d.ts",
       "../src/errors.js",
-      "../src/tokenizer.js",
       "../src/ast-nodes.js",
       "../src/parser.js",
       "../src/cache-base.js",
       "../src/file-system/index.js",
-      "../src/analyzer.js",
-      "../src/memory-cache.js",
-      "../src/analyzer.test.js",
       "../src/generator/internal/json-generator.js",
       "../src/generator/internal/xstate/internal/rawstring.js",
-      "../src/generator/internal/xstate/internal/counter.js",
-      "../src/generator/internal/xstate/internal/to-state-config.js",
-      "../src/generator/internal/xstate/internal/to-machine-config.js",
-      "../src/generator/internal/xstate/internal/template.js",
-      "../src/generator/internal/xstate/index.js",
-      "../src/generator/index.js",
-      "../src/compile.js",
-      "../src/file-cache.js",
-      "../src/index.js",
       "../src/parser.test.js",
-      "../src/tokenizer.test.js",
       "../node_modules/@types/mocha/index.d.ts",
       "../node_modules/@types/node/globals.d.ts",
       "../node_modules/@types/node/assert.d.ts",

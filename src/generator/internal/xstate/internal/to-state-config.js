@@ -25,7 +25,7 @@ export async function toStateConfig ({ stateNode, cache, toMachineConfig, counte
       : id
   }
 
-  let stateConfig = {
+  const stateConfig = {
     id: ID(stateNode.id),
     type: stateNode.parallel
       ? 'parallel'

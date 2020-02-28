@@ -38,7 +38,7 @@ function readOption (names, args, { defaultValue = undefined } = {}) {
       }
 
       if (argCount === 0) {
-        argValues = [ value ]
+        argValues = [value]
       } else {
         argValues = argValues.concat(value)
       }
@@ -91,16 +91,16 @@ wirestate statechart/App.wirestate --generator xstate --srcDir statechart > App.
 function main () {
   const args = process.argv.slice(2)
 
-  if (args.some(arg => [ '--help', '-h' ].indexOf(arg) >= 0)) {
+  if (args.some(arg => ['--help', '-h'].indexOf(arg) >= 0)) {
     help()
     process.exit(0)
   }
 
   const inputFileName = args.find(arg => !arg.startsWith('-'))
-  const srcDir = readOption([ '--srcDir' ], args, { defaultValue: '' })
-  const cacheDir = readOption([ '--cacheDir' ], args, { defaultValue: null })
-  const generatorName = readOption([ '--generator' ], args, { defaultValue: 'json' })
-  const disableCallbacks = readOption([ '--disableCallbacks' ], args, { defaultValue: false })
+  const srcDir = readOption(['--srcDir'], args, { defaultValue: '' })
+  const cacheDir = readOption(['--cacheDir'], args, { defaultValue: null })
+  const generatorName = readOption(['--generator'], args, { defaultValue: 'json' })
+  const disableCallbacks = readOption(['--disableCallbacks'], args, { defaultValue: false })
 
   if (!inputFileName) {
     help()

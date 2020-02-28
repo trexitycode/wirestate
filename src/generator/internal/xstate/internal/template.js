@@ -67,9 +67,9 @@ export function wirestate ({ callbacks = {}, catchFn = DEFAULT_CATCH_FN }) {
  * @param {Map<string, Object>} machineConfigs Mapping of WireState machine ID to XState machine config objects
  */
 const _body = machineConfigs => {
-  let lines = []
+  const lines = []
 
-  for (let [wireStateMachineId, machineConfig] of machineConfigs) {
+  for (const [wireStateMachineId, machineConfig] of machineConfigs) {
     lines.push(
       `machines['${wireStateMachineId}'] = Machine(${JSON.stringify(machineConfig, null, 2)})`
     )

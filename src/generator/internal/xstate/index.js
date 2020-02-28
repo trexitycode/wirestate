@@ -8,7 +8,7 @@ import { render } from './internal/template'
  * @param {CacheBase} cache
  */
 export async function xstateGenerator (cache, { disableCallbacks = false } = {}) {
-  const wireStateFiles = [ ...cache.keys ]
+  const wireStateFiles = [...cache.keys]
   // Since the Map constructor takes an initializer like: [ [key, value], ... ]
   // we build an array of: [ [WireState machine ID, XState machine config], ... ]
   // array to new up a Map for the render function.

@@ -4,7 +4,7 @@ import { makeTokenizer } from './tokenizer'
 describe('a tokenzier', function () {
   it('should tokenize keywords only followed by whitespace', function () {
     const tokenizer = makeTokenizer({ wireStateFile: 'SomeFile.wirestate' })
-    const source = `as asOne oneas`
+    const source = 'as asOne oneas'
     const tokens = tokenizer.tokenize(source)
     Assert.deepStrictEqual(tokens, [
       { type: 'keyword', value: 'as', raw: 'as', column: 0, line: 1 },
@@ -15,7 +15,7 @@ describe('a tokenzier', function () {
 
   it('should tokenize keywords at end of source text', function () {
     const tokenizer = makeTokenizer({ wireStateFile: 'SomeFile.wirestate' })
-    const source = `*as`
+    const source = '*as'
     const tokens = tokenizer.tokenize(source)
     Assert.deepStrictEqual(tokens, [
       { type: 'operator', value: '*', raw: '*', column: 0, line: 1 },
@@ -25,7 +25,7 @@ describe('a tokenzier', function () {
 
   it('should not include keywords within identifiers', function () {
     const tokenizer = makeTokenizer({ wireStateFile: 'SomeFile.wirestate' })
-    const source = `My as State Name as`
+    const source = 'My as State Name as'
     const tokens = tokenizer.tokenize(source)
     Assert.deepStrictEqual(tokens, [
       { type: 'identifier', value: 'My', raw: 'My', column: 0, line: 1 },
@@ -40,7 +40,7 @@ describe('a tokenzier', function () {
 
   it('should exclude trailing keywords from identifiers', function () {
     const tokenizer = makeTokenizer({ wireStateFile: 'SomeFile.wirestate' })
-    const source = `My State as`
+    const source = 'My State as'
     const tokens = tokenizer.tokenize(source)
     Assert.deepStrictEqual(tokens, [
       { type: 'identifier', value: 'My State', raw: 'My State', column: 0, line: 1 },

@@ -17,7 +17,7 @@ export class MemoryCache extends CacheBase {
   /**
    * @inheritdoc
    */
-  get keys () { return [ ...this._table.keys() ] }
+  get keys () { return [...this._table.keys()] }
 
   /**
    * @inheritdoc
@@ -65,7 +65,7 @@ export class MemoryCache extends CacheBase {
    * @inheritdoc
    */
   async clear () {
-    const fileNames = [ ...this._table.keys() ]
+    const fileNames = [...this._table.keys()]
 
     await Promise.all(
       fileNames.map(fileName => {
@@ -79,7 +79,7 @@ export class MemoryCache extends CacheBase {
    * @param {string} machineId
    */
   async findMachineById (machineId) {
-    for (let wireStateFile of this.keys) {
+    for (const wireStateFile of this.keys) {
       const scopeNode = await this._table.get(wireStateFile)
 
       const machine = scopeNode.machines.find(machineNode => {
@@ -93,9 +93,9 @@ export class MemoryCache extends CacheBase {
   }
 
   toJSON () {
-    let json = {}
+    const json = {}
 
-    for (let wireStateFile of this._scopes.keys()) {
+    for (const wireStateFile of this._scopes.keys()) {
       json[wireStateFile] = this._scopes.get(wireStateFile)
     }
 

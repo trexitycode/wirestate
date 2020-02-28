@@ -1,7 +1,7 @@
 /* eslint-disable-next-line */
 import { CacheBase } from '../../cache-base'
 
-const BLACKLISTED_PROPS = [ 'line', 'column', 'indent' ]
+const BLACKLISTED_PROPS = ['line', 'column', 'indent']
 
 /** @param {CacheBase} cache */
 export function jsonGenerator (cache) {

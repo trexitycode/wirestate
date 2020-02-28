@@ -1,6 +1,6 @@
 // Keeps track of singleton counting objects
 /** @type {Map<string, CountingObject>} */
-let counters = new Map()
+const counters = new Map()
 
 /**
  * @typedef {Object} CountingObject

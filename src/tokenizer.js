@@ -15,7 +15,7 @@ const makeScanner = (str) => {
 
   const advance = (step = 1) => {
     for (let k = 0; k < step; k += 1) {
-      let char = str[i + k]
+      const char = str[i + k]
       if (char === '\n') {
         line += 1
         column = 0
@@ -32,7 +32,7 @@ const makeScanner = (str) => {
 
   const backTrack = (step = 1) => {
     for (let k = step; k > 0; k -= 1) {
-      let char = str[i - k]
+      const char = str[i - k]
       if (char === '\n') {
         line -= 1
         column = 0
@@ -133,7 +133,7 @@ export const makeTokenizer = ({ wireStateFile = '' } = {}) => {
     canRead (scanner) { return scanner.c === '"' || scanner.c === "'" },
     read (scanner) {
       let buffer = ''
-      let quote = scanner.c
+      const quote = scanner.c
       let isTerminated = false
       let c = scanner.advance()
 
@@ -201,7 +201,7 @@ export const makeTokenizer = ({ wireStateFile = '' } = {}) => {
   }
 
   const symbolToken = {
-    symbols: [ '->', '|' ],
+    symbols: ['->', '|'],
     canRead (scanner) {
       return this.symbols.some(s => scanner.look(s))
     },
@@ -219,7 +219,7 @@ export const makeTokenizer = ({ wireStateFile = '' } = {}) => {
   }
 
   const keywordToken = {
-    keywords: [ 'as' ],
+    keywords: ['as'],
     canRead (scanner) {
       return this.keywords.some(kw => {
         const nextChar = scanner.at(scanner.index + kw.length)
@@ -335,7 +335,7 @@ export const makeTokenizer = ({ wireStateFile = '' } = {}) => {
 
   const tokenize = (text) => {
     const scanner = makeScanner(text)
-    let tokens = []
+    const tokens = []
     let line = 0
     let column = 0
     let noMatch = true

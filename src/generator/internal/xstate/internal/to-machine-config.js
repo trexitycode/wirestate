@@ -35,7 +35,7 @@ export async function toMachineConfig ({ machineNode, cache, counter = null, dis
       : id
   }
 
-  let machineConfig = {
+  const machineConfig = {
     id: ID(machineNode.id),
     initial: (machineNode.states.find(state => !!state.initial) || { id: undefined }).id
   }
