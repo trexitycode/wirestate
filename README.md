@@ -20,6 +20,7 @@ WireState is inspired by [SCXML][2], [XState][1], and [sketch.systems][3].
 
 ## Documentation
 
-- [Guide -- outdated](./docs/GUIDE.md)
+- [Guide](./docs/GUIDE.md)
 - [CLI](./docs/CLI.md)
+- [WireState Syntax](./docs/WIRESTATE-SYNTAX.md)
 - [API -- outdated](./docs/API.md)
