@@ -15,8 +15,8 @@ export const render = (machineConfigs) => {
 
 const _head = () => (
   `/* Generated on ${new Date().toISOString()} using @launchfort/wirestate */
+/* eslint-disable */
 
-/* eslint-disable-next-line */
 import { Machine, StateNode } from 'xstate'
 
 const DEFAULT_CATCH_FN = (error, callbackKey) => {
@@ -52,7 +52,7 @@ export function wirestate ({ callbacks = {}, catchFn = DEFAULT_CATCH_FN }) {
       return (send, receive) => {
         try {
           return cb(e, send, receive)
-        } catch(error) {
+        } catch (error) {
           catchFn(error, callbackKey)
         }
       }

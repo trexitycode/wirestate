@@ -152,7 +152,7 @@
         "version": "9df813421b08c9875d94dec0f7c491eb497c4b3ad51a0fa87863fad8b80056e2"
       },
       "../src/generator/internal/xstate/internal/template.js": {
-        "version": "980c996bf3086486a751ab70399b5def05572f5ca3be8ab934e9d50352541eca"
+        "version": "43229bb110043bc352af7447f20971e3f1725c7b05bf8c898ef299e316eb9a00"
       },
       "../src/generator/internal/xstate/index.js": {
         "version": "010bcff3b3c13c84c55e1b11193afd6646cf0e06775cff8ba1212d605414f918"
@@ -1294,21 +1294,12 @@
       ]
     },
     "semanticDiagnosticsPerFile": [
-      "../src/tokenizer.js",
-      "../src/tokenizer.test.js",
+      "../src/generator/internal/xstate/internal/template.js",
+      "../src/generator/internal/xstate/index.js",
+      "../src/generator/index.js",
       "../src/index.js",
       "../src/compile.js",
       "../src/compile.test.js",
-      "../src/analyzer.test.js",
-      "../src/analyzer.js",
-      "../src/file-cache.js",
-      "../src/memory-cache.js",
-      "../src/generator/internal/xstate/internal/counter.js",
-      "../src/generator/internal/xstate/internal/to-machine-config.js",
-      "../src/generator/internal/xstate/index.js",
-      "../src/generator/index.js",
-      "../src/generator/internal/xstate/internal/to-state-config.js",
-      "../src/generator/internal/xstate/internal/template.js",
       "../node_modules/typescript/lib/lib.es5.d.ts",
       "../node_modules/typescript/lib/lib.es2015.d.ts",
       "../node_modules/typescript/lib/lib.es2016.d.ts",
@@ -1337,13 +1328,22 @@
       "../node_modules/typescript/lib/lib.esnext.intl.d.ts",
       "../node_modules/typescript/lib/lib.esnext.bigint.d.ts",
       "../src/errors.js",
+      "../src/tokenizer.js",
       "../src/ast-nodes.js",
       "../src/parser.js",
       "../src/cache-base.js",
       "../src/file-system/index.js",
+      "../src/analyzer.js",
+      "../src/memory-cache.js",
+      "../src/analyzer.test.js",
       "../src/generator/internal/json-generator.js",
       "../src/generator/internal/xstate/internal/rawstring.js",
+      "../src/generator/internal/xstate/internal/counter.js",
+      "../src/generator/internal/xstate/internal/to-state-config.js",
+      "../src/generator/internal/xstate/internal/to-machine-config.js",
+      "../src/file-cache.js",
       "../src/parser.test.js",
+      "../src/tokenizer.test.js",
       "../node_modules/@types/mocha/index.d.ts",
       "../node_modules/@types/node/globals.d.ts",
       "../node_modules/@types/node/assert.d.ts",
