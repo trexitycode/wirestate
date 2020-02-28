@@ -74,7 +74,7 @@ const callbacks = {
 }
 ```
 
-Notice that we return a function. This is no accident. As a pattern in the wirestate callbacks, you can optionally return a function that will run once you leave that state (or machine).
+Notice that we return a function. This is no accident. As a pattern in the wirestate callbacks, you can optionally return a function that will run once when the machine leaves that state.
 
 Say you want to add a callback to the `Start` state. Because it belongs to the `App` machine, this has to be indicated in the name of the callback in the object. This is done with the following naming pattern: `[MACHINE_NAME]/[STATE_NAME]`. Using the previous machine, this is what the object will now look like:
 
