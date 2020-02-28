@@ -1,8 +1,12 @@
+- [ ] Make it so that the file exstension is always expected
+      to be `.wirestate` and nothing else. This will simplify
+      the codebase and make the docuemtation easier to write.
+
 - [ ] Rewrite GUIDE.md so that it shows a typical usage of
       the `xstate` generator. This needs to be a full example
       that includes running in the browser.
 
 - [ ] Rewrite WIRESTATE-SYNTAX.md to reflect the new syntax.
 
-- [ ] Let's delete API.md for now until we can possibly
-      automate generating this documentation.
+- [ ] Simplify API.md so that it only talks about the `xstate`
+      generator API.

@@ -1,5 +1,32 @@
 ## WireState Syntax
 
+### @machine
+
+All WireState files must have at least one `@machine` directive.
+This directive designates the root node of your statechart for
+a state machine.
+
+```
+@machine App
+```
+
+### States
+
+### Transitions
+
+### Compound States
+
+- initial
+- final
+
+### Parallel States
+
+### @use
+
+### @import
+
+---
+
 Behaviour statecharts are typically files ending with `.wirestate`. The statechart
 consistes of states and their transitions.
 
