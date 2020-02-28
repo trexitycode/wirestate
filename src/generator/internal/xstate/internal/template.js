@@ -17,7 +17,7 @@ const _head = () => (
   `/* Generated on ${new Date().toISOString()} using @launchfort/wirestate */
 /* eslint-disable */
 
-import { Machine, StateNode } from 'xstate'
+import { Machine } from 'xstate'
 
 const DEFAULT_CATCH_FN = (error, callbackKey) => {
   console.error({ callbackKey, error })

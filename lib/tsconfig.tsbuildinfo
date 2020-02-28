@@ -152,7 +152,7 @@
         "version": "9df813421b08c9875d94dec0f7c491eb497c4b3ad51a0fa87863fad8b80056e2"
       },
       "../src/generator/internal/xstate/internal/template.js": {
-        "version": "43229bb110043bc352af7447f20971e3f1725c7b05bf8c898ef299e316eb9a00"
+        "version": "f460d8cfe072113a1351d307403069609ca6753457b9dcc2df0db30746fe7c07"
       },
       "../src/generator/internal/xstate/index.js": {
         "version": "010bcff3b3c13c84c55e1b11193afd6646cf0e06775cff8ba1212d605414f918"
