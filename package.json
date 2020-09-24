@@ -10,7 +10,7 @@
     "lib": "lib"
   },
   "scripts": {
-    "prepublish": "tsc -p .",
+    "prepublishOnly": "tsc -p .",
     "pretest": "npm run build",
     "test": "mocha --opts .mocha.opts './lib/**/*.test.js'",
     "build": "tsc -p .",

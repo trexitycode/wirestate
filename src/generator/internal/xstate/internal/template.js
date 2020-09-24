@@ -17,7 +17,7 @@ const _head = () => (
   `/* Generated on ${new Date().toISOString()} using @launchfort/wirestate */
 
 /* eslint-disable-next-line */
-import { Machine, StateNode } from 'xstate'
+import { Machine } from 'xstate'
 
 const DEFAULT_CATCH_FN = (error, callbackKey) => {
   console.error({ callbackKey, error })
@@ -51,8 +51,8 @@ export function wirestate ({ callbacks = {}, catchFn = DEFAULT_CATCH_FN }) {
     return (ctx, e) => {
       return (send, receive) => {
         try {
-          return cb(e, send, receive)
-        } catch(error) {
+          return cb(e, send, ctx, receive)
+        } catch (error) {
           catchFn(error, callbackKey)
         }
       }
